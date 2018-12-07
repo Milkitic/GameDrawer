@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using RomExplorer.IO;
 
 namespace RomExplorer
 {
@@ -14,10 +13,5 @@ namespace RomExplorer
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            GameListLoader loader = new GameListLoader();
-            loader.Search();
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RomExplorer.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,12 @@ namespace RomExplorer
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GameListLoader loader = new GameListLoader();
+            var list = loader.Search();
         }
     }
 }

@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RomExplorer
+namespace RomExplorer.Model
 {
     public class ConsoleMachine
     {
         public ConsoleMachine(string directoryPath)
         {
             DirectoryPath = directoryPath;
-            Name = new DirectoryInfo(DirectoryPath).Name;
         }
 
         public Guid Guid { get; set; } = Guid.NewGuid();
-        public string Name { get; set; }
+        public string Name => new DirectoryInfo(DirectoryPath).Name;
         public string DirectoryPath { get; set; }
         public string IconPath { get; set; }
         public string Description { get; set; } = "这个文件暂时还没有介绍，请帮忙一同编辑吧！";
