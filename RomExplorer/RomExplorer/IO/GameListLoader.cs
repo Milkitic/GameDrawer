@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RomExplorer.Model;
@@ -53,6 +54,7 @@ namespace RomExplorer.IO
             var gameDirectoryInfo = new DirectoryInfo(GamePath);
             foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
             {
+                Thread.Sleep(1000);
                 string consoleDirectoryPath = consoleDirectoryInfo.FullName;
                 var console = new ConsoleMachine(consoleDirectoryPath);
                 
@@ -74,6 +76,7 @@ namespace RomExplorer.IO
                     var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
                     foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
                     {
+                        Thread.Sleep(100);
                         var romPath = romFileInfo.FullName;
                         var game = new Game(romPath);
                         
