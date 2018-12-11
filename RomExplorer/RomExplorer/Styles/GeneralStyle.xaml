@@ -9,4 +9,5 @@
         <Setter Property="Height" Value="49" />
         <Setter Property="Margin" Value="3,2,1,2" />
     </Style>
+
 </ResourceDictionary>

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using RomExplorer.Model;
 
 namespace RomExplorer.IO
@@ -20,14 +21,30 @@ namespace RomExplorer.IO
                 Directory.CreateDirectory(GamePath);
         }
 
-        public void LoadCache()
+        public List<ConsoleMachine> LoadCache()
         {
-          
+            if (File.Exists(CachePath))
+            {
+                try
+                {
+                    ConsoleMachines = JsonConvert.DeserializeObject<List<ConsoleMachine>>(File.ReadAllText(CachePath));
+                }
+                catch
+                {
+                    Search();
+                }
+            }
+            else
+            {
+                Search();
+            }
+
+            return ConsoleMachines;
         }
 
         public void SaveCache()
         {
-         
+            File.WriteAllText(CachePath, JsonConvert.SerializeObject(ConsoleMachines));
         }
 
         public List<ConsoleMachine> Search()
@@ -38,43 +55,48 @@ namespace RomExplorer.IO
             {
                 string consoleDirectoryPath = consoleDirectoryInfo.FullName;
                 var console = new ConsoleMachine(consoleDirectoryPath);
-                consoleMachines.Add(console);
-
-                string romDirectoryPath = Path.Combine(consoleDirectoryPath, "Rom");
-                string emulatorDirectoryPath = Path.Combine(consoleDirectoryPath, "Emulator");
-
-                if (!Directory.Exists(romDirectoryPath))
-                    Directory.CreateDirectory(romDirectoryPath);
+                
+                if (File.Exists(console.DescriptionPath))
+                {
+                    console.Description = File.ReadAllText(console.DescriptionPath);
+                }
                 else
                 {
-                    var romDirectoryInfo = new DirectoryInfo(romDirectoryPath);
+                    console.SetDescription(ConsoleMachine.DefaultDescription);
+                }
+
+                consoleMachines.Add(console);
+
+                if (!Directory.Exists(console.RomDirectoryPath))
+                    Directory.CreateDirectory(console.RomDirectoryPath);
+                else
+                {
+                    var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
                     foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
                     {
                         var romPath = romFileInfo.FullName;
                         var game = new Game(romPath);
-
-                        var descriptionPath = Path.Combine(game.AddonDirectory, "description.txt");
-                         if (!Directory.Exists(game.AddonDirectory))
-                            Directory.CreateDirectory(game.AddonDirectory);
+                        
+                        if (!Directory.Exists(game.MetaDirectory))
+                            Directory.CreateDirectory(game.MetaDirectory);
                         if (!Directory.Exists(game.ScreenShotDirectory))
                             Directory.CreateDirectory(game.ScreenShotDirectory);
                        
-                        if (File.Exists(descriptionPath))
+                        if (File.Exists(game.DescriptionPath))
                         {
-                            game.Description = File.ReadAllText(descriptionPath);
+                            game.Description = File.ReadAllText(game.DescriptionPath);
                         }
                         else
                         {
-                            game.Description = Game.DefaultDescription;
-                            File.WriteAllText(descriptionPath, Game.DefaultDescription);
+                            game.SetDescription(Game.DefaultDescription);
                         }
                         
                         console.Games.Add(game);
                     }
                 }
 
-                if (!Directory.Exists(emulatorDirectoryPath))
-                    Directory.CreateDirectory(emulatorDirectoryPath);
+                if (!Directory.Exists(console.EmulatorDirectoryPath))
+                    Directory.CreateDirectory(console.EmulatorDirectoryPath);
             }
 
             ConsoleMachines = consoleMachines;

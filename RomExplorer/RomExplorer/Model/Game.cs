@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace RomExplorer.Model
 {
@@ -9,13 +10,21 @@ namespace RomExplorer.Model
             RomPath = romPath;
         }
 
+        public Guid Guid { get; set; } = Guid.NewGuid();
         public string Name => Path.GetFileNameWithoutExtension(RomPath); //view property
         public string RomPath { get; set; } //view property
-        public string AddonDirectory => RomPath + ".addons";
+        public string MetaDirectory => RomPath + ".meta";
         public string Description { get; set; } //view property
-        public string IconPath => Path.Combine(AddonDirectory, "icon.png"); //view property
-        public string ScreenShotDirectory => Path.Combine(AddonDirectory, "screenshots");
+        public string DescriptionPath => Path.Combine(MetaDirectory, "description.txt");
+        public string IconPath => Path.Combine(MetaDirectory, "icon.png"); //view property
+        public string ScreenShotDirectory => Path.Combine(MetaDirectory, "screenshots");
 
-        public static string DefaultDescription => "这个文件暂时还没有介绍，请帮忙一同编辑吧！";
+        public void SetDescription(string desccription)
+        {
+            Description = desccription;
+            File.WriteAllText(DescriptionPath, Description);
+        }
+
+        public static string DefaultDescription => "暂无游戏介绍";
     }
 }

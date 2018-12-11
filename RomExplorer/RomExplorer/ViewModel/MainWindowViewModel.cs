@@ -2,6 +2,7 @@
 using RomExplorer.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,14 +11,36 @@ namespace RomExplorer.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private ConsoleMachine _consoleMachine;
+        private ObservableCollection<ConsoleMachine> _consoleMachines;
+        private ConsoleMachine _currentMachine;
+        private Game _currentGame;
 
-        public ConsoleMachine ConsoleMachine
+        public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
-            get => _consoleMachine;
+            get => _consoleMachines;
             set
             {
-                _consoleMachine = value;
+                _consoleMachines = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ConsoleMachine CurrentMachine
+        {
+            get => _currentMachine;
+            set
+            {
+                _currentMachine = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Game CurrentGame
+        {
+            get => _currentGame;
+            set
+            {
+                _currentGame = value;
                 OnPropertyChanged();
             }
         }
