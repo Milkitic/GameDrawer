@@ -58,9 +58,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\MainWindowConverter.cs" />
+    <Compile Include="IO\IdentityHelper.cs" />
+    <Compile Include="Model\FileModelBase.cs" />
     <Compile Include="OptionContainer.cs" />
+    <Compile Include="ViewModel\ConsoleConfigWindowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\ConsoleConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -72,7 +80,10 @@
     <Compile Include="Model\ConsoleMachine.cs" />
     <Compile Include="Model\Game.cs" />
     <Compile Include="IO\GameListLoader.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\ConsoleConfigWindow.xaml.cs">
+      <DependentUpon>ConsoleConfigWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -108,12 +119,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\完整项目\Osu-Player\WpfApi\WpfApi.csproj">
       <Project>{028e6f4e-d538-4b83-904c-c94c2f1e3c83}</Project>
       <Name>WpfApi</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\default\game.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

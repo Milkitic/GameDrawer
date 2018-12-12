@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RomExplorer.Model;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,11 @@ namespace RomExplorer
     /// </summary>
     public partial class App : Application
     {
+        public static Config Config { get; set; }
+
+        static App()
+        {
+            Config = new Config();
+        }
     }
 }

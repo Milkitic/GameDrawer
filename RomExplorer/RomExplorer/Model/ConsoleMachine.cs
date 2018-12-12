@@ -1,32 +1,56 @@
-﻿using System;
+﻿using Milkitic.WpfApi;
+using RomExplorer.IO;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
 {
-    public class ConsoleMachine
+    public class ConsoleMachine : FileModelBase
     {
+        protected override string SuspendedDescription { get; set; } = "暂无主机介绍";
+
         public ConsoleMachine(string directoryPath)
         {
-            DirectoryPath = directoryPath;
+            Path = directoryPath;
         }
 
-        public Guid Guid { get; set; } = Guid.NewGuid();
-        public string Name => new DirectoryInfo(DirectoryPath).Name;
-        public string DirectoryPath { get; set; }
-        public string IconPath => Path.Combine(DirectoryPath, "icon.png"); //view property
-        public string Description { get; set; } = "暂无主机介绍";
+        public string RomDirectoryPath => System.IO.Path.Combine(Path, "Rom");
+        public string EmulatorDirectoryPath => System.IO.Path.Combine(Path, "Emu");
 
-        public string DescriptionPath => Path.Combine(DirectoryPath, "description.txt");
-        public string RomDirectoryPath => Path.Combine(DirectoryPath, "Rom");
-        public string EmulatorDirectoryPath => Path.Combine(DirectoryPath, "Emu");
+        public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
 
-        public List<Game> Games { get; set; } = new List<Game>();
-
-        public void SetDescription(string desccription)
+        public void InitDescription()
         {
-            Description = desccription;
-            File.WriteAllText(DescriptionPath, Description);
+            File.WriteAllText(DescriptionPath, DefaultDescription);
+        }
+
+        public override void CommitChanges()
+        {
+            base.CommitChanges();
+
+            if (SuspendedName != NameWithoutExtension)
+            {
+                var chars = IoPath.GetInvalidPathChars();
+                if (SuspendedName.Any(k => chars.Contains(k)))
+                {
+                    throw new InvalidOperationException("文件名非法。");
+                }
+
+                var newPath = IoPath.Combine(new DirectoryInfo(Path).Parent.FullName, SuspendedName);
+                Directory.Move(Path, newPath);
+                Path = newPath;
+                OnPropertyChanged($"Path");
+                OnPropertyChanged($"Identity");
+                OnPropertyChanged($"NameWithoutExtension");
+                OnPropertyChanged($"IconPath");
+                OnPropertyChanged($"DescriptionPath");
+                OnPropertyChanged($"RomDirectoryPath");
+                OnPropertyChanged($"EmulatorDirectoryPath");
+            }
         }
 
         public static string DefaultDescription => "这个文件暂时还没有介绍，请帮忙一同编辑吧！";

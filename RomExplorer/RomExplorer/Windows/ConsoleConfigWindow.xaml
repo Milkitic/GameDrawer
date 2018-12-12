@@ -1,0 +1,53 @@
+﻿<Window x:Class="RomExplorer.Windows.ConsoleConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RomExplorer.Windows"
+        xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
+        xmlns:converters="clr-namespace:RomExplorer.Converters"
+        mc:Ignorable="d"
+        Title="ConsoleConfigWindow" Height="270" Width="453"
+        Loaded="Window_Loaded">
+    <Window.DataContext>
+        <viewModel:ConsoleConfigWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <converters:IconConverter x:Key="IconConverter" />
+    </Window.Resources>
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="文件夹名：" Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="0" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding Name,Mode=TwoWay}" />
+        <Label Grid.Row="1" Grid.Column="0" Content="默认宿主程序：" Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding HostApplication,Mode=TwoWay}" />
+        <Label Grid.Row="2" Grid.Column="0" Content="启动参数：" Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding StartupArguments,Mode=TwoWay}" />
+        <Button Grid.Row="3" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
+                Command="{Binding SaveCommand}" Click="BtnOk_Click"/>
+        <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="3">
+            <Border Background="AliceBlue" Width="40" Height="40">
+                <Viewbox Width="32" Height="32">
+                    <Image Source="{Binding IconPath,Converter={StaticResource IconConverter},Mode=TwoWay}" />
+                </Viewbox>
+            </Border>
+            <Button Content="修改图标"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

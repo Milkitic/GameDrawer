@@ -25,10 +25,9 @@ namespace RomExplorer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindowViewModel ViewModel;
+        internal MainWindowViewModel ViewModel;
         private readonly OptionContainer _consoleOption = new OptionContainer();
         private readonly OptionContainer _gameOption = new OptionContainer();
-        private GameListLoader _loader;
 
         public MainWindow()
         {
@@ -37,8 +36,7 @@ namespace RomExplorer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _loader = new GameListLoader();
-            var list = _loader.LoadCache();
+            var list = GameListLoader.LoadCache();
 
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.ConsoleMachines = new ObservableCollection<ConsoleMachine>(list);
@@ -48,27 +46,26 @@ namespace RomExplorer
         {
             _consoleOption.Add(sender);
             _consoleOption.Switch(sender);
-            var id = (Guid)((ToggleButton)sender).Tag;
-            ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Guid == id);
+            var identity = (string)((ToggleButton)sender).Tag;
+            ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Identity == identity);
         }
 
         private void BtnGame_Click(object sender, RoutedEventArgs e)
         {
             _gameOption.Add(sender);
             _gameOption.Switch(sender);
-            var id = (Guid)((ToggleButton)sender).Tag;
-            ViewModel.CurrentGame = ViewModel.CurrentMachine.Games.First(k => k.Guid == id);
+            var identity = (string)((ToggleButton)sender).Tag;
+            ViewModel.CurrentGame = ViewModel.CurrentMachine.Games.First(k => k.Identity == identity);
         }
 
         private void BtnSync_Click(object sender, RoutedEventArgs e)
         {
-            var list = _loader.Search();
+            var list = GameListLoader.Search();
             ViewModel.ConsoleMachines = new ObservableCollection<ConsoleMachine>(list);
             ViewModel.CurrentMachine =
-                ViewModel.ConsoleMachines.FirstOrDefault(k => k.DirectoryPath == ViewModel.CurrentMachine?.DirectoryPath);
+                ViewModel.ConsoleMachines.FirstOrDefault(k => k.Path == ViewModel.CurrentMachine?.Path);
             ViewModel.CurrentGame =
-                ViewModel.CurrentMachine?.Games.FirstOrDefault(k => k.RomPath == ViewModel.CurrentGame?.RomPath);
-
+                ViewModel.CurrentMachine?.Games.FirstOrDefault(k => k.Path == ViewModel.CurrentGame?.Path);
         }
     }
 }
