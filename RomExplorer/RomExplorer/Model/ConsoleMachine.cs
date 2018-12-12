@@ -18,8 +18,8 @@ namespace RomExplorer.Model
             Path = directoryPath;
         }
 
-        public string RomDirectoryPath => System.IO.Path.Combine(Path, "Rom");
-        public string EmulatorDirectoryPath => System.IO.Path.Combine(Path, "Emu");
+        public string RomDirectoryPath => IoPath.Combine(Path, "Rom");
+        public string EmulatorDirectoryPath => IoPath.Combine(Path, "Emu");
 
         public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
 
