@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Milkitic.WpfApi;
+using Newtonsoft.Json;
 using RomExplorer.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,47 +13,160 @@ using System.Threading.Tasks;
 
 namespace RomExplorer.IO
 {
-    internal static class GameListLoader
+    internal class GameListLoader
     {
+        private ObservableCollection<ConsoleMachine> _consoleMachines;
+        private FileSystemWatcher _fileSystemWatcher;
         public static string CachePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameListCache.json");
         public static string GamePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Games");
 
-        static GameListLoader()
+        public ObservableCollection<ConsoleMachine> ConsoleMachines
+        {
+            get
+            {
+                if (_consoleMachines != null)
+                    return _consoleMachines;
+
+                ObservableCollection<ConsoleMachine> list;
+                try
+                {
+                    list = LoadConsoles(false);
+                }
+                catch (Exception e)
+                {
+                    list = LoadConsoles(true);
+                }
+
+                return list;
+            }
+            set => _consoleMachines = value;
+        }
+
+        public GameListLoader()
         {
             if (!Directory.Exists(GamePath))
                 Directory.CreateDirectory(GamePath);
+            _fileSystemWatcher = new FileSystemWatcher(GamePath)
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName
+            };
+
+            _fileSystemWatcher.Created += FileSystemWatcher_Created;
+            _fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+            _fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+            _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
-        public static List<ConsoleMachine> LoadCache()
+        private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            List<ConsoleMachine> consoleMachines;
-            if (File.Exists(CachePath))
+            Thread.Sleep(1000);
+            var path = e.FullPath;
+            var name = e.Name;
+            var oldPath = e.OldFullPath;
+            var oldName = e.OldName;
+            FileAttributes attr = File.GetAttributes(path);
+
+            if (attr.HasFlag(FileAttributes.Directory))
             {
-                try
+                var di = new DirectoryInfo(path);
+                if (di.Parent?.FullName == new DirectoryInfo(GamePath).FullName)
                 {
-                    consoleMachines = JsonConvert.DeserializeObject<List<ConsoleMachine>>(File.ReadAllText(CachePath));
-                }
-                catch
-                {
-                    consoleMachines = Search();
+                    if (_consoleMachines.All(k => k.Path != path))
+                    {
+                        var console = _consoleMachines.FirstOrDefault(k => k.Path == oldPath);
+                        if (console != null)
+                        {
+                            console.NameWithoutExtension = name;
+                            console.CommitChanges();
+                            Execute.OnUiThread(() => { console.Refresh(); });
+                        }
+                    }
                 }
             }
             else
             {
-                consoleMachines = Search();
+
+            }
+        }
+
+        private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+
+        }
+
+        private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+
+        }
+
+        public ObservableCollection<ConsoleMachine> LoadConsoles(bool refresh)
+        {
+            if (_consoleMachines != null)
+            {
+                //_consoleMachines.CollectionChanged -= ConsoleMachines_CollectionChanged;
             }
 
+            ObservableCollection<ConsoleMachine> consoleMachines;
+            if (refresh || !File.Exists(CachePath))
+            {
+                consoleMachines = RefreshConsoles();
+            }
+            else
+            {
+                try
+                {
+                    consoleMachines =
+                        JsonConvert.DeserializeObject<ObservableCollection<ConsoleMachine>>(
+                            File.ReadAllText(CachePath));
+                }
+                catch
+                {
+                    consoleMachines = RefreshConsoles();
+                }
+            }
+
+            _consoleMachines = consoleMachines;
+            SaveCache();
+            //consoleMachines.CollectionChanged += ConsoleMachines_CollectionChanged;
             return consoleMachines;
         }
 
-        public static void SaveCache(this List<ConsoleMachine> consoleMachines)
+        private void ConsoleMachines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            File.WriteAllText(CachePath, JsonConvert.SerializeObject(consoleMachines));
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    var consoleMachine = (ConsoleMachine)newItem;
+                    consoleMachine.Committed += ConsoleMachine_Committed;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var newItem in e.OldItems)
+                {
+                    var consoleMachine = (ConsoleMachine)newItem;
+                    consoleMachine.Committed -= ConsoleMachine_Committed;
+                }
+            }
         }
 
-        public static List<ConsoleMachine> Search()
+        private void ConsoleMachine_Committed(object sender, EventArgs e)
         {
-            List<ConsoleMachine> consoleMachines = new List<ConsoleMachine>();
+            SaveCache();
+        }
+
+        public void SaveCache()
+        {
+            File.WriteAllText(CachePath, JsonConvert.SerializeObject(_consoleMachines));
+        }
+
+        private static ObservableCollection<ConsoleMachine> RefreshConsoles()
+        {
+            ObservableCollection<ConsoleMachine> consoleMachines
+                = new ObservableCollection<ConsoleMachine>();
             var gameDirectoryInfo = new DirectoryInfo(GamePath);
             foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
             {
@@ -94,10 +210,12 @@ namespace RomExplorer.IO
                     Directory.CreateDirectory(console.EmulatorDirectoryPath);
             }
 
-            SaveCache(consoleMachines);
             return consoleMachines;
         }
+    }
 
+    public static class GameListExtension
+    {
         public static void Refresh(this ConsoleMachine console)
         {
             if (!File.Exists(console.DescriptionPath))
@@ -133,6 +251,24 @@ namespace RomExplorer.IO
 
             if (!Directory.Exists(console.EmulatorDirectoryPath))
                 Directory.CreateDirectory(console.EmulatorDirectoryPath);
+
+            App.GameListLoader.SaveCache();
+        }
+
+        public static void Refresh(this Game game)
+        {
+            return;
+            if (!Directory.Exists(game.MetaDirectory))
+                Directory.CreateDirectory(game.MetaDirectory);
+            if (!Directory.Exists(game.ScreenShotDirectory))
+                Directory.CreateDirectory(game.ScreenShotDirectory);
+
+            if (!File.Exists(game.DescriptionPath))
+            {
+                game.InitDescription();
+            }
+
+            game.Path = game.Path;
         }
     }
 }

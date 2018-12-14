@@ -6,25 +6,32 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
 {
     public class FileModelBase : ViewModelBase
     {
+        public event EventHandler Committed;
         private string InnerIconPath => System.IO.Path.Combine(Path, "icon.png");
         protected virtual string SuspendedName { get; set; }
         protected virtual string SuspendedDescription { get; set; } = "暂无介绍";
 
         public virtual string NameWithoutExtension //view property
         {
-            get => new DirectoryInfo(Path).Name;
+            get => IoPath.GetFileNameWithoutExtension(Path);
             set => SuspendedName = value;
         }
 
         public string Description
         {
-            get => File.ReadAllText(DescriptionPath);
+            get => GetDescriptionFromFile();
             set => SuspendedDescription = value;
+        }
+
+        public string GetDescriptionFromFile()
+        {
+            return File.ReadAllText(DescriptionPath);
         }
 
         private bool _descriptionEditable;
@@ -35,6 +42,18 @@ namespace RomExplorer.Model
             set
             {
                 _descriptionEditable = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _nameEditable;
+
+        public bool NameEditable
+        {
+            get => _nameEditable;
+            set
+            {
+                _nameEditable = value;
                 OnPropertyChanged();
             }
         }
@@ -54,14 +73,46 @@ namespace RomExplorer.Model
             {
                 File.WriteAllText(DescriptionPath, SuspendedDescription);
                 OnPropertyChanged($"Description");
+                App.GameListLoader.SaveCache();
             }
         }
 
         public void SetIcon(string path)
         {
             if (path == InnerIconPath) return;
-            File.Copy(path, InnerIconPath);
-            OnPropertyChanged();
+            File.Copy(path, InnerIconPath, true);
+            OnPropertyChanged($"IconPath");
+            OnPropertyChanged($"InnerIconPath");
+        }
+
+        public void ResetSuspended()
+        {
+            SuspendedName = NameWithoutExtension;
+        }
+
+        public virtual void OnCommitted(object sender, EventArgs e)
+        {
+            //Committed?.Invoke(sender, e);
+        }
+
+        protected static string ValidateFileName(string originName)
+        {
+            var trimStr = originName.Trim();
+            var chars = IoPath.GetInvalidFileNameChars();
+            foreach (var k in trimStr)
+            {
+                if (chars.Contains(k))
+                {
+                    throw new ArgumentException(@"路径中不允许有非法字符。", k.ToString());
+                }
+            }
+
+            if (string.IsNullOrEmpty(trimStr))
+            {
+                throw new ArgumentNullException(trimStr, @"路径不能为空。");
+            }
+
+            return trimStr;
         }
     }
 }

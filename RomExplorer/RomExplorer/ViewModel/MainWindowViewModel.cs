@@ -6,6 +6,7 @@ using RomExplorer.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace RomExplorer.ViewModel
         private ObservableCollection<ConsoleMachine> _consoleMachines;
         private ConsoleMachine _currentMachine;
         private Game _currentGame;
-        
+
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
             get => _consoleMachines;
@@ -96,6 +97,49 @@ namespace RomExplorer.ViewModel
                     {
                         CurrentMachine.Refresh();
                     }
+                });
+            }
+        }
+
+        public ICommand BrowseCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    if (CurrentGame == null)
+                    {
+                        Process.Start(CurrentMachine.RomDirectoryPath);
+                    }
+                    else
+                    {
+                        Process.Start("Explorer", "/select," + CurrentGame.Path);
+                    }
+                });
+            }
+        }
+
+        public ICommand RenameCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    if (CurrentGame != null)
+                    {
+                        CurrentGame.NameEditable = true;
+                    }
+                });
+            }
+        }
+
+        public ICommand RefreshConsole
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    CurrentMachine.Refresh();
                 });
             }
         }

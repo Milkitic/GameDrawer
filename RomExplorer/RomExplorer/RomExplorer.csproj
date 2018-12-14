@@ -59,7 +59,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\MainWindowConverter.cs" />
+    <Compile Include="FocusExtension.cs" />
+    <Compile Include="IO\FileExtension.cs" />
     <Compile Include="IO\IdentityHelper.cs" />
+    <Compile Include="Model\DataEventArgs.cs" />
     <Compile Include="Model\FileModelBase.cs" />
     <Compile Include="OptionContainer.cs" />
     <Compile Include="ViewModel\ConsoleConfigWindowViewModel.cs" />

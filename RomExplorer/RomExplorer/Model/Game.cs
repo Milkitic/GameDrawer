@@ -21,11 +21,7 @@ namespace RomExplorer.Model
             set => SuspendedName = value;
         }
 
-        public string Name //view property
-        {
-            get => IoPath.GetFileName(Path);
-            set => SuspendedName = value;
-        }
+        public string Name => IoPath.GetFileName(Path); //view property
 
         public string MetaDirectory => Path + ".meta";
         public override string DescriptionPath => IoPath.Combine(MetaDirectory, "description.txt");
@@ -39,16 +35,16 @@ namespace RomExplorer.Model
 
         public override void CommitChanges()
         {
-            base.CommitChanges();
             if (SuspendedName != NameWithoutExtension && SuspendedName != null)
             {
-                var chars = IoPath.GetInvalidFileNameChars();
-                if (SuspendedName.Any(k => chars.Contains(k)))
-                {
-                    throw new InvalidOperationException("文件名非法。");
-                }
+                var validName = ValidateFileName(SuspendedName);
 
-                File.Move(Path, IoPath.Combine(new FileInfo(Path).Directory.FullName, SuspendedName));
+                var fileInfo = new FileInfo(Path);
+                var newPath = IoPath.Combine(fileInfo.Directory.FullName, validName + fileInfo.Extension);
+                FileExtension.MoveFile(Path, newPath);
+                var dirInfo = new FileInfo(MetaDirectory);
+                FileExtension.MoveFile(MetaDirectory, IoPath.Combine(dirInfo.Directory.FullName, validName + fileInfo.Extension + ".meta"));
+                Path = newPath;
                 OnPropertyChanged($"Path");
                 OnPropertyChanged($"Identity");
                 OnPropertyChanged($"Name");
@@ -58,6 +54,11 @@ namespace RomExplorer.Model
                 OnPropertyChanged($"RomDirectoryPath");
                 OnPropertyChanged($"EmulatorDirectoryPath");
             }
+
+            base.CommitChanges();
+
+            //App.GameListLoader.SaveCache();
+            //OnCommitted(this, new DataEventArgs());
         }
 
         public static string DefaultDescription => "暂无游戏介绍";

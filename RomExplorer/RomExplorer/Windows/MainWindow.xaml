@@ -15,8 +15,11 @@
     </Window.DataContext>
     <Window.Resources>
         <converters:CanShowConverter x:Key="CanShowConverter" />
+        <converters:CannotShowConverter x:Key="CannotShowConverter" />
         <converters:ContentConverter x:Key="ContentConverter" />
         <converters:IconConverter x:Key="IconConverter" />
+        <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
+       
         <ControlTemplate x:Key="ConsoleItemTemplate" TargetType="{x:Type ListBoxItem}">
             <ToggleButton x:Name="BtnConsole" VerticalAlignment="Center"
                           MinHeight="32" MinWidth="92"
@@ -31,8 +34,7 @@
                         <Image Source="{Binding IconPath,Converter={StaticResource IconConverter}}"></Image>
                     </Viewbox>
                     <Label Grid.Row="1" MaxWidth="120" HorizontalAlignment="Center"
-                       Foreground="{Binding ElementName=BtnCollection, Path=Foreground}"
-                       FontSize="13px">
+                           FontSize="13px">
                         <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}"></TextBlock>
                     </Label>
                     <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
@@ -88,13 +90,17 @@
                         <Image Source="{Binding IconPath,Converter={StaticResource IconConverter}}"></Image>
                     </Viewbox>
                     <Label Grid.Row="1" MaxWidth="120" HorizontalAlignment="Center"
-                           Foreground="{Binding ElementName=BtnGame, Path=Foreground}">
+                           Foreground="{Binding ElementName=BtnGame, Path=Foreground}"
+                           Visibility="{Binding NameEditable,Converter={StaticResource CannotShowConverter}}">
                         <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}" MinWidth="5"/>
                     </Label>
                     <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
                              HorizontalAlignment="Center"
                              VerticalContentAlignment="Center" Padding="3,0"
-                             Visibility="Collapsed" />
+                             Visibility="{Binding NameEditable,Converter={StaticResource CanShowConverter}}"
+                             LostFocus="NamingBox_LostFocus" Focusable="True"
+                             KeyDown="NamingBox_KeyDown"
+                             local:FocusExtension.IsFocused="{Binding NameEditable}" />
                 </Grid>
             </ToggleButton>
         </ControlTemplate>
@@ -140,14 +146,24 @@
                  Text="{Binding CurrentMachine.Description, Mode=TwoWay}" Padding="3,5" 
                  Visibility="Collapsed" />
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Background="Yellow">
-            <Button Content="运行" />
-            <Button Content="重命名" />
-            <Button Content="删除" />
-            <Button Content="浏览" />
+            <Button Content="运行" 
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" />
+            <Button Content="重命名"
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding RenameCommand}" />
+            <Button Content="删除" 
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" />
+            <Button Content="浏览"
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding BrowseCommand}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
-            <Button Content="刷新" />
-            <Button Content="主机设置..." Command="{Binding ConsoleConfigCommand}" />
+            <Button Content="刷新" 
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding RefreshConsole}"/>
+            <Button Content="主机设置..."
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding ConsoleConfigCommand}" />
         </StackPanel>
         <ListView Grid.Row="3" Grid.Column="0" Background="IndianRed"
                   x:Name="GameList"

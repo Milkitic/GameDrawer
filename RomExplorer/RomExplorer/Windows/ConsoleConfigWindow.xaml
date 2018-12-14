@@ -7,7 +7,7 @@
         xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
         xmlns:converters="clr-namespace:RomExplorer.Converters"
         mc:Ignorable="d"
-        Title="ConsoleConfigWindow" Height="270" Width="453"
+        Title="ConsoleConfigWindow" Height="308" Width="497"
         Loaded="Window_Loaded">
     <Window.DataContext>
         <viewModel:ConsoleConfigWindowViewModel />
@@ -17,14 +17,15 @@
     </Window.Resources>
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Content="文件夹名：" Height="28"
@@ -39,7 +40,12 @@
                HorizontalAlignment="Right" VerticalContentAlignment="Center" />
         <TextBox Grid.Row="2" Grid.Column="1" Height="28" Margin="2"
                  VerticalContentAlignment="Center" Text="{Binding StartupArguments,Mode=TwoWay}" />
-        <Button Grid.Row="3" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
+        <Label Grid.Row="3" Grid.Column="0" Content="主机描述：" Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Top" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding HostApplication,Mode=TwoWay}" />
+
+        <Button Grid.Row="4" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
                 Command="{Binding SaveCommand}" Click="BtnOk_Click"/>
         <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="3">
             <Border Background="AliceBlue" Width="40" Height="40">
@@ -47,7 +53,7 @@
                     <Image Source="{Binding IconPath,Converter={StaticResource IconConverter},Mode=TwoWay}" />
                 </Viewbox>
             </Border>
-            <Button Content="修改图标"></Button>
+            <Button Content="修改图标" Command="{Binding BrowseIconCommand}"></Button>
         </StackPanel>
     </Grid>
 </Window>

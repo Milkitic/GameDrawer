@@ -9,13 +9,40 @@ using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
 {
-    public class ConsoleMachine : FileModelBase
+    public sealed class ConsoleMachine : FileModelBase
     {
         protected override string SuspendedDescription { get; set; } = "暂无主机介绍";
 
         public ConsoleMachine(string directoryPath)
         {
             Path = directoryPath;
+            Games.CollectionChanged += Games_CollectionChanged;
+        }
+
+        private void Games_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    var game = (Game)newItem;
+                    game.Committed += Game_Committed;
+                }
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var newItem in e.OldItems)
+                {
+                    var game = (Game)newItem;
+                    game.Committed -= Game_Committed;
+                }
+            }
+        }
+
+        private void Game_Committed(object sender, EventArgs e)
+        {
+            //OnCommitted(sender, e);
         }
 
         public string RomDirectoryPath => IoPath.Combine(Path, "Rom");
@@ -30,18 +57,12 @@ namespace RomExplorer.Model
 
         public override void CommitChanges()
         {
-            base.CommitChanges();
-
             if (SuspendedName != NameWithoutExtension)
             {
-                var chars = IoPath.GetInvalidPathChars();
-                if (SuspendedName.Any(k => chars.Contains(k)))
-                {
-                    throw new InvalidOperationException("文件名非法。");
-                }
+                var validName = ValidateFileName(SuspendedName);
 
-                var newPath = IoPath.Combine(new DirectoryInfo(Path).Parent.FullName, SuspendedName);
-                Directory.Move(Path, newPath);
+                var newPath = IoPath.Combine(new DirectoryInfo(Path).Parent.FullName, validName);
+                var success = FileExtension.MoveFile(Path, newPath);
                 Path = newPath;
                 OnPropertyChanged($"Path");
                 OnPropertyChanged($"Identity");
@@ -51,6 +72,11 @@ namespace RomExplorer.Model
                 OnPropertyChanged($"RomDirectoryPath");
                 OnPropertyChanged($"EmulatorDirectoryPath");
             }
+
+            base.CommitChanges();
+
+            //App.GameListLoader.SaveCache();
+            //OnCommitted(this, new DataEventArgs());
         }
 
         public static string DefaultDescription => "这个文件暂时还没有介绍，请帮忙一同编辑吧！";

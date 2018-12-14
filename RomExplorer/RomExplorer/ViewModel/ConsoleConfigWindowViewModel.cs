@@ -1,4 +1,5 @@
-﻿using Milkitic.WpfApi;
+﻿using Microsoft.Win32;
+using Milkitic.WpfApi;
 using Milkitic.WpfApi.Commands;
 using RomExplorer.Model;
 using System;
@@ -100,5 +101,24 @@ namespace RomExplorer.ViewModel
             }
         }
 
+        public ICommand BrowseIconCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    OpenFileDialog fbd = new OpenFileDialog
+                    {
+                        Title = @"请选择一个图片",
+                        Filter = @"所有支持的图片类型|*.jpg;*.png;*.bmp;*.jpeg"
+                    };
+                    var result = fbd.ShowDialog();
+                    if (result == true)
+                    {
+                        IconPath = fbd.FileName;
+                    }
+                });
+            }
+        }
     }
 }

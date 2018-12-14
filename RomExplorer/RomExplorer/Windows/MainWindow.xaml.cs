@@ -36,10 +36,10 @@ namespace RomExplorer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var list = GameListLoader.LoadCache();
+            var list = App.GameListLoader.ConsoleMachines;
 
             ViewModel = (MainWindowViewModel)DataContext;
-            ViewModel.ConsoleMachines = new ObservableCollection<ConsoleMachine>(list);
+            ViewModel.ConsoleMachines = list;
         }
 
         private void BtnConsole_Click(object sender, RoutedEventArgs e)
@@ -60,12 +60,41 @@ namespace RomExplorer
 
         private void BtnSync_Click(object sender, RoutedEventArgs e)
         {
-            var list = GameListLoader.Search();
-            ViewModel.ConsoleMachines = new ObservableCollection<ConsoleMachine>(list);
+            var list = App.GameListLoader.LoadConsoles(true);
+            ViewModel.ConsoleMachines = list;
             ViewModel.CurrentMachine =
                 ViewModel.ConsoleMachines.FirstOrDefault(k => k.Path == ViewModel.CurrentMachine?.Path);
             ViewModel.CurrentGame =
                 ViewModel.CurrentMachine?.Games.FirstOrDefault(k => k.Path == ViewModel.CurrentGame?.Path);
+        }
+
+        private void NamingBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ApplyNamingChange();
+        }
+
+
+        private void NamingBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                ApplyNamingChange();
+            }
+        }
+
+        private void ApplyNamingChange()
+        {
+            ViewModel.CurrentGame.NameEditable = false;
+            try
+            {
+                ViewModel.CurrentGame.CommitChanges();
+                ViewModel.CurrentGame.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                ViewModel.CurrentGame.ResetSuspended();
+            }
         }
     }
 }
