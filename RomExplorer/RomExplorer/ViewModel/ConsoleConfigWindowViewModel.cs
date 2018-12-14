@@ -98,14 +98,14 @@ namespace RomExplorer.ViewModel
                 return new DelegateCommand(obj =>
                 {
                     _consoleMachine.SetIcon(IconPath);
-                    _consoleMachine.NameWithoutExtension = Name;
-                    _consoleMachine.Description = Description;
+                    _consoleMachine.NameWithoutExtension = Name.Trim();
+                    _consoleMachine.Description = Description.Trim();
                     _consoleMachine.CommitChanges();
                     _gameConsoleConfig.Identity = _consoleMachine.Identity;
                     if (!string.IsNullOrEmpty(HostApplication) || !string.IsNullOrEmpty(StartupArguments))
                     {
-                        _gameConsoleConfig.HostApplication = HostApplication;
-                        _gameConsoleConfig.StartupArguments = StartupArguments;
+                        _gameConsoleConfig.HostApplication = HostApplication.Trim();
+                        _gameConsoleConfig.StartupArguments = StartupArguments?.Trim();
                     }
 
                     _gameConsoleConfig.CommitChanges();

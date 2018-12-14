@@ -20,7 +20,7 @@ namespace RomExplorer
 
         static App()
         {
-            Config = new Config();
+            Config = Config.LoadOrCreateConfig();
 
             GameListLoader = new GameListLoader();
         }

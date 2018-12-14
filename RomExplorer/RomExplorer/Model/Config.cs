@@ -10,25 +10,40 @@ namespace RomExplorer.Model
 {
     public class Config
     {
-        public string GamePath { get; set; } = Path.Combine(BaseDirectory, "Games");
+        public Config()
+        {
+            if (!Directory.Exists(BackupDirectory))
+                Directory.CreateDirectory(BackupDirectory);
+            if (!Directory.Exists(GameDirectory))
+                Directory.CreateDirectory(GameDirectory);
+        }
+        public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
 
-        public ObservableCollection<GameConsoleConfig> GameConsoleConfigs { get; set; }
-            = new ObservableCollection<GameConsoleConfig>();
-
-
+        public List<GameConsoleConfig> GameConsoleConfigs { get; set; }
+            = new List<GameConsoleConfig>();
+        
         [JsonIgnore]
         public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
         [JsonIgnore]
         public static string ConfigPath => Path.Combine(BaseDirectory, "config.json");
+        [JsonIgnore]
+        public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
 
         public void SaveConfig()
         {
             File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this));
         }
 
-        public static Config LoadConfig()
+        public static Config LoadOrCreateConfig()
         {
-            return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigPath));
+            try
+            {
+                return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigPath));
+            }
+            catch (Exception e)
+            {
+                return new Config();
+            }
         }
     }
 

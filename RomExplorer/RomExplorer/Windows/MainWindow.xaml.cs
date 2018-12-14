@@ -54,6 +54,7 @@ namespace RomExplorer
             _consoleOption.Switch(sender);
             var identity = (string)((ToggleButton)sender).Tag;
             ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Identity == identity);
+            ViewModel.CurrentGame = null;
         }
 
         private void BtnGame_Click(object sender, RoutedEventArgs e)
@@ -105,7 +106,7 @@ namespace RomExplorer
 
         private void BtnGame_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ViewModel.RunCurrentGame.Execute(null);
+            ViewModel.RunCommand.Execute(null);
         }
     }
 }

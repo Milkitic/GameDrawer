@@ -144,20 +144,73 @@ namespace RomExplorer.ViewModel
             }
         }
 
-        public ICommand RunCurrentGame
+        public ICommand RunCommand
         {
             get
             {
                 return new DelegateCommand(obj =>
                 {
                     var gameConsoleConfig =
-                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity);
+                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity) ??
+                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentMachine.Identity);
                     if (gameConsoleConfig != null)
                     {
-                        Process.Start(CurrentGame.Path);
+                        string host = null, args = null;
+                        if (!string.IsNullOrEmpty(gameConsoleConfig.HostApplication))
+                        {
+                            host = gameConsoleConfig.HostApplication;
+                        }
+                        if (!string.IsNullOrEmpty(gameConsoleConfig.StartupArguments))
+                        {
+                            args = gameConsoleConfig.StartupArguments;
+                        }
+
+                        if (host == null && args == null)
+                        {
+                            Process.Start(CurrentGame.Path);
+                        }
+                        else
+                        {
+                            ProcessStartInfo startInfo = new ProcessStartInfo
+                            {
+                                FileName = host ?? CurrentGame.Path,
+                                Arguments = CurrentGame.Path + " " + args
+                            };
+                            Process.Start(startInfo);
+                        }
                     }
                     else
                         Process.Start(CurrentGame.Path);
+                });
+            }
+        }
+
+        public ICommand RemoveCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    try
+                    {
+                        var newName = new DirectoryInfo(CurrentGame.MetaDirectory).Name + " - " +
+                                      DateTime.Now.ToString("yyyyMMddHHmmss");
+                        var newPath = Path.Combine(Config.BackupDirectory, newName);
+                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(CurrentGame.Path,
+                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                        Directory.Move(CurrentGame.MetaDirectory, newPath);
+                        _currentMachine.Games.Remove(CurrentGame);
+                        CurrentGame = null;
+                        App.GameListLoader.SaveCache();
+                        App.Config.SaveConfig();
+                        //RefreshConsole.Execute(null);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
                 });
             }
         }

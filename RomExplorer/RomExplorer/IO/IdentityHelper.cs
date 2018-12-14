@@ -12,7 +12,7 @@ namespace RomExplorer.IO
     {
         public static string GetRelativePath(string fileName)
         {
-            var baseUri = new Uri(App.Config.GamePath, UriKind.Absolute);
+            var baseUri = new Uri(App.Config.GameDirectory, UriKind.Absolute);
             var fileUri = new Uri(fileName, UriKind.Absolute);
 
             return baseUri.MakeRelativeUri(fileUri).OriginalString;

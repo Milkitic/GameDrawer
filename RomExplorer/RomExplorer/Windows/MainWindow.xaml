@@ -36,7 +36,8 @@
                     </Viewbox>
                     <Label Grid.Row="1" MaxWidth="120" HorizontalAlignment="Center"
                            FontSize="13px">
-                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}"></TextBlock>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}"
+                                   TextAlignment="Center" />
                     </Label>
                     <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
                              HorizontalAlignment="Center" 
@@ -96,7 +97,8 @@
                     <Label Grid.Row="1" MaxWidth="120" HorizontalAlignment="Center"
                            Foreground="{Binding ElementName=BtnGame, Path=Foreground}"
                            Visibility="{Binding NameEditable,Converter={StaticResource CannotShowConverter}}">
-                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}" MinWidth="5"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}" MinWidth="5"
+                                   TextAlignment="Center"/>
                     </Label>
                     <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
                              HorizontalAlignment="Center"
@@ -125,19 +127,21 @@
             <ColumnDefinition MinWidth="300" />
             <ColumnDefinition Width="150" MaxWidth="200" />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top">
-            <Button Content="同步" Margin="0,1,-1,1" Width="30" Click="BtnSync_Click" />
-            <Button Content="+" Margin="0,1,-1,1" Width="30" />
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top">
+            <DockPanel HorizontalAlignment="Right">
+                <Button DockPanel.Dock="Right" Content="同步" Margin="0,1,-1,1" Width="30" Click="BtnSync_Click" />
+                <Button Content="+" Margin="0,1,-1,1" Width="30" />
+            </DockPanel>
             <ListView x:Name="FolderList" Background="Transparent"
                               BorderThickness="0" 
                               ItemContainerStyle="{StaticResource ConsoleItemStyle}"
                               ItemsSource="{Binding ConsoleMachines,Mode=OneWay}" 
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               ScrollViewer.CanContentScroll="False"
-                              MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}}">
+                              MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
+                        <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
@@ -152,12 +156,13 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Background="Yellow">
             <Button Content="运行" 
                     IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
-                    Command="{Binding RunCurrentGame}"/>
+                    Command="{Binding RunCommand}"/>
             <Button Content="重命名"
                     IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
                     Command="{Binding RenameCommand}" />
             <Button Content="删除" 
-                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" />
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding RemoveCommand}" />
             <Button Content="浏览"
                     IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}" 
                     Command="{Binding BrowseCommand}" />
@@ -181,7 +186,8 @@
                   MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Width="{Binding ElementName=GameList,Path=ActualWidth}" />
+                    <WrapPanel Width="{Binding ElementName=GameList,Path=ActualWidth}"
+                               HorizontalAlignment="Center"/>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>

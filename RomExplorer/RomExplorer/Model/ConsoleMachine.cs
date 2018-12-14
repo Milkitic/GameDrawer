@@ -45,8 +45,8 @@ namespace RomExplorer.Model
             //OnCommitted(sender, e);
         }
 
-        public string RomDirectoryPath => IoPath.Combine(Path, "Rom");
-        public string EmulatorDirectoryPath => IoPath.Combine(Path, "Emu");
+        public string RomDirectoryPath => IoPath.Combine(Path, "Apps");
+        public string EmulatorDirectoryPath => IoPath.Combine(Path, "HostApp");
 
         public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
 
@@ -79,6 +79,6 @@ namespace RomExplorer.Model
             //OnCommitted(this, new DataEventArgs());
         }
 
-        public static string DefaultDescription => "这个文件暂时还没有介绍，请帮忙一同编辑吧！";
+        public static string DefaultDescription => "暂无主机介绍";
     }
 }
