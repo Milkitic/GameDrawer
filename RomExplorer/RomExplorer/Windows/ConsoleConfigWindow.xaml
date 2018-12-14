@@ -42,8 +42,8 @@
                  VerticalContentAlignment="Center" Text="{Binding StartupArguments,Mode=TwoWay}" />
         <Label Grid.Row="3" Grid.Column="0" Content="主机描述：" Height="28"
                HorizontalAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Top" />
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="2"
-                 VerticalContentAlignment="Center" Text="{Binding HostApplication,Mode=TwoWay}" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="2" Padding="0,6"
+                 Text="{Binding Description,Mode=TwoWay}" TextWrapping="Wrap" AcceptsReturn="True" />
 
         <Button Grid.Row="4" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
                 Command="{Binding SaveCommand}" Click="BtnOk_Click"/>

@@ -19,6 +19,7 @@ namespace RomExplorer.ViewModel
         private string _name;
         private string _hostApplication;
         private string _startupArguments;
+        private string _description;
 
         public ConsoleMachine ConsoleMachine
         {
@@ -80,6 +81,16 @@ namespace RomExplorer.ViewModel
             }
         }
 
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SaveCommand
         {
             get
@@ -88,6 +99,7 @@ namespace RomExplorer.ViewModel
                 {
                     _consoleMachine.SetIcon(IconPath);
                     _consoleMachine.NameWithoutExtension = Name;
+                    _consoleMachine.Description = Description;
                     _consoleMachine.CommitChanges();
                     _gameConsoleConfig.Identity = _consoleMachine.Identity;
                     if (!string.IsNullOrEmpty(HostApplication) || !string.IsNullOrEmpty(StartupArguments))
@@ -97,6 +109,7 @@ namespace RomExplorer.ViewModel
                     }
 
                     _gameConsoleConfig.CommitChanges();
+                    App.Config.SaveConfig();
                 });
             }
         }

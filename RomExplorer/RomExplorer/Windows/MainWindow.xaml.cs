@@ -4,8 +4,10 @@ using RomExplorer.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,6 +31,8 @@ namespace RomExplorer
         private readonly OptionContainer _consoleOption = new OptionContainer();
         private readonly OptionContainer _gameOption = new OptionContainer();
 
+        public static SynchronizationContext SynchronizationContext { get; private set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +44,8 @@ namespace RomExplorer
 
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.ConsoleMachines = list;
+            SynchronizationContext = SynchronizationContext.Current;
+
         }
 
         private void BtnConsole_Click(object sender, RoutedEventArgs e)
@@ -95,6 +101,11 @@ namespace RomExplorer
                 MessageBox.Show(ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 ViewModel.CurrentGame.ResetSuspended();
             }
+        }
+
+        private void BtnGame_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.RunCurrentGame.Execute(null);
         }
     }
 }

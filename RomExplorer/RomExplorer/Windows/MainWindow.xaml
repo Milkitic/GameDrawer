@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:RomExplorer"
         xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
         xmlns:converters="clr-namespace:RomExplorer.Converters"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Loaded="Window_Loaded"
@@ -21,7 +22,7 @@
         <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
        
         <ControlTemplate x:Key="ConsoleItemTemplate" TargetType="{x:Type ListBoxItem}">
-            <ToggleButton x:Name="BtnConsole" VerticalAlignment="Center"
+            <ToggleButton x:Name="BtnConsole" VerticalAlignment="Top"
                           MinHeight="32" MinWidth="92"
                           Tag="{Binding Identity}"
                           Click="BtnConsole_Click">
@@ -52,7 +53,8 @@
             <ToggleButton x:Name="BtnGame" VerticalAlignment="Center"
                           MinHeight="32" MinWidth="92"
                           Tag="{Binding Identity}"
-                          Click="BtnGame_Click">
+                          Click="BtnGame_Click"
+                          MouseDoubleClick="BtnGame_MouseDoubleClick">
                 <ToggleButton.Style>
                     <Style TargetType="ToggleButton">
                         <Setter Property="Background" Value="Transparent" />
@@ -62,7 +64,9 @@
                                     <Border x:Name="Border" CornerRadius="2" 
                                             BorderBrush="Transparent"
                                             BorderThickness="1">
-                                        <ContentPresenter Margin="0,3,0,0" Content="{TemplateBinding Content}" />
+                                        <ContentPresenter Margin="0,3,0,0" Content="{TemplateBinding Content}" >
+                                         
+                                        </ContentPresenter>
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
@@ -147,7 +151,8 @@
                  Visibility="Collapsed" />
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Background="Yellow">
             <Button Content="运行" 
-                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" />
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding RunCurrentGame}"/>
             <Button Content="重命名"
                     IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
                     Command="{Binding RenameCommand}" />

@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace RomExplorer.IO
 {
@@ -60,7 +59,6 @@ namespace RomExplorer.IO
 
         private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            Thread.Sleep(1000);
             var path = e.FullPath;
             var name = e.Name;
             var oldPath = e.OldFullPath;
@@ -79,7 +77,8 @@ namespace RomExplorer.IO
                         {
                             console.NameWithoutExtension = name;
                             console.CommitChanges();
-                            Execute.OnUiThread(() => { console.Refresh(); });
+                            //Execute.InitializeWithDispatcher();
+                            Execute.OnUiThread(() => { console.Refresh(); }, MainWindow.SynchronizationContext);
                         }
                     }
                 }

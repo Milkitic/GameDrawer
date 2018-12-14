@@ -143,5 +143,23 @@ namespace RomExplorer.ViewModel
                 });
             }
         }
+
+        public ICommand RunCurrentGame
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    var gameConsoleConfig =
+                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity);
+                    if (gameConsoleConfig != null)
+                    {
+                        Process.Start(CurrentGame.Path);
+                    }
+                    else
+                        Process.Start(CurrentGame.Path);
+                });
+            }
+        }
     }
 }

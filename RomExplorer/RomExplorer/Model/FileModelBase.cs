@@ -73,7 +73,6 @@ namespace RomExplorer.Model
             {
                 File.WriteAllText(DescriptionPath, SuspendedDescription);
                 OnPropertyChanged($"Description");
-                App.GameListLoader.SaveCache();
             }
         }
 

@@ -41,6 +41,7 @@ namespace RomExplorer.Windows
             ViewModel.IconPath = _consoleMachine.IconPath;
             ViewModel.HostApplication = ViewModel.GameConsoleConfig.HostApplication;
             ViewModel.StartupArguments = ViewModel.GameConsoleConfig.StartupArguments;
+            ViewModel.Description = _consoleMachine.Description;
         }
 
         private void BtnOk_Click(object sender, RoutedEventArgs e)
