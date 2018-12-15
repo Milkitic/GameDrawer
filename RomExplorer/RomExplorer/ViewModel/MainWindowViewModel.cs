@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -21,6 +22,9 @@ namespace RomExplorer.ViewModel
         private ObservableCollection<ConsoleMachine> _consoleMachines;
         private ConsoleMachine _currentMachine;
         private Game _currentGame;
+
+        private CancellationTokenSource _cts;
+        private Task _syncTask;
 
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
@@ -168,9 +172,11 @@ namespace RomExplorer.ViewModel
         {
             get
             {
-                return new DelegateCommand(obj =>
+                return new DelegateCommand(async obj =>
                 {
+                    await StopScanTask();
                     CurrentMachine.Refresh();
+                    StartScanTask();
                 });
             }
         }
@@ -253,6 +259,41 @@ namespace RomExplorer.ViewModel
 
                 });
             }
+        }
+
+        public void StartScanTask()
+        {
+            if (CurrentMachine.Games.Count < 100)
+            {
+                CurrentMachine.VisibleGames = CurrentMachine.Games;
+            }
+            else
+            {
+                CurrentMachine.VisibleGames = new ObservableCollection<Game>();
+                _syncTask = Task.Run(() =>
+                {
+                    var id = CurrentMachine.Identity;
+                    foreach (var game in CurrentMachine.Games)
+                    {
+                        if (id != CurrentMachine.Identity || _cts.IsCancellationRequested)
+                            return;
+                        Execute.OnUiThread(() => { CurrentMachine.VisibleGames.Add(game); },
+                            MainWindow.SynchronizationContext);
+                        Thread.Sleep(10);
+                    }
+                });
+            }
+        }
+
+        public async Task StopScanTask()
+        {
+            _cts?.Cancel();
+            if (_syncTask != null)
+                await Task.Run(() =>
+                {
+                    if (_syncTask != null) Task.WaitAll(_syncTask);
+                });
+            _cts = new CancellationTokenSource();
         }
     }
 }

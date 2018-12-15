@@ -31,8 +31,6 @@ namespace RomExplorer
         internal MainWindowViewModel ViewModel;
         private readonly OptionContainer _consoleOption = new OptionContainer();
         private readonly OptionContainer _gameOption = new OptionContainer();
-        private CancellationTokenSource _cts;
-        private Task _syncTask;
 
         public static SynchronizationContext SynchronizationContext { get; private set; }
 
@@ -53,50 +51,17 @@ namespace RomExplorer
 
         private async void BtnConsole_Click(object sender, RoutedEventArgs e)
         {
-            await StopScanTask();
+            await ViewModel.StopScanTask();
 
             _consoleOption.Add(sender);
             _consoleOption.Switch(sender);
             var identity = (string)((ToggleButton)sender).Tag;
             ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Identity == identity);
 
-            if (ViewModel.CurrentMachine.Games.Count < 100)
-            {
-                ViewModel.CurrentMachine.VisibleGames = ViewModel.CurrentMachine.Games;
-            }
-            else
-            {
-                ViewModel.CurrentMachine.VisibleGames = new ObservableCollection<Game>();
-                StartScanTask();
-            }
+            ViewModel.StartScanTask();
             ViewModel.CurrentGame = null;
         }
 
-        private void StartScanTask()
-        {
-            _syncTask = Task.Run(() =>
-            {
-                var id = ViewModel.CurrentMachine.Identity;
-                foreach (var game in ViewModel.CurrentMachine.Games)
-                {
-                    if (id != ViewModel.CurrentMachine.Identity || _cts.IsCancellationRequested)
-                        return;
-                    Execute.OnUiThread(() => { ViewModel.CurrentMachine.VisibleGames.Add(game); },
-                        SynchronizationContext);
-                    Thread.Sleep(10);
-                }
-            });
-        }
-
-        private async Task StopScanTask()
-        {
-            _cts?.Cancel();
-            await Task.Run(() =>
-            {
-                if (_syncTask != null) Task.WaitAll(_syncTask);
-            });
-            _cts = new CancellationTokenSource();
-        }
 
         private void BtnGame_Click(object sender, RoutedEventArgs e)
         {
@@ -106,8 +71,10 @@ namespace RomExplorer
             ViewModel.CurrentGame = ViewModel.CurrentMachine.Games.First(k => k.Identity == identity);
         }
 
-        private void BtnSync_Click(object sender, RoutedEventArgs e)
+        private async void BtnSync_Click(object sender, RoutedEventArgs e)
         {
+            await ViewModel.StopScanTask();
+
             var list = App.GameListLoader.LoadConsoles(true);
             ViewModel.ConsoleMachines = list;
             ViewModel.CurrentMachine =
