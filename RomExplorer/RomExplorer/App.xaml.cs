@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RomExplorer.IO;
+using RomExplorer.Model;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +15,14 @@ namespace RomExplorer
     /// </summary>
     public partial class App : Application
     {
+        public static Config Config { get; set; }
+        internal static GameListLoader GameListLoader { get; set; }
+
+        static App()
+        {
+            Config = Config.LoadOrCreateConfig();
+
+            GameListLoader = new GameListLoader();
+        }
     }
 }

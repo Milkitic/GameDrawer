@@ -1,0 +1,96 @@
+﻿<Window x:Class="RomExplorer.Windows.ConsoleConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RomExplorer.Windows"
+        xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
+        xmlns:converters="clr-namespace:RomExplorer.Converters"
+        mc:Ignorable="d"
+        Title="ConsoleConfigWindow" Height="350" Width="570.5"
+        Loaded="Window_Loaded">
+    <Window.DataContext>
+        <viewModel:ConsoleConfigWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <converters:IconConverter x:Key="IconConverter" />
+        <converters:LabelConverter x:Key="LabelConverter" />
+        <converters:ShowLabelConverter x:Key="ShowLabelConverter" />
+        <converters:IfCheckConverter x:Key="IfCheckConverter" />
+  </Window.Resources>
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" 
+               Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Name}"
+               Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding Name,Mode=TwoWay}" />
+        <Label Grid.Row="1" Grid.Column="0"
+               Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Host}"
+               Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="1" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding HostApplication,Mode=TwoWay}" />
+        <Label Grid.Row="2" Grid.Column="0"
+               Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Arg}"
+               Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <TextBox Grid.Row="2" Grid.Column="1" Height="28" Margin="2"
+                 VerticalContentAlignment="Center" Text="{Binding StartupArguments,Mode=TwoWay}" />
+        <Label Grid.Row="3" Grid.Column="0"
+               Content="扩展名过滤："
+               Height="28" Visibility="{Binding FileModelBase,Converter={StaticResource ShowLabelConverter}}"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" />
+        <Grid Grid.Row="3" Grid.Column="1" 
+              Visibility="{Binding FileModelBase,Converter={StaticResource ShowLabelConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Height="28" Margin="2" Grid.Column="0"
+                     Visibility="{Binding FileModelBase,Converter={StaticResource ShowLabelConverter}}"
+                     VerticalContentAlignment="Center" Text="{Binding ExtensionFilter,Mode=TwoWay}" />
+            <RadioButton VerticalAlignment="Center" Margin="3,0" Grid.Column="1" Content="白名单"
+                         IsChecked="{Binding UseWhiteList,
+                                     Converter={StaticResource IfCheckConverter},
+                                     ConverterParameter=True,Mode=TwoWay}"
+                         Checked="RadioButton_Checked"/>
+            <RadioButton VerticalAlignment="Center" Margin="3,0" Grid.Column="2" Content="黑名单"
+                         IsChecked="{Binding UseWhiteList,
+                                     Converter={StaticResource IfCheckConverter},
+                                     ConverterParameter=False,Mode=TwoWay}"
+                         Checked="RadioButton_Checked"/>
+        </Grid>
+        <Label Grid.Row="5" Grid.Column="0"
+               Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Des}"
+               Height="28"
+               HorizontalAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Top" />
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="2" Padding="0,6"
+                 Text="{Binding Description,Mode=TwoWay}" TextWrapping="Wrap" AcceptsReturn="True" />
+        <Button Grid.Row="6" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
+                Command="{Binding SaveCommand}" Click="BtnOk_Click"/>
+        <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="6">
+            <Border Background="AliceBlue" Width="40" Height="40">
+                <Viewbox Width="32" Height="32">
+                    <Image Source="{Binding IconPath,Converter={StaticResource IconConverter},Mode=TwoWay}" />
+                </Viewbox>
+            </Border>
+            <Button Content="修改图标" Command="{Binding BrowseIconCommand}"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

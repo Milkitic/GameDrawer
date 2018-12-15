@@ -1,0 +1,251 @@
+﻿<Window x:Class="RomExplorer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RomExplorer"
+        xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
+        xmlns:converters="clr-namespace:RomExplorer.Converters"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="960"
+        Loaded="Window_Loaded"
+        MinWidth="583" MinHeight="479">
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <converters:CanShowConverter x:Key="CanShowConverter" />
+        <converters:CannotShowConverter x:Key="CannotShowConverter" />
+        <converters:ContentConverter x:Key="ContentConverter" />
+        <converters:IconConverter x:Key="IconConverter" />
+        <converters:IconSizeConverter x:Key="IconSizeConverter" />
+        <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
+
+        <ControlTemplate x:Key="ConsoleItemTemplate" TargetType="{x:Type ListBoxItem}">
+            <ToggleButton x:Name="BtnConsole" VerticalAlignment="Top"
+                          MinHeight="32" MinWidth="92"
+                          Tag="{Binding Identity}"
+                          Click="BtnConsole_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Viewbox Grid.Row="0" Width="32" Height="32">
+                        <Image Source="{Binding IconPath,Converter={StaticResource IconConverter}}" 
+                               RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Viewbox>
+                    <Label Grid.Row="1" MaxWidth="120" HorizontalAlignment="Center"
+                           FontSize="13px">
+                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}"
+                                   TextAlignment="Center" />
+                    </Label>
+                    <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
+                             HorizontalAlignment="Center" 
+                             VerticalContentAlignment="Center" Padding="3,0"
+                             Visibility="Collapsed" />
+                </Grid>
+            </ToggleButton>
+        </ControlTemplate>
+        <Style x:Key="ConsoleItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template" Value="{StaticResource ConsoleItemTemplate}" />
+        </Style>
+        <ControlTemplate x:Key="GameItemTemplate" TargetType="{x:Type ListBoxItem}">
+            <ToggleButton x:Name="BtnGame" VerticalAlignment="Center"
+                          MinHeight="32" MinWidth="92"
+                          Tag="{Binding Identity}"
+                          Click="BtnGame_Click"
+                          MouseDoubleClick="BtnGame_MouseDoubleClick">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Border" CornerRadius="2" 
+                                            BorderBrush="Transparent"
+                                            BorderThickness="1">
+                                        <ContentPresenter Margin="0,3,0,0" Content="{TemplateBinding Content}"
+                                                          ClipToBounds="False">
+
+                                        </ContentPresenter>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#809AD0F0" />
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#604A70E0" />
+                                            <Setter TargetName="Border" Property="BorderThickness" Value="1" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#D09AD0F0"></Setter>
+                                            <Setter TargetName="Border" Property="BorderBrush" Value="#604A70E0" />
+                                            <Setter TargetName="Border" Property="BorderThickness" Value="1" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+                <Grid Height="85">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Width="48" Height="48">
+                        <Viewbox Width="{Binding IconPath,Converter={StaticResource IconSizeConverter}}"
+                                 Height="{Binding IconPath,Converter={StaticResource IconSizeConverter}}">
+                            <Image Source="{Binding IconPath,Converter={StaticResource IconConverter}}"
+                                   RenderOptions.BitmapScalingMode="HighQuality" 
+                                   Stretch="UniformToFill"/>
+                        </Viewbox>
+                    </Border>
+                    <Label Grid.Row="1" MaxWidth="96" Width="96" HorizontalAlignment="Center"
+                           Foreground="{Binding ElementName=BtnGame, Path=Foreground}"
+                           HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center"
+                           Visibility="{Binding NameEditable,Converter={StaticResource CannotShowConverter}}">
+                        <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}" MinWidth="5"
+                                   TextAlignment="Center"/>
+                    </Label>
+                    <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
+                             HorizontalAlignment="Center" MaxWidth="96" Height="Auto"
+                             VerticalContentAlignment="Center" Padding="3"
+                             Visibility="{Binding NameEditable,Converter={StaticResource CanShowConverter}}"
+                             LostFocus="NamingBox_LostFocus" Focusable="True"
+                             KeyDown="NamingBox_KeyDown" TextWrapping="Wrap"
+                             HorizontalContentAlignment="Center" MaxHeight="38"
+                             local:FocusExtension.IsFocused="{Binding NameEditable}" />
+                </Grid>
+            </ToggleButton>
+        </ControlTemplate>
+        <Style x:Key="GameItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template" Value="{StaticResource GameItemTemplate}" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="300" />
+            <ColumnDefinition Width="150" MaxWidth="200" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top">
+            <DockPanel HorizontalAlignment="Right">
+                <Button DockPanel.Dock="Right" Content="同步" Margin="0,1,-1,1" Width="30" Click="BtnSync_Click" />
+                <Button Content="+" Margin="0,1,-1,1" Width="30" />
+            </DockPanel>
+            <ListView x:Name="FolderList" Background="Transparent"
+                              BorderThickness="0" 
+                              ItemContainerStyle="{StaticResource ConsoleItemStyle}"
+                              ItemsSource="{Binding ConsoleMachines,Mode=OneWay}" 
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.CanContentScroll="False"
+                              MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </StackPanel>
+        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="5,6">
+            <TextBlock TextWrapping="Wrap" Text="{Binding CurrentMachine.Description}"></TextBlock>
+        </Label>
+        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                 AcceptsReturn="True" TextWrapping="Wrap"
+                 Text="{Binding CurrentMachine.Description, Mode=TwoWay}" Padding="3,5" 
+                 Visibility="Collapsed" />
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Background="Yellow">
+            <Button Content="运行" 
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding RunCommand}"/>
+            <Button Content="重命名"
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding RenameCommand}" />
+            <Button Content="删除" 
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding RemoveCommand}" />
+            <Button Content="设置此文件..." 
+                    IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding GameConfigCommand}" />
+            <Button Content="浏览"
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}" 
+                    Command="{Binding BrowseCommand}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
+            <Button Content="刷新" 
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding RefreshConsole}"/>
+            <Button Content="主机设置..."
+                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                    Command="{Binding ConsoleConfigCommand}" />
+        </StackPanel>
+        <ListView Grid.Row="3" Grid.Column="0" Background="IndianRed"
+                  x:Name="GameList"
+                  BorderThickness="0"
+                  ItemContainerStyle="{StaticResource GameItemStyle}"
+                  ItemsSource="{Binding CurrentMachine.VisibleGames,Mode=OneWay,IsAsync=True}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.CanContentScroll="False"
+                  MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:VirtualizingWrapPanel Width="{Binding ElementName=GameList,Path=ActualWidth}"
+                               IsItemsHost="True"
+                               VerticalAlignment="Top"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1"
+              Background="LightBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0">
+                <TextBlock TextWrapping="Wrap" Text="{Binding CurrentGame.Description}" />
+            </Label>
+            <TextBox Grid.Row="0"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     Text="{Binding CurrentGame.Description, Mode=TwoWay}"
+                     VerticalContentAlignment="Center" Padding="3,0" 
+                     Visibility="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource CanShowConverter}}" />
+            <Button Grid.Row="1" Content="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource ContentConverter}}" 
+                    Command="{Binding ChangeEditabilityCommand}" />
+        </Grid>
+        <GridSplitter Grid.Row="3" Grid.Column="0" Width="4"></GridSplitter>
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StatusBar Grid.Column="0" Height="30" VerticalAlignment="Bottom">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Label>
+                        <Hyperlink>百度超级马里奥吧</Hyperlink>
+                    </Label>
+                    <Label>
+                        <Hyperlink>任天堂官方网站</Hyperlink>
+                    </Label>
+                </StackPanel>
+            </StatusBar>
+            <StatusBar Grid.Column="1" Height="30" VerticalAlignment="Bottom">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Label Content="Version:" />
+                    <Label x:Name="LblVersion" Content="123" />
+                </StackPanel>
+            </StatusBar>
+        </Grid>
+    </Grid>
+</Window>
