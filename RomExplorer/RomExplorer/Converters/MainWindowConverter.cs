@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RomExplorer.Model;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -99,7 +100,29 @@ namespace RomExplorer.Converters
             return bitmap;
         }
     }
+    internal class IconSizeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var path = (string)value;
+            if (!string.IsNullOrEmpty(path))
+            {
+                var fi = new FileInfo(path);
+                if (fi.Exists &&
+                    Path.GetFullPath(fi.Directory.FullName) == Path.GetFullPath(Config.IconCacheDirectory))
+                {
+                    return 32;
+                }
+            }
 
+            return 48;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     internal class IsEnabledConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

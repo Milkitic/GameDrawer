@@ -13,7 +13,8 @@ namespace RomExplorer.Model
     public class FileModelBase : ViewModelBase
     {
         public event EventHandler Committed;
-        private string InnerIconPath => System.IO.Path.Combine(Path, "icon.png");
+
+        protected virtual string InnerIconPath => IoPath.Combine(Path, "icon.png");
         protected virtual string SuspendedName { get; set; }
         protected virtual string SuspendedDescription { get; set; } = "暂无介绍";
 
@@ -60,11 +61,12 @@ namespace RomExplorer.Model
 
         public string Identity => IdentityHelper.GetRelativePath(Path);
         public virtual string IconPath //view property
-            => InnerIconPath;
+            => File.Exists(InnerIconPath)
+                ? InnerIconPath
+                : IoPath.Combine(Config.IconCacheDirectory, $"{IoPath.GetExtension(Path)}.png");
 
         public virtual string DescriptionPath => System.IO.Path.Combine(Path, "description.txt");
-
-
+        
         public virtual string Path { get; set; } //view property
 
         public virtual void CommitChanges()

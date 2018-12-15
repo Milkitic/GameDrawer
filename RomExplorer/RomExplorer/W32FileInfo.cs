@@ -34,7 +34,7 @@ namespace RomExplorer
             public string szTypeName;
         }
 
-        public enum FileAttributeFlags : int
+        public enum FileAttributeFlags : uint
         {
             FILE_ATTRIBUTE_READONLY = 0x00000001,
             FILE_ATTRIBUTE_HIDDEN = 0x00000002,
@@ -52,8 +52,7 @@ namespace RomExplorer
             FILE_ATTRIBUTE_ENCRYPTED = 0x00004000
         }
 
-
-        public enum GetFileInfoFlags : int
+        public enum GetFileInfoFlags : uint
         {
             SHGFI_ICON = 0x000000100, // get icon 
             SHGFI_DISPLAYNAME = 0x000000200, // get display name 
@@ -74,12 +73,7 @@ namespace RomExplorer
             SHGFI_ADDOVERLAYS = 0x000000020, // apply the appropriate overlays 
             SHGFI_OVERLAYINDEX = 0x000000040 // Get the index of the overlay 
         }
-
-        /// <summary>  
-        /// 通过路径获取小图标 
-        /// </summary>  
-        /// <param name="path"> 文件或文件夹路径 </param>  
-        /// <returns> 获取的图标 </returns>   
+        
         public static Icon GetLargeIcon(string path)
         {
             FileInformation info = new FileInformation();

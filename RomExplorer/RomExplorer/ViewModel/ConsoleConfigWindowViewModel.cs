@@ -13,20 +13,22 @@ namespace RomExplorer.ViewModel
 {
     internal class ConsoleConfigWindowViewModel : ViewModelBase
     {
-        private ConsoleMachine _consoleMachine;
+        private FileModelBase _fileModelBase;
         private GameConsoleConfig _gameConsoleConfig;
         private string _iconPath;
         private string _name;
         private string _hostApplication;
         private string _startupArguments;
         private string _description;
+        private bool _useWhiteList;
+        private string _extensionFilter;
 
-        public ConsoleMachine ConsoleMachine
+        public FileModelBase FileModelBase
         {
-            get => _consoleMachine;
+            get => _fileModelBase;
             set
             {
-                _consoleMachine = value;
+                _fileModelBase = value;
                 OnPropertyChanged();
             }
         }
@@ -91,22 +93,44 @@ namespace RomExplorer.ViewModel
             }
         }
 
+        public bool UseWhiteList
+        {
+            get => _useWhiteList;
+            set
+            {
+                _useWhiteList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ExtensionFilter
+        {
+            get => _extensionFilter;
+            set
+            {
+                _extensionFilter = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SaveCommand
         {
             get
             {
                 return new DelegateCommand(obj =>
                 {
-                    _consoleMachine.SetIcon(IconPath);
-                    _consoleMachine.NameWithoutExtension = Name.Trim();
-                    _consoleMachine.Description = Description.Trim();
-                    _consoleMachine.CommitChanges();
-                    _gameConsoleConfig.Identity = _consoleMachine.Identity;
+                    _fileModelBase.SetIcon(IconPath);
+                    _fileModelBase.NameWithoutExtension = Name.Trim();
+                    _fileModelBase.Description = Description.Trim();
+                    _fileModelBase.CommitChanges();
+                    _gameConsoleConfig.Identity = _fileModelBase.Identity;
                     if (!string.IsNullOrEmpty(HostApplication) || !string.IsNullOrEmpty(StartupArguments))
                     {
                         _gameConsoleConfig.HostApplication = HostApplication.Trim();
                         _gameConsoleConfig.StartupArguments = StartupArguments?.Trim();
                     }
+                    _gameConsoleConfig.UseWhiteList = UseWhiteList;
+                    _gameConsoleConfig.ExtensionFilter = ExtensionFilter?.Trim();
 
                     _gameConsoleConfig.CommitChanges();
                     App.Config.SaveConfig();

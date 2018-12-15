@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -173,40 +175,17 @@ namespace RomExplorer.IO
                 string consoleDirectoryPath = consoleDirectoryInfo.FullName;
                 var console = new ConsoleMachine(consoleDirectoryPath);
 
-                if (!File.Exists(console.DescriptionPath))
+                var iconPath = Path.Combine(Config.IconCacheDirectory, "Folder.png");
+
+                if (!File.Exists(iconPath))
                 {
-                    console.InitDescription();
+                    W32FileInfo.GetLargeIcon(console.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                    //W32FileInfo.GetLargeIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                    //icon
                 }
 
                 consoleMachines.Add(console);
-
-                if (!Directory.Exists(console.RomDirectoryPath))
-                    Directory.CreateDirectory(console.RomDirectoryPath);
-                else
-                {
-                    var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
-                    foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
-                    {
-                        //Thread.Sleep(50);
-                        var romPath = romFileInfo.FullName;
-                        var game = new Game(romPath);
-
-                        if (!Directory.Exists(game.MetaDirectory))
-                            Directory.CreateDirectory(game.MetaDirectory);
-                        if (!Directory.Exists(game.ScreenShotDirectory))
-                            Directory.CreateDirectory(game.ScreenShotDirectory);
-
-                        if (!File.Exists(game.DescriptionPath))
-                        {
-                            game.InitDescription();
-                        }
-
-                        console.Games.Add(game);
-                    }
-                }
-
-                if (!Directory.Exists(console.EmulatorDirectoryPath))
-                    Directory.CreateDirectory(console.EmulatorDirectoryPath);
+                console.RefreshWithoutCache();
             }
 
             return consoleMachines;
@@ -216,6 +195,13 @@ namespace RomExplorer.IO
     public static class GameListExtension
     {
         public static void Refresh(this ConsoleMachine console)
+        {
+            RefreshWithoutCache(console);
+
+            App.GameListLoader.SaveCache();
+        }
+
+        public static void RefreshWithoutCache(this ConsoleMachine console)
         {
             if (!File.Exists(console.DescriptionPath))
             {
@@ -228,8 +214,34 @@ namespace RomExplorer.IO
             {
                 console.Games.Clear();
                 var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
+                var config = App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == console.Identity);
+                string[] filter = null;
+                bool filterUseWhiteList = false;
+                if (config != null)
+                {
+                    filter = config.ExtensionFilter?.Split('|').Select(k => "." + k.Trim().TrimStart('.')).ToArray() ??
+                             new string[0];
+                    filterUseWhiteList = config.UseWhiteList;
+                }
+
                 foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
                 {
+                    if (config != null)
+                    {
+                        if (filterUseWhiteList)
+                        {
+                            if (!filter.Contains(romFileInfo.Extension))
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (filter.Contains(romFileInfo.Extension))
+                                continue;
+                        }
+                    }
+
                     var romPath = romFileInfo.FullName;
                     var game = new Game(romPath);
 
@@ -243,14 +255,28 @@ namespace RomExplorer.IO
                         game.InitDescription();
                     }
 
+                    string iconPath;
+                    if (game.Extension == "exe" || game.Extension == "lnk")
+                    {
+                        iconPath = Path.Combine(Config.IconCacheDirectory,
+                            $"{game.Identity.Replace("/", "").Replace("\\", "")}.png");
+                    }
+                    else
+                        iconPath = Path.Combine(Config.IconCacheDirectory, game.Extension + ".png");
+
+                    if (!File.Exists(iconPath))
+                    {
+                        Icon.ExtractAssociatedIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                        //W32FileInfo.GetLargeIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                        //icon
+                    }
+
                     console.Games.Add(game);
                 }
             }
 
             if (!Directory.Exists(console.EmulatorDirectoryPath))
                 Directory.CreateDirectory(console.EmulatorDirectoryPath);
-
-            App.GameListLoader.SaveCache();
         }
 
         public static void Refresh(this Game game)

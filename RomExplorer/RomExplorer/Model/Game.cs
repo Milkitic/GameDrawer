@@ -22,10 +22,31 @@ namespace RomExplorer.Model
         }
 
         public string Name => IoPath.GetFileName(Path); //view property
+        public string Extension => IoPath.GetExtension(Path)?.Trim('.').ToLower(); //view property
+
 
         public string MetaDirectory => Path + ".meta";
         public override string DescriptionPath => IoPath.Combine(MetaDirectory, "description.txt");
-        public override string IconPath => IoPath.Combine(MetaDirectory, "icon.png"); //view property
+        protected override string InnerIconPath => IoPath.Combine(MetaDirectory, "icon.png");
+        public override string IconPath //view property
+        {
+            get
+            {
+                if (File.Exists(InnerIconPath))
+                    return InnerIconPath;
+                else
+                {
+                    if (Extension == "exe" || Extension == "lnk")
+                    {
+                        return IoPath.Combine(Config.IconCacheDirectory, $"{Identity.Replace("/","")}.png");
+                    }
+                    else
+                        return IoPath.Combine(Config.IconCacheDirectory, $"{Extension}.png");
+
+                }
+            }
+        }
+
         public string ScreenShotDirectory => IoPath.Combine(MetaDirectory, "screenshots");
 
         public void InitDescription()

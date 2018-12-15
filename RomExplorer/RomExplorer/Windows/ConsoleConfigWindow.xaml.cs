@@ -21,10 +21,10 @@ namespace RomExplorer.Windows
     /// </summary>
     public partial class ConsoleConfigWindow : Window
     {
-        private readonly ConsoleMachine _consoleMachine;
+        private readonly FileModelBase _consoleMachine;
         internal ConsoleConfigWindowViewModel ViewModel { get; private set; }
 
-        public ConsoleConfigWindow(ConsoleMachine consoleMachine)
+        public ConsoleConfigWindow(FileModelBase consoleMachine)
         {
             _consoleMachine = consoleMachine;
             InitializeComponent();
@@ -33,7 +33,7 @@ namespace RomExplorer.Windows
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ViewModel = (ConsoleConfigWindowViewModel)DataContext;
-            ViewModel.ConsoleMachine = _consoleMachine;
+            ViewModel.FileModelBase = _consoleMachine;
             ViewModel.GameConsoleConfig =
                 App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == _consoleMachine.Identity)
                 ?? new GameConsoleConfig(_consoleMachine.Identity);
@@ -41,6 +41,8 @@ namespace RomExplorer.Windows
             ViewModel.IconPath = _consoleMachine.IconPath;
             ViewModel.HostApplication = ViewModel.GameConsoleConfig.HostApplication;
             ViewModel.StartupArguments = ViewModel.GameConsoleConfig.StartupArguments;
+            ViewModel.UseWhiteList = ViewModel.GameConsoleConfig.UseWhiteList;
+            ViewModel.ExtensionFilter = ViewModel.GameConsoleConfig.ExtensionFilter;
             ViewModel.Description = _consoleMachine.Description;
         }
 
@@ -48,6 +50,11 @@ namespace RomExplorer.Windows
         {
             DialogResult = true;
             Close();
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(ViewModel?.UseWhiteList);
         }
     }
 }

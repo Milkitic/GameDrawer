@@ -16,6 +16,10 @@ namespace RomExplorer.Model
                 Directory.CreateDirectory(BackupDirectory);
             if (!Directory.Exists(GameDirectory))
                 Directory.CreateDirectory(GameDirectory);
+            if (!Directory.Exists(CacheDirectory))
+                Directory.CreateDirectory(CacheDirectory);
+            if (!Directory.Exists(IconCacheDirectory))
+                Directory.CreateDirectory(IconCacheDirectory);
         }
 
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
@@ -25,7 +29,9 @@ namespace RomExplorer.Model
 
         [JsonIgnore] public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
         [JsonIgnore] public static string ConfigPath => Path.Combine(BaseDirectory, "config.json");
+        [JsonIgnore] public static string CacheDirectory => Path.Combine(BaseDirectory, "Cache");
         [JsonIgnore] public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
+        [JsonIgnore] public static string IconCacheDirectory => Path.Combine(CacheDirectory, "Icon");
 
         public void SaveConfig()
         {
@@ -52,6 +58,8 @@ namespace RomExplorer.Model
             Identity = identity;
         }
 
+        public bool UseWhiteList { get; set; }
+        public string ExtensionFilter { get; set; }
         public string Identity { get; set; }
         public string HostApplication { get; set; }
         public string StartupArguments { get; set; }

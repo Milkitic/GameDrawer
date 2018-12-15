@@ -12,6 +12,10 @@ namespace RomExplorer.Model
     public sealed class ConsoleMachine : FileModelBase
     {
         protected override string SuspendedDescription { get; set; } = "暂无主机介绍";
+        public override string IconPath //view property
+            => File.Exists(InnerIconPath)
+                ? InnerIconPath
+                : IoPath.Combine(Config.IconCacheDirectory, $"Folder.png");
 
         public ConsoleMachine(string directoryPath)
         {
@@ -49,6 +53,7 @@ namespace RomExplorer.Model
         public string EmulatorDirectoryPath => IoPath.Combine(Path, "HostApp");
 
         public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
+        public ObservableCollection<Game> VisibleGames { get; set; }
 
         public void InitDescription()
         {

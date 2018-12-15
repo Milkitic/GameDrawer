@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace RomExplorer.ViewModel
@@ -101,6 +102,36 @@ namespace RomExplorer.ViewModel
             }
         }
 
+        public ICommand GameConfigCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    if (CurrentMachine == null) return;
+                    var window = new ConsoleConfigWindow(CurrentGame);
+
+                    Execute.OnUiThread(() =>
+                    {
+                        try
+                        {
+                            window.ShowDialog();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            window.Close();
+                        }
+                    });
+
+                    //if (window.DialogResult == true)
+                    //{
+                    //    CurrentMachine.Refresh();
+                    //}
+                });
+            }
+        }
+
         public ICommand BrowseCommand
         {
             get
@@ -150,37 +181,46 @@ namespace RomExplorer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-                    var gameConsoleConfig =
-                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity) ??
-                        App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentMachine.Identity);
-                    if (gameConsoleConfig != null)
+                    try
                     {
-                        string host = null, args = null;
-                        if (!string.IsNullOrEmpty(gameConsoleConfig.HostApplication))
+                        var gameConsoleConfig =
+                            App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity) ??
+                            App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentMachine.Identity);
+                        if (gameConsoleConfig != null)
                         {
-                            host = gameConsoleConfig.HostApplication;
-                        }
-                        if (!string.IsNullOrEmpty(gameConsoleConfig.StartupArguments))
-                        {
-                            args = gameConsoleConfig.StartupArguments;
-                        }
+                            string host = null, args = null;
+                            if (!string.IsNullOrEmpty(gameConsoleConfig.HostApplication))
+                            {
+                                host = gameConsoleConfig.HostApplication;
+                            }
+                            if (!string.IsNullOrEmpty(gameConsoleConfig.StartupArguments))
+                            {
+                                args = gameConsoleConfig.StartupArguments;
+                            }
 
-                        if (host == null && args == null)
-                        {
-                            Process.Start(CurrentGame.Path);
+                            if (host == null && args == null)
+                            {
+                                Process.Start(CurrentGame.Path);
+                            }
+                            else
+                            {
+                                bool useQuote = CurrentGame.Path.Contains(' ');
+                                ProcessStartInfo startInfo = new ProcessStartInfo
+                                {
+                                    FileName = host ?? CurrentGame.Path,
+                                    Arguments = $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
+                                };
+                                Process.Start(startInfo);
+                            }
                         }
                         else
-                        {
-                            ProcessStartInfo startInfo = new ProcessStartInfo
-                            {
-                                FileName = host ?? CurrentGame.Path,
-                                Arguments = CurrentGame.Path + " " + args
-                            };
-                            Process.Start(startInfo);
-                        }
+                            Process.Start(CurrentGame.Path);
                     }
-                    else
-                        Process.Start(CurrentGame.Path);
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
                 });
             }
         }
