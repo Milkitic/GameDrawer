@@ -17,17 +17,15 @@ namespace RomExplorer.Model
             if (!Directory.Exists(GameDirectory))
                 Directory.CreateDirectory(GameDirectory);
         }
+
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
 
         public List<GameConsoleConfig> GameConsoleConfigs { get; set; }
             = new List<GameConsoleConfig>();
-        
-        [JsonIgnore]
-        public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
-        [JsonIgnore]
-        public static string ConfigPath => Path.Combine(BaseDirectory, "config.json");
-        [JsonIgnore]
-        public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
+
+        [JsonIgnore] public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
+        [JsonIgnore] public static string ConfigPath => Path.Combine(BaseDirectory, "config.json");
+        [JsonIgnore] public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
 
         public void SaveConfig()
         {

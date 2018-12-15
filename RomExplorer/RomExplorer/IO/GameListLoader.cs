@@ -230,7 +230,6 @@ namespace RomExplorer.IO
                 var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
                 foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
                 {
-                    //Thread.Sleep(50);
                     var romPath = romFileInfo.FullName;
                     var game = new Game(romPath);
 
