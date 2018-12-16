@@ -261,6 +261,39 @@ namespace RomExplorer.ViewModel
             }
         }
 
+        public ICommand SyncCommand
+        {
+            get
+            {
+                return new DelegateCommand(async obj =>
+                {
+                    await StopScanTask();
+
+                    var list = App.GameListLoader.LoadConsoles(true);
+                    ConsoleMachines = list;
+                    CurrentMachine = ConsoleMachines.FirstOrDefault(k => k.Path == CurrentMachine?.Path);
+                    CurrentGame = CurrentMachine?.Games.FirstOrDefault(k => k.Path == CurrentGame?.Path);
+                });
+            }
+        }
+
+        public ICommand SelectConsoleCommand
+        {
+            get
+            {
+                return new DelegateCommand(async obj =>
+                {
+                    await StopScanTask();
+
+                    var identity = (string)obj;
+                    CurrentMachine = ConsoleMachines.First(k => k.Identity == identity);
+                    CurrentGame = null;
+
+                    StartScanTask();
+                });
+            }
+        }
+
         public void StartScanTask()
         {
             if (CurrentMachine.Games.Count < 100)
