@@ -8,20 +8,44 @@
         xmlns:converters="clr-namespace:RomExplorer.Converters"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+        xmlns:dms="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="960"
         Loaded="Window_Loaded"
-        MinWidth="583" MinHeight="479">
+        MinWidth="583" MinHeight="479" Background="Transparent">
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CornerRadius="0"
+                                  CaptionHeight="44"
+                                  GlassFrameThickness="1,44,1,1"
+                                  UseAeroCaptionButtons="True"
+                                  NonClientFrameEdges="None"
+                                  ResizeBorderThickness="2" />
+                    <!--<WindowChrome CornerRadius="0"
+                                  CaptionHeight="44"
+                                  GlassFrameThickness="1,44,1,1"
+                                  UseAeroCaptionButtons="True"
+                                  NonClientFrameEdges="None"
+                                  ResizeBorderThickness="2" />-->
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Style>
+
     <Window.DataContext>
         <viewModel:MainWindowViewModel />
     </Window.DataContext>
     <Window.Resources>
+        <converters:WindowMarginConverter x:Key="WindowMarginConverter" />
         <converters:CanShowConverter x:Key="CanShowConverter" />
         <converters:CannotShowConverter x:Key="CannotShowConverter" />
         <converters:ContentConverter x:Key="ContentConverter" />
         <converters:IconConverter x:Key="IconConverter" />
         <converters:IconSizeConverter x:Key="IconSizeConverter" />
         <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
+        <converters:GameInfoConverter x:Key="GameInfoConverter" />
 
         <ControlTemplate x:Key="ConsoleItemTemplate" TargetType="{x:Type ListBoxItem}">
             <ToggleButton x:Name="BtnConsole" VerticalAlignment="Top"
@@ -128,8 +152,12 @@
             <Setter Property="Template" Value="{StaticResource GameItemTemplate}" />
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="{Binding WindowState,
+        RelativeSource={RelativeSource FindAncestor,
+        AncestorType={x:Type local:MainWindow}},
+        Converter={StaticResource WindowMarginConverter}}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="43" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -140,10 +168,43 @@
             <ColumnDefinition MinWidth="300" />
             <ColumnDefinition Width="150" MaxWidth="200" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top">
+        <StackPanel Grid.Row="0"
+                    Grid.Column="0" Grid.ColumnSpan="2"/>
+        <Border Background="LightGray"
+                Grid.Row="1" Grid.RowSpan="5"
+                Grid.Column="0" Grid.ColumnSpan="2"/>
+        <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top">
             <DockPanel HorizontalAlignment="Right">
-                <Button DockPanel.Dock="Right" Content="同步" Command="{Binding SyncCommand}"/>
-                <Button DockPanel.Dock="Right" Content="+" />
+                <dms:DMButton DockPanel.Dock="Right" Command="{Binding SyncCommand}"
+                              Width="28" Height="28" CornerRadius="5"
+                              Background="#FF1E9FFF" Cursor="Hand">
+                    <dms:DMButton.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <TextBlock FontWeight="Heavy">同步资源</TextBlock>
+                                <TextBlock>重新加载硬盘上的所有分类</TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </dms:DMButton.ToolTip>
+                    <Viewbox Width="16" Height="16">
+                        <ContentPresenter Content="{StaticResource SvgWhiteRefresh}" />
+                    </Viewbox>
+                </dms:DMButton>
+                <dms:DMButton DockPanel.Dock="Right" Command="{Binding AddNewGameConsole}"
+                              Width="28" Height="28" CornerRadius="5"
+                              Background="#FF2BB669" Cursor="Hand">
+                    <dms:DMButton.ToolTip>
+                        <ToolTip>
+                            <StackPanel>
+                                <TextBlock FontWeight="Heavy">添加分类</TextBlock>
+                                <TextBlock>在主页上添加一个分类</TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </dms:DMButton.ToolTip>
+                    <Viewbox Width="16" Height="16">
+                        <ContentPresenter Content="{StaticResource SvgWhitePlus}" />
+                    </Viewbox>
+                </dms:DMButton>
             </DockPanel>
             <ListView x:Name="FolderList" Background="Transparent"
                       BorderThickness="0"
@@ -159,14 +220,14 @@
                 </ListView.ItemsPanel>
             </ListView>
         </StackPanel>
-        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Padding="5,6">
+        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Padding="5,6">
             <TextBlock TextWrapping="Wrap" Text="{Binding CurrentMachine.Description}"></TextBlock>
         </Label>
-        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+        <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                  AcceptsReturn="True" TextWrapping="Wrap"
                  Text="{Binding CurrentMachine.Description, Mode=TwoWay}" Padding="3,5"
                  Visibility="Collapsed" />
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Background="Yellow">
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Background="Yellow">
             <Button Content="运行"
                     IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                     Command="{Binding RunCommand}" />
@@ -183,17 +244,63 @@
                     IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                     Command="{Binding BrowseCommand}" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right">
-            <Button Content="+"
-                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}" />
-            <Button Content="刷新"
-                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
-                    Command="{Binding RefreshConsole}" />
-            <Button Content="主机设置..."
-                    IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
-                    Command="{Binding ConsoleConfigCommand}" />
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">
+            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
+                          Background="{StaticResource ExtraLightBrush}"
+                          BorderBrush="Gray"
+                          Cursor="Hand"
+                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                          Command="{Binding AddNewGameConsole}" CommandParameter="{Binding CurrentMachine}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel>
+                            <TextBlock FontWeight="Heavy">添加游戏</TextBlock>
+                            <TextBlock>打开添加游戏会话窗口，在此分类下添加一个游戏。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentPresenter Content="{StaticResource SvgBlackPlus}" />
+                </Viewbox>
+            </dms:DMButton>
+            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
+                          Background="{StaticResource ExtraLightBrush}"
+                          BorderBrush="Gray"
+                          Cursor="Hand"
+                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                          Command="{Binding RefreshConsole}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel>
+                            <TextBlock FontWeight="Heavy">同步分类</TextBlock>
+                            <TextBlock>重新加载该分类内的游戏。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentPresenter Content="{StaticResource SvgBlackRefresh}" />
+                </Viewbox>
+            </dms:DMButton>
+            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
+                          Background="{StaticResource ExtraLightBrush}"
+                          BorderBrush="Gray"
+                          Cursor="Hand"
+                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
+                          Command="{Binding ConsoleConfigCommand}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel>
+                            <TextBlock FontWeight="Heavy">分类设置</TextBlock>
+                            <TextBlock>打开分类设置会话窗口，进行分类的详细设置。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentPresenter Content="{StaticResource SvgBlackGear}" />
+                </Viewbox>
+            </dms:DMButton>
         </StackPanel>
-        <ListView Grid.Row="3" Grid.Column="0" Background="IndianRed"
+        <ListView Grid.Row="4" Grid.Column="0" Background="IndianRed"
                   x:Name="GameList"
                   BorderThickness="0"
                   ItemContainerStyle="{StaticResource GameItemStyle}"
@@ -210,9 +317,11 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
-        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1"
+        <Grid Grid.Row="4" Grid.RowSpan="2" Grid.Column="1"
               Background="LightBlue">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -227,9 +336,11 @@
             <Button Grid.Row="1"
                     Content="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource ContentConverter}}"
                     Command="{Binding ChangeEditabilityCommand}" />
+            <Label Grid.Row="2" Content="{Binding CurrentGame.Extension,Converter={StaticResource GameInfoConverter},ConverterParameter=concat;格式：;文件}" />
+            <Label Grid.Row="3" Content="{Binding CurrentGame.Length,Converter={StaticResource GameInfoConverter},ConverterParameter=convert-size|concat;大小：;}" />
         </Grid>
-        <GridSplitter Grid.Row="3" Grid.Column="0" Width="4"></GridSplitter>
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+        <GridSplitter Grid.Row="4" Grid.Column="0" Width="4"></GridSplitter>
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />

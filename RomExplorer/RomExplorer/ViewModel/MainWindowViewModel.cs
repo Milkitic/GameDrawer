@@ -100,7 +100,18 @@ namespace RomExplorer.ViewModel
 
                     if (window.DialogResult == true)
                     {
-                        CurrentMachine.Refresh();
+                        if (CurrentMachine != null)
+                        {
+                            if (!Directory.Exists(CurrentMachine.Path))
+                            {
+                                ConsoleMachines.Remove(CurrentMachine);
+                                CurrentMachine = null;
+                            }
+                            else
+                            {
+                                CurrentMachine.Refresh();
+                            }
+                        }
                     }
                 });
             }
@@ -290,6 +301,18 @@ namespace RomExplorer.ViewModel
                     CurrentGame = null;
 
                     StartScanTask();
+                });
+            }
+        }
+
+        public ICommand AddNewGameConsole
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+                    var window = new AddGameConsoleWindow((ConsoleMachine) obj);
+                    window.ShowDialog();
                 });
             }
         }

@@ -13,6 +13,19 @@ using System.Windows.Media.Imaging;
 
 namespace RomExplorer.Converters
 {
+    internal class WindowMarginConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var state = (WindowState)value;
+            return state == WindowState.Maximized ? new Thickness(8,1,8,8) : new Thickness(1);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     internal class CanShowConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -128,6 +141,36 @@ namespace RomExplorer.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return !(value is null);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class GameInfoConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var args = (parameter as string)?.Split('|');
+            if (args != null)
+            {
+                foreach (var arg in args)
+                {
+                    var par = arg.Split(';');
+                    switch (par[0])
+                    {
+                        case "concat":
+                            return par[1] + value + par[2];
+                        case "convert-size":
+                            value = Extension.GetBytesReadable((long)value);
+                            break;
+                    }
+                }
+            }
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

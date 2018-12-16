@@ -23,6 +23,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -37,19 +38,19 @@
                Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Name}"
                Height="28"
                HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Height="28" Margin="2"
+        <TextBox Grid.Row="0" Grid.Column="1" Height="28" Margin="2" Grid.ColumnSpan="2"
                  VerticalContentAlignment="Center" Text="{Binding Name,Mode=TwoWay}" />
         <Label Grid.Row="1" Grid.Column="0"
                Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Host}"
                Height="28"
                HorizontalAlignment="Right" VerticalContentAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Height="28" Margin="2"
+        <TextBox Grid.Row="1" Grid.Column="1" Height="28" Margin="2" Grid.ColumnSpan="2"
                  VerticalContentAlignment="Center" Text="{Binding HostApplication,Mode=TwoWay}" />
         <Label Grid.Row="2" Grid.Column="0"
                Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Arg}"
                Height="28"
                HorizontalAlignment="Right" VerticalContentAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Height="28" Margin="2"
+        <TextBox Grid.Row="2" Grid.Column="1" Height="28" Margin="2" Grid.ColumnSpan="2"
                  VerticalContentAlignment="Center" Text="{Binding StartupArguments,Mode=TwoWay}" />
         <Label Grid.Row="3" Grid.Column="0"
                Content="扩展名过滤："
@@ -80,11 +81,14 @@
                Content="{Binding FileModelBase,Converter={StaticResource LabelConverter},ConverterParameter=Des}"
                Height="28"
                HorizontalAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Top" />
-        <TextBox Grid.Row="5" Grid.Column="1" Margin="2" Padding="0,6"
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="2" Padding="0,6" Grid.ColumnSpan="2"
                  Text="{Binding Description,Mode=TwoWay}" TextWrapping="Wrap" AcceptsReturn="True" />
-        <Button Grid.Row="6" Grid.Column="1" Content="确定" HorizontalAlignment="Right"
+        <Button Grid.Row="6" Grid.Column="1" Content="删除此目录" HorizontalAlignment="Right"
+                Visibility="{Binding FileModelBase,Converter={StaticResource ShowLabelConverter}}"
+                Click="BtnDelete_Click"/>
+        <Button Grid.Row="6" Grid.Column="2" Content="确定" HorizontalAlignment="Right"
                 Command="{Binding SaveCommand}" Click="BtnOk_Click"/>
-        <StackPanel Grid.Row="0" Grid.Column="2" Grid.RowSpan="6">
+        <StackPanel Grid.Row="0" Grid.Column="3" Grid.RowSpan="6">
             <Border Background="AliceBlue" Width="40" Height="40">
                 <Viewbox Width="32" Height="32">
                     <Image Source="{Binding IconPath,Converter={StaticResource IconConverter},Mode=TwoWay}" />

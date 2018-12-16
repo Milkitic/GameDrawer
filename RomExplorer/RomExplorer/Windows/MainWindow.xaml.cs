@@ -46,7 +46,6 @@ namespace RomExplorer
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.ConsoleMachines = list;
             SynchronizationContext = SynchronizationContext.Current;
-
         }
 
         /// <summary>

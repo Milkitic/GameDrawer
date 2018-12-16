@@ -180,8 +180,6 @@ namespace RomExplorer.IO
                 if (!File.Exists(iconPath))
                 {
                     W32FileInfo.GetLargeIcon(console.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
-                    //W32FileInfo.GetLargeIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
-                    //icon
                 }
 
                 consoleMachines.Add(console);
@@ -266,11 +264,10 @@ namespace RomExplorer.IO
 
                     if (!File.Exists(iconPath))
                     {
-                        Icon.ExtractAssociatedIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
-                        //W32FileInfo.GetLargeIcon(game.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
-                        //icon
+                        Icon.ExtractAssociatedIcon(game.Path)?.ToBitmap().Save(iconPath, ImageFormat.Png);
                     }
 
+                    game.Length = romFileInfo.Length;
                     console.Games.Add(game);
                 }
             }

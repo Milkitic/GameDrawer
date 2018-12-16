@@ -23,7 +23,7 @@ namespace RomExplorer.Model
 
         public string Name => IoPath.GetFileName(Path); //view property
         public string Extension => IoPath.GetExtension(Path)?.Trim('.').ToLower(); //view property
-
+        public long Length { get; set; }
 
         public string MetaDirectory => Path + ".meta";
         public override string DescriptionPath => IoPath.Combine(MetaDirectory, "description.txt");
@@ -38,7 +38,7 @@ namespace RomExplorer.Model
                 {
                     if (Extension == "exe" || Extension == "lnk")
                     {
-                        return IoPath.Combine(Config.IconCacheDirectory, $"{Identity.Replace("/","")}.png");
+                        return IoPath.Combine(Config.IconCacheDirectory, $"{Identity.Replace("/", "")}.png");
                     }
                     else
                         return IoPath.Combine(Config.IconCacheDirectory, $"{Extension}.png");
@@ -58,7 +58,7 @@ namespace RomExplorer.Model
         {
             if (SuspendedName != NameWithoutExtension && SuspendedName != null)
             {
-                var validName = ValidateFileName(SuspendedName);
+                var validName = FileExtension.ValidateFileName(SuspendedName);
 
                 var fileInfo = new FileInfo(Path);
                 var newPath = IoPath.Combine(fileInfo.Directory.FullName, validName + fileInfo.Extension);

@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:RomExplorer">
+    <SolidColorBrush x:Key="ExtraLightBrush" Color="#F0F0F0" />
+    <SolidColorBrush x:Key="ExtraBlackBrush" Color="#303030" />
+
+    <PathGeometry x:Key="PathRefresh"
+                  Figures="M990 10v374H590.2l133.3-125.3c-63.4-44.4-135.2-64.1-215.6-59.2c-80.4 4.9-149.3 34.1-206.8 87.6c-31.4 29.4-55.2 63-71.5 100.8c-16.3 37.9-24.5 76-24.5 114.5c0 38.5 8.2 76.7 24.5 114.5c16.3 37.9 40.2 71.1 71.5 99.9c63.4 60 140.1 90.1 230.3 90.1c90.2 0 167.3-30 231.3-90.1c15.7-14.4 29.4-30 41.2-47c0.7 0 1.5 0.7 2.5 2c1 1.3 1.8 2.3 2.5 2.9c44.4 41.1 98.7 70.8 162.7 89.1c-20.9 30.7-44.4 58.1-70.6 82.2c-67.3 62.7-145.7 105.1-235.2 127.3c-89.5 22.2-179 22.2-268.5 0c-89.5-22.2-167.6-64.6-234.2-127.3c-50.3-46.3-88.4-99.9-114.2-160.6C22.9 624.8 10 563.6 10 502c0-61.7 12.9-122.7 38.7-183.1c25.8-60.4 63.9-114.1 114.2-161c62.1-58.1 134.3-98.7 216.6-121.9c82.3-23.2 165.5-27.3 249.4-12.2c84 15 159.6 47.6 226.9 97.9c1.3 0 13.2-9.3 35.8-27.9c22.5-18.6 44.6-37.4 66.2-56.3L990 10z"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="PathPlus1"
+                  Figures="M117.5 392.6h764.9c59.4 0 107.5 48.1 107.5 107.5c0 59.4-48.1 107.5-107.5 107.5H117.5C58.1 607.6 10 559.5 10 500.1C10 440.7 58.1 392.6 117.5 392.6z"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="PathPlus2"
+                  Figures="M607.4 117.5v764.9c0 59.4-48.1 107.5-107.5 107.5c-59.4 0-107.5-48.1-107.5-107.5V117.5C392.4 58.1 440.5 10 499.9 10C559.3 10 607.4 58.1 607.4 117.5z"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="PathGear"
+                  Figures="M952.4 424.6h-45.2c-20.7 0-42.7-16.2-48.9-36l-25.9-63.1c-9.8-18.3-5.8-45.2 8.8-59.9l32.1-32c14.7-14.7 14.7-38.7 0-53.4l-53.4-53.3c-14.7-14.6-38.7-14.6-53.4 0L734.4 159c-14.6 14.6-41.6 18.6-59.9 8.9l-63-26c-19.8-6.1-36-28.1-36-48.9V47.7c0-20.7-17-37.7-37.7-37.7h-75.4c-20.8 0-37.8 17-37.8 37.7v45.2c0 20.8-16.2 42.8-36 48.9l-63.1 26c-18.3 9.8-45.2 5.8-59.8-8.9l-32.2-32.1c-14.6-14.6-38.6-14.6-53.3 0l-53.3 53.3c-14.7 14.7-14.7 38.7 0 53.3l32 32.1c14.7 14.7 18.7 41.6 8.9 59.9l-26 63.1c-6.1 19.8-28.1 36-48.9 36l-45.2-0.1c-20.7 0-37.7 17-37.7 37.7v75.4c0 20.7 17 37.7 37.7 37.7h45.2c20.8 0.1 42.7 16.3 48.8 36l26.1 63.1c9.8 18.3 5.8 45.3-8.9 59.9l-32.1 32c-14.6 14.7-14.6 38.7 0 53.4l53.4 53.4c14.6 14.6 38.6 14.6 53.3 0l32.1-32.1c14.6-14.6 41.5-18.6 59.7-8.7l63.2 26c19.8 6.2 36 28.1 36 48.9v45.1c0 20.7 16.9 37.7 37.8 37.7h75.4c20.7 0 37.7-17 37.7-37.7v-45.1c0-20.7 16.3-42.7 36-48.9l63.2-26c18.3-9.9 45.3-5.9 59.9 8.7l32 32.1c14.7 14.6 38.7 14.6 53.4 0l53.4-53.4c14.7-14.7 14.7-38.7 0-53.4l-32.1-32c-14.6-14.6-18.6-41.6-8.8-59.9l25.9-63.1c6.2-19.8 28.2-36 48.9-36h45.2c20.7 0 37.6-17 37.6-37.7v-75.5C990 441.5 973 424.6 952.4 424.6 M688.6 499.9c0 104.1-84.4 188.4-188.5 188.4c-104.1 0-188.5-84.3-188.5-188.4c0-104.1 84.4-188.4 188.5-188.4C604.2 311.5 688.6 395.9 688.6 499.9"
+                  FillRule="NonZero" />
+    <PathGeometry x:Key="PathPlay"
+                  Figures="M853.2 597.5L253.5 973.4l-0.5-0.7c-4.3 2.7-8.8 5.1-13.4 7.2c-0.1 0.1-0.3 0.1-0.5 0.3c-4.5 2-9.2 3.8-14 5.2c-0.3 0.1-0.7 0.1-1 0.3c-2.1 0.6-4.2 1.1-6.3 1.5c-0.4 0.1-0.7 0.2-1.1 0.3c-2.4 0.6-4.8 1-7.2 1.3c-0.4 0.1-0.8 0.1-1.2 0.1c-2 0.3-4 0.6-6.1 0.7c-0.6 0.1-1.3 0.1-1.9 0.1c-2.4 0.1-4.9 0.3-7.4 0.3C130.4 990 91 923.3 91 860.9l0 0l0 0l0-720.9l0 0C91 77.6 130.4 10 192.8 10c23.7 0 45.6 7.3 63.8 19.7l595.6 372.2c34 19.5 56.8 56.1 56.8 98.1C909 541.6 886.6 577.9 853.2 597.5z"
+                  FillRule="NonZero" />
+
+<Canvas x:Key="SvgWhitePlus" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraLightBrush}" Data="{StaticResource PathPlus1}" />
+        <Path Fill="{StaticResource ExtraLightBrush}" Data="{StaticResource PathPlus2}" />
+    </Canvas>
+    <Canvas x:Key="SvgBlackPlus" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraBlackBrush}" Data="{StaticResource PathPlus1}" />
+        <Path Fill="{StaticResource ExtraBlackBrush}" Data="{StaticResource PathPlus2}" />
+    </Canvas>
+    <Canvas x:Key="SvgWhiteRefresh" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraLightBrush}" Data="{StaticResource PathRefresh}" />
+    </Canvas>
+    <Canvas x:Key="SvgBlackRefresh" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraBlackBrush}" Data="{StaticResource PathRefresh}" />
+    </Canvas>
+    <Canvas x:Key="SvgWhiteGear" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraLightBrush}" Data="{StaticResource PathGear}" />
+    </Canvas>
+    <Canvas x:Key="SvgBlackGear" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraBlackBrush}" Data="{StaticResource PathGear}" />
+    </Canvas>
+    <Canvas x:Key="SvgBlackRun" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraBlackBrush}" Data="{StaticResource PathPlay1}" />
+    </Canvas>
+    <Canvas x:Key="SvgWhiteRun" Width="1000" Height="1000">
+        <Path Fill="{StaticResource ExtraLightBrush}" Data="{StaticResource PathPlay1}" />
+    </Canvas>
+</ResourceDictionary>
