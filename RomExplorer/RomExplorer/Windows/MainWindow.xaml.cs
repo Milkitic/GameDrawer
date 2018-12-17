@@ -46,15 +46,18 @@ namespace RomExplorer
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.ConsoleMachines = list;
             SynchronizationContext = SynchronizationContext.Current;
-
         }
 
+        /// <summary>
+        /// toggle button，暂时用事件处理程序
+        /// </summary>
         private async void BtnConsole_Click(object sender, RoutedEventArgs e)
         {
-            await ViewModel.StopScanTask();
-
             _consoleOption.Add(sender);
             _consoleOption.Switch(sender);
+
+            await ViewModel.StopScanTask();
+
             var identity = (string)((ToggleButton)sender).Tag;
             ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Identity == identity);
 
@@ -62,7 +65,9 @@ namespace RomExplorer
             ViewModel.CurrentGame = null;
         }
 
-
+        /// <summary>
+        /// toggle button，暂时用事件处理程序
+        /// </summary>
         private void BtnGame_Click(object sender, RoutedEventArgs e)
         {
             _gameOption.Add(sender);
@@ -71,16 +76,12 @@ namespace RomExplorer
             ViewModel.CurrentGame = ViewModel.CurrentMachine.Games.First(k => k.Identity == identity);
         }
 
-        private async void BtnSync_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// toggle button，暂时用事件处理程序
+        /// </summary>
+        private void BtnGame_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            await ViewModel.StopScanTask();
-
-            var list = App.GameListLoader.LoadConsoles(true);
-            ViewModel.ConsoleMachines = list;
-            ViewModel.CurrentMachine =
-                ViewModel.ConsoleMachines.FirstOrDefault(k => k.Path == ViewModel.CurrentMachine?.Path);
-            ViewModel.CurrentGame =
-                ViewModel.CurrentMachine?.Games.FirstOrDefault(k => k.Path == ViewModel.CurrentGame?.Path);
+            ViewModel.RunCommand.Execute(this);
         }
 
         private void NamingBox_LostFocus(object sender, RoutedEventArgs e)
@@ -112,9 +113,14 @@ namespace RomExplorer
             }
         }
 
-        private void BtnGame_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void Window_Activated(object sender, EventArgs e)
         {
-            ViewModel.RunCommand.Execute(null);
+            ViewModel.WindowActivated = true;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            ViewModel.WindowActivated = false;
         }
     }
 }

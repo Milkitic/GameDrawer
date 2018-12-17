@@ -66,7 +66,7 @@ namespace RomExplorer.Model
                 : IoPath.Combine(Config.IconCacheDirectory, $"{IoPath.GetExtension(Path)}.png");
 
         public virtual string DescriptionPath => System.IO.Path.Combine(Path, "description.txt");
-        
+
         public virtual string Path { get; set; } //view property
 
         public virtual void CommitChanges()
@@ -96,24 +96,9 @@ namespace RomExplorer.Model
             //Committed?.Invoke(sender, e);
         }
 
-        protected static string ValidateFileName(string originName)
+        public void RaisePropertyChanged(string propertyName)
         {
-            var trimStr = originName.Trim();
-            var chars = IoPath.GetInvalidFileNameChars();
-            foreach (var k in trimStr)
-            {
-                if (chars.Contains(k))
-                {
-                    throw new ArgumentException(@"路径中不允许有非法字符。", k.ToString());
-                }
-            }
-
-            if (string.IsNullOrEmpty(trimStr))
-            {
-                throw new ArgumentNullException(trimStr, @"路径不能为空。");
-            }
-
-            return trimStr;
+            OnPropertyChanged(propertyName);
         }
     }
 }

@@ -24,5 +24,15 @@ namespace RomExplorer
 
             GameListLoader = new GameListLoader();
         }
+
+        private void Application_Activated(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Application_Deactivated(object sender, EventArgs e)
+        {
+
+        }
     }
 }

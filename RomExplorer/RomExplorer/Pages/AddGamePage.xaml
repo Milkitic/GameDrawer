@@ -1,0 +1,57 @@
+﻿<Page x:Class="RomExplorer.Pages.AddGamePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:RomExplorer.Pages"
+      xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
+      xmlns:converters="clr-namespace:RomExplorer.Converters"
+      mc:Ignorable="d" 
+      d:DesignHeight="225" d:DesignWidth="450"
+      Title="AddGamePage"
+      Loaded="Page_Loaded">
+    <Page.DataContext>
+        <viewModel:AddGamePageViewModel />
+    </Page.DataContext>
+    <Page.Resources>
+        <converters:IfCheckConverter x:Key="IfCheckConverter" />
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Viewbox Grid.Row="0" Width="48" Height="48">
+            <Image RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="{Binding IconPath,Mode=TwoWay}"/>
+        </Viewbox>
+        <Button Grid.Row="1" HorizontalAlignment="Center" Content="选择图标..." 
+                Command="{Binding SelectIconPath}" />
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+            <Label Content="文件路径："/>
+            <TextBox x:Name="TbPath" Text="{Binding Path,Mode=TwoWay}" MinWidth="300" TextChanged="TbPath_TextChanged" />
+            <Button Content="选择文件..." DockPanel.Dock="Right"
+                    Command="{Binding SelectPath}" />
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
+            <Label Content="名称："/>
+            <TextBox Text="{Binding Name,Mode=TwoWay}" MinWidth="300"/>
+        </StackPanel>
+        <DockPanel Grid.Row="4" HorizontalAlignment="Center">
+            <RadioButton Content="复制源文件"
+                         IsChecked="{Binding UseShortcut,
+                                     Converter={StaticResource IfCheckConverter},
+                                     ConverterParameter=False,Mode=TwoWay}" />
+            <RadioButton Content="创建为快捷方式"
+                         IsChecked="{Binding UseShortcut,
+                                     Converter={StaticResource IfCheckConverter},
+                                     ConverterParameter=True,Mode=TwoWay}" />
+        </DockPanel>
+        <Button Grid.Row="5" HorizontalAlignment="Center" Content="确定"
+                Click="BtnCreate_Click" />
+    </Grid>
+</Page>

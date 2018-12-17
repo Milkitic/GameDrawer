@@ -51,6 +51,17 @@ namespace RomExplorer.Windows
             DialogResult = true;
             Close();
         }
+        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("此操作将删除此目录以及所有子目录与文件至回收站。", "确认信息", MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
+            if (result != MessageBoxResult.Yes) return;
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(ViewModel.FileModelBase.Path,
+                Microsoft.VisualBasic.FileIO.UIOption.AllDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            if (ViewModel.FileModelBase is ConsoleMachine) ViewModel.FileModelBase = null;
+            BtnOk_Click(sender, e);
+        }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {

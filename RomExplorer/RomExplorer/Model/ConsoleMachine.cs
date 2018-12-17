@@ -64,7 +64,7 @@ namespace RomExplorer.Model
         {
             if (SuspendedName != NameWithoutExtension)
             {
-                var validName = ValidateFileName(SuspendedName);
+                var validName =FileExtension. ValidateFileName(SuspendedName);
 
                 var newPath = IoPath.Combine(new DirectoryInfo(Path).Parent.FullName, validName);
                 var success = FileExtension.MoveFile(Path, newPath);
