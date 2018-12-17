@@ -81,7 +81,7 @@ namespace RomExplorer
         /// </summary>
         private void BtnGame_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ViewModel.RunCommand.Execute(null);
+            ViewModel.RunCommand.Execute(this);
         }
 
         private void NamingBox_LostFocus(object sender, RoutedEventArgs e)
@@ -111,6 +111,16 @@ namespace RomExplorer
                 MessageBox.Show(ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
                 ViewModel.CurrentGame.ResetSuspended();
             }
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            ViewModel.WindowActivated = true;
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            ViewModel.WindowActivated = false;
         }
     }
 }

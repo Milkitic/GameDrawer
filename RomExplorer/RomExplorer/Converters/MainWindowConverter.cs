@@ -18,7 +18,127 @@ namespace RomExplorer.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var state = (WindowState)value;
-            return state == WindowState.Maximized ? new Thickness(8,1,8,8) : new Thickness(1);
+            return state == WindowState.Maximized ? new Thickness(8, 7, 8, 8) : new Thickness(1);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    internal class TitleBarHeightConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var state = (WindowState)value;
+            return state == WindowState.Maximized ? 37 : 43;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    internal class ChromeForegroundConverter : IValueConverter
+    {
+        private static System.Drawing.Color? _color1;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var windowActivated = (bool)value;
+            if (windowActivated)
+            {
+                if (_color1 == null)
+                    _color1 = ColorExtension.GetChromeColor();
+                if (_color1 != null)
+                {
+                    var color = _color1.Value;
+                    var average = (color.R + color.G + color.B) / 3f;
+                    return average >= 128
+                        ? new SolidColorBrush(Color.FromRgb(0, 0, 0))
+                        : new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                }
+
+                return new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            }
+
+            return new SolidColorBrush(Color.FromRgb(164, 164, 164));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ChromeHoverForegroundConverter : IValueConverter
+    {
+        private static System.Drawing.Color? _color1;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var windowActivated = (bool)value;
+            if (windowActivated)
+            {
+                if (_color1 == null)
+                    _color1 = ColorExtension.GetChromeColor();
+                if (_color1 != null)
+                {
+                    var color = _color1.Value;
+                    var average = (color.R + color.G + color.B) / 3f;
+                    return average >= 128
+                        ? new SolidColorBrush(Color.FromRgb(0, 0, 0))
+                        : new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                }
+
+                return new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            }
+
+            return new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class ChromeHoverBackgroundConverter : IValueConverter
+    {
+        private static System.Drawing.Color? _color1;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var windowActivated = (bool)value;
+            if (windowActivated)
+            {
+                if (_color1 == null)
+                    _color1 = ColorExtension.GetChromeColor();
+                if (_color1 != null)
+                {
+                    var color = _color1.Value;
+                    var average = (color.R + color.G + color.B) / 3f;
+                    return average >= 128
+                        ? new SolidColorBrush(Color.FromArgb(25, 0, 0, 0))
+                        : new SolidColorBrush(Color.FromArgb(25, 255, 255, 255));
+                }
+
+                return new SolidColorBrush(Color.FromArgb(25, 255, 255, 255));
+            }
+
+            return new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    internal class QuoteHeightConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)value - 9;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -148,7 +268,18 @@ namespace RomExplorer.Converters
             throw new NotImplementedException();
         }
     }
+    internal class VisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is null ? Visibility.Collapsed : Visibility.Visible;
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     internal class GameInfoConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -69,6 +69,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\ClippingBorder.cs" />
     <Compile Include="Converters\ConsoleConfigWindowConverter.cs" />
     <Compile Include="Converters\MainWindowConverter.cs" />
     <Compile Include="Extension.cs" />
@@ -173,8 +174,9 @@
   <ItemGroup>
     <Resource Include="Resources\default\game.png" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <Resource Include="Resources\default\bg.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

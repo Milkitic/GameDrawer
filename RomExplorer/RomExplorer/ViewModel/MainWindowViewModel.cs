@@ -25,6 +25,7 @@ namespace RomExplorer.ViewModel
 
         private CancellationTokenSource _cts;
         private Task _syncTask;
+        private bool _windowActivated;
 
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
@@ -73,6 +74,16 @@ namespace RomExplorer.ViewModel
                         CurrentMachine.DescriptionEditable = true;
                     }
                 });
+            }
+        }
+
+        public bool WindowActivated
+        {
+            get => _windowActivated;
+            set
+            {
+                _windowActivated = value;
+                OnPropertyChanged();
             }
         }
 
@@ -200,38 +211,69 @@ namespace RomExplorer.ViewModel
                 {
                     try
                     {
-                        var gameConsoleConfig =
-                            App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity) ??
+                        var gameConfig =
+                            App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentGame.Identity);
+                        var consoleConfig =
                             App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == CurrentMachine.Identity);
-                        if (gameConsoleConfig != null)
+                        Process proc;
+                        if (gameConfig != null || consoleConfig != null)
                         {
                             string host = null, args = null;
-                            if (!string.IsNullOrEmpty(gameConsoleConfig.HostApplication))
-                            {
-                                host = gameConsoleConfig.HostApplication;
-                            }
-                            if (!string.IsNullOrEmpty(gameConsoleConfig.StartupArguments))
-                            {
-                                args = gameConsoleConfig.StartupArguments;
-                            }
+                            if (!string.IsNullOrEmpty(consoleConfig?.HostApplication)) host = consoleConfig?.HostApplication;
+                            if (!string.IsNullOrEmpty(consoleConfig?.StartupArguments)) args = consoleConfig?.StartupArguments;
+                            if (!string.IsNullOrEmpty(gameConfig?.HostApplication)) host = gameConfig?.HostApplication;
+                            if (!string.IsNullOrEmpty(gameConfig?.StartupArguments)) args = gameConfig?.StartupArguments;
 
                             if (host == null && args == null)
                             {
-                                Process.Start(CurrentGame.Path);
+                                proc = new Process
+                                {
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = CurrentGame.Path,
+                                    },
+                                    EnableRaisingEvents = true
+                                };
                             }
                             else
                             {
                                 bool useQuote = CurrentGame.Path.Contains(' ');
-                                ProcessStartInfo startInfo = new ProcessStartInfo
+                                proc = new Process
                                 {
-                                    FileName = host ?? CurrentGame.Path,
-                                    Arguments = $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
+                                    StartInfo = new ProcessStartInfo
+                                    {
+                                        FileName = host ?? CurrentGame.Path,
+                                        Arguments = $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
+                                    },
+                                    EnableRaisingEvents = true
                                 };
-                                Process.Start(startInfo);
                             }
                         }
                         else
-                            Process.Start(CurrentGame.Path);
+                        {
+                            proc = new Process
+                            {
+                                StartInfo = new ProcessStartInfo
+                                {
+                                    FileName = CurrentGame.Path,
+                                },
+                                EnableRaisingEvents = true
+                            };
+                        }
+                        var window = (MainWindow)obj;
+                        var prevState = window.WindowState;
+                        proc.Exited += (sender, e) =>
+                        {
+                            Execute.OnUiThread(() =>
+                            {
+                                if (window.WindowState != WindowState.Minimized) return;
+                                window.WindowState = prevState;
+                                window.Topmost = true;
+                                window.Topmost = false;
+                            }, MainWindow.SynchronizationContext);
+                        };
+                        proc.Start();
+                        window.WindowState = WindowState.Minimized;
                     }
                     catch (Exception e)
                     {
@@ -311,7 +353,7 @@ namespace RomExplorer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-                    var window = new AddGameConsoleWindow((ConsoleMachine) obj);
+                    var window = new AddGameConsoleWindow((ConsoleMachine)obj);
                     window.ShowDialog();
                 });
             }
