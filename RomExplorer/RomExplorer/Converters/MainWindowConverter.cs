@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -159,6 +160,25 @@ namespace RomExplorer.Converters
             throw new NotImplementedException();
         }
     }
+    internal class CanShowMultiConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var positive = System.Convert.ToBoolean(parameter);
+            var model = (ConsoleMachine)values[0];
+            var b = values[1] as bool?;
+            if (model is null)
+                return Visibility.Collapsed;
+
+            if (positive) return b == true ? Visibility.Visible : Visibility.Collapsed;
+            return b == true ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     internal class CannotShowConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -178,7 +198,7 @@ namespace RomExplorer.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var b = (bool?)value;
-            return b == true ? "完成" : "编辑";
+            return Application.Current.FindResource(b == true ? "WhiteOkControl" : "WhiteEditControl");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

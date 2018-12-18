@@ -4,13 +4,17 @@
                     xmlns:controls="clr-namespace:RomExplorer.Controls">
     <SolidColorBrush x:Key="LightGrayBrush" Color="#C0C0C0" />
     <SolidColorBrush x:Key="LightBrush" Color="#E0E0E0" />
-    <SolidColorBrush x:Key="GreyBrush" Color="#C0C0C0" />
+    <SolidColorBrush x:Key="GrayBrush" Color="#A0A0A0" />
+    <SolidColorBrush x:Key="ExtraLight20Brush" Color="#20F0F0F0" />
+    <SolidColorBrush x:Key="ExtraLight40Brush" Color="#40F0F0F0" />
     <SolidColorBrush x:Key="ExtraLight80Brush" Color="#80F0F0F0" />
     <SolidColorBrush x:Key="ExtraLightBrush" Color="#F0F0F0" />
     <SolidColorBrush x:Key="ExtraBlackBrush" Color="#303030" />
 
-    <BitmapImage x:Key="DefaultIcon" CacheOption="OnLoad" UriSource="pack://application:,,,/RomExplorer;component/Resources/default/game.png"/>
-    <BitmapImage x:Key="DefaultBg" CacheOption="OnLoad" UriSource="pack://application:,,,/RomExplorer;component/Resources/default/bg.jpg"/>
+    <BitmapImage x:Key="DefaultIcon" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/RomExplorer;component/Resources/default/game.png" />
+    <BitmapImage x:Key="DefaultBg" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/RomExplorer;component/Resources/default/bg.jpg" />
   
     <Style x:Key="GroupBoxStyle" TargetType="{x:Type GroupBox}">
         <Setter Property="Margin" Value="2,3" />
@@ -30,12 +34,29 @@
         <GradientStop Offset="0.3" Color="#80646464"/>
         <GradientStop Offset="1" Color="#303030"/>
     </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HorizonLinearBlackBrush3" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#808080"/>
+        <GradientStop Offset="0.5" Color="#909090"/>
+        <GradientStop Offset="1" Color="#808080"/>
+    </LinearGradientBrush>
     <LinearGradientBrush x:Key="VerticalLinearBlackBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#2d2d30"/>
         <GradientStop Offset="0.5" Color="#303030"/>
         <GradientStop Offset="1" Color="#2d2d30"/>
     </LinearGradientBrush>
-
+    <LinearGradientBrush x:Key="VerticalLinearBlackBrush2" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#606060"/>
+        <GradientStop Offset="0.5" Color="#585858"/>
+        <GradientStop Offset="1" Color="#606060"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="VerticalLinearWhiteBrush" StartPoint="1,0" EndPoint="0.7,1">
+        <GradientStop Offset="0" Color="#f0f0f0"/>
+        <GradientStop Offset="1" Color="#a0a0a0"/>
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HorizonLinearWhiteBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#c0c0c0"/>
+        <GradientStop Offset="1" Color="#a0a0a0"/>
+    </LinearGradientBrush>
     <!-- Simple Thumb - The Thumb is the draggable part of the Scrollbar -->
     <Style x:Key="SimpleThumbStyle" TargetType="{x:Type Thumb}" BasedOn="{x:Null}">
         <Setter Property="Template">
@@ -44,7 +65,7 @@
                     <Grid Margin="0,0,0,0" x:Name="Grid">
                         <Rectangle HorizontalAlignment="Stretch" x:Name="Rectangle" VerticalAlignment="Stretch"
                                     Height="Auto" RadiusX="2" RadiusY="2"
-                                   Fill="{StaticResource ExtraLightBrush}"
+                                   Fill="{StaticResource VerticalLinearBlackBrush2}"
                                    Width="10"
                                    Stroke="{DynamicResource NormalBorderBrush}" />
                     </Grid>
@@ -59,8 +80,8 @@
         </Setter>
     </Style>
     <Style x:Key="SimpleRepeatButton1" TargetType="{x:Type RepeatButton}" BasedOn="{x:Null}">
-        <Setter Property="Background" Value="{StaticResource ExtraLightBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ExtraLight80Brush}"/>
+        <Setter Property="Background" Value="{StaticResource HorizonLinearBlackBrush3}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ExtraLight40Brush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
@@ -77,15 +98,15 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource LightBrush}"
+                            <Setter Property="Background" Value="{StaticResource HorizonLinearWhiteBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Background" Value="{StaticResource GreyBrush}"
+                            <Setter Property="Background" Value="{StaticResource LightGrayBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Background" Value="{StaticResource GreyBrush}"
+                            <Setter Property="Background" Value="{StaticResource LightGrayBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -94,8 +115,8 @@
         </Setter>
     </Style>
     <Style x:Key="SimpleRepeatButton2" TargetType="{x:Type RepeatButton}" BasedOn="{x:Null}">
-        <Setter Property="Background" Value="{StaticResource ExtraLightBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ExtraLight80Brush}"/>
+        <Setter Property="Background" Value="{StaticResource HorizonLinearBlackBrush3}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ExtraLight40Brush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
@@ -112,15 +133,15 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource LightBrush}"
+                            <Setter Property="Background" Value="{StaticResource HorizonLinearWhiteBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="Background" Value="{StaticResource GreyBrush}"
+                            <Setter Property="Background" Value="{StaticResource LightGrayBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Background" Value="{StaticResource GreyBrush}"
+                            <Setter Property="Background" Value="{StaticResource LightGrayBrush}"
                                     TargetName="Border"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -148,7 +169,7 @@
     </Style>
     <Style x:Key="SimpleScrollBar" TargetType="{x:Type ScrollBar}">
         <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="{StaticResource ExtraBlackBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollBar}">
@@ -164,7 +185,10 @@
                                           Style="{StaticResource SimpleRepeatButton1}" 
                                           Command="ScrollBar.LineUpCommand">
                             <Grid>
-                                <Path x:Name="DecreaseArrow" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Data="M 0 4 L 8 4 L 4 0 Z"/>
+                                <Path x:Name="DecreaseArrow"
+                                      Stroke="{TemplateBinding Foreground}"
+                                      StrokeThickness="1"
+                                      Data="M 1 4 L 7 4 L 4 0 Z" />
                             </Grid>
                         </RepeatButton>
 
@@ -190,7 +214,10 @@
                                       Style="{StaticResource SimpleRepeatButton2}" 
                                       Command="ScrollBar.LineDownCommand">
                             <Grid>
-                                <Path x:Name="IncreaseArrow" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                <Path x:Name="IncreaseArrow" 
+                                      Stroke="{TemplateBinding Foreground}"
+                                      StrokeThickness="1"
+                                      Data="M 1 0 L 4 4 L 7 0 Z" />
                             </Grid>
                         </RepeatButton>
                     </Grid>
@@ -233,18 +260,30 @@
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                     <Grid Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                             <ColumnDefinition Width="*"/>
+                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <ScrollContentPresenter Grid.Column="0" Grid.Row="0" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" CanContentScroll="{TemplateBinding CanContentScroll}"/>
-
                         <!-- ScrollBars 的可见性通过控件的实现来控制 -->
-                        <ScrollBar Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0" Grid.Row="1" x:Name="PART_HorizontalScrollBar" Style="{DynamicResource SimpleScrollBar}" Orientation="Horizontal" Value="{Binding Path=HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Minimum="0" Maximum="{TemplateBinding ScrollableWidth}" />
-                        <ScrollBar Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="1" Grid.Row="0" x:Name="PART_VerticalScrollBar" Style="{DynamicResource SimpleScrollBar}" Orientation="Vertical" Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Minimum="0" Maximum="{TemplateBinding ScrollableHeight}" />
+                        <ScrollBar Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Grid.Column="0"
+                                   Grid.Row="0" x:Name="PART_HorizontalScrollBar"
+                                   Style="{DynamicResource SimpleScrollBar}" Orientation="Horizontal"
+                                   Value="{Binding Path=HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}" Minimum="0"
+                                   Maximum="{TemplateBinding ScrollableWidth}" />
+                        <ScrollContentPresenter Grid.Column="0" Grid.Row="1" Margin="{TemplateBinding Padding}"
+                                                Content="{TemplateBinding Content}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                CanContentScroll="{TemplateBinding CanContentScroll}" />
+                        <ScrollBar Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Grid.Column="1"
+                                   Grid.Row="0" x:Name="PART_VerticalScrollBar"
+                                   Style="{DynamicResource SimpleScrollBar}" Orientation="Vertical"
+                                   Value="{Binding Path=VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}" Minimum="0"
+                                   Maximum="{TemplateBinding ScrollableHeight}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

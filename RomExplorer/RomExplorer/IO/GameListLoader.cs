@@ -244,7 +244,12 @@ namespace RomExplorer.IO
                     var game = new Game(romPath);
 
                     if (!Directory.Exists(game.MetaDirectory))
+                    {
                         Directory.CreateDirectory(game.MetaDirectory);
+                        var metaDir = new DirectoryInfo(game.MetaDirectory);
+                        metaDir.Attributes = metaDir.Attributes | FileAttributes.Hidden;
+                    }
+
                     if (!Directory.Exists(game.ScreenShotDirectory))
                         Directory.CreateDirectory(game.ScreenShotDirectory);
 

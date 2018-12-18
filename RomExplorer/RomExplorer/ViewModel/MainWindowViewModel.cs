@@ -13,7 +13,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace RomExplorer.ViewModel
 {
@@ -64,9 +66,11 @@ namespace RomExplorer.ViewModel
                 return new DelegateCommand(obj =>
                 {
                     if (CurrentMachine == null) return;
+                    if (CurrentGame == null) return;
                     if (CurrentMachine.DescriptionEditable)
                     {
-                        CurrentGame?.CommitChanges();
+                        CurrentGame.Description = (string)obj;
+                        CurrentGame.CommitChanges();
                         CurrentMachine.DescriptionEditable = false;
                     }
                     else
@@ -324,8 +328,11 @@ namespace RomExplorer.ViewModel
 
                     var list = App.GameListLoader.LoadConsoles(true);
                     ConsoleMachines = list;
-                    CurrentMachine = ConsoleMachines.FirstOrDefault(k => k.Path == CurrentMachine?.Path);
-                    CurrentGame = CurrentMachine?.Games.FirstOrDefault(k => k.Path == CurrentGame?.Path);
+                    CurrentMachine = null;
+                    CurrentGame = null;
+                    //CurrentMachine = ConsoleMachines.FirstOrDefault(k => k.Path == CurrentMachine?.Path);
+                    //CurrentGame = CurrentMachine?.Games.FirstOrDefault(k => k.Path == CurrentGame?.Path);
+                    //if (CurrentMachine != null) StartScanTask();
                 });
             }
         }

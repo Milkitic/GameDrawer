@@ -12,7 +12,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="960"
         Loaded="Window_Loaded"
-        MinWidth="583" MinHeight="479" Background="Transparent"
+        MinWidth="960" MinHeight="720" Background="Transparent"
         Activated="Window_Activated" Deactivated="Window_Deactivated">
     <Window.Style>
         <Style TargetType="{x:Type Window}">
@@ -45,6 +45,7 @@
         <converters:ChromeHoverForegroundConverter x:Key="ChromeHoverForegroundConverter" />
         <converters:ChromeHoverBackgroundConverter x:Key="ChromeHoverBackgroundConverter" />
         <converters:QuoteHeightConverter x:Key="QuoteHeightConverter" />
+        <converters:CanShowMultiConverter x:Key="CanShowMultiConverter" />
         <converters:CanShowConverter x:Key="CanShowConverter" />
         <converters:CannotShowConverter x:Key="CannotShowConverter" />
         <converters:ContentConverter x:Key="ContentConverter" />
@@ -113,16 +114,24 @@
                                         </Viewbox>
                                     </StackPanel>
                                     <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ExtraLight80Brush}" />
-                                            <Setter TargetName="Left" Property="Fill" Value="{StaticResource ExtraLight80Brush}" />
-                                            <Setter TargetName="Right" Property="Fill" Value="{StaticResource ExtraLight80Brush}" />
-                                        </Trigger>
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" Value="True" />
+                                                <Condition Property="IsChecked" Value="False" />
+                                            </MultiTrigger.Conditions>
+                                            <Setter TargetName="Border" Property="Background"
+                                                    Value="{StaticResource ExtraLight40Brush}" />
+                                            <Setter TargetName="Border" Property="CornerRadius" Value="5" />
+                                        </MultiTrigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ExtraLightBrush}" />
-                                            <Setter TargetName="Left" Property="Fill" Value="{StaticResource ExtraLightBrush}" />
-                                            <Setter TargetName="Right" Property="Fill" Value="{StaticResource ExtraLightBrush}" />
-                                            <Setter TargetName="LblName" Property="Foreground" Value="{StaticResource ExtraBlackBrush}" />
+                                            <Setter TargetName="Border" Property="Background"
+                                                    Value="{StaticResource VerticalLinearWhiteBrush}" />
+                                            <Setter TargetName="Left" Property="Fill"
+                                                    Value="{StaticResource GrayBrush}" />
+                                            <Setter TargetName="Right" Property="Fill"
+                                                    Value="{StaticResource GrayBrush}" />
+                                            <Setter TargetName="LblName" Property="Foreground"
+                                                    Value="{StaticResource ExtraBlackBrush}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -140,6 +149,7 @@
         <ControlTemplate x:Key="GameItemTemplate" TargetType="{x:Type ListBoxItem}">
             <ToggleButton x:Name="BtnGame" VerticalAlignment="Center"
                           MinHeight="32" MinWidth="92"
+                          Foreground="{StaticResource ExtraLightBrush}"
                           Tag="{Binding Identity}"
                           Click="BtnGame_Click"
                           MouseDoubleClick="BtnGame_MouseDoubleClick">
@@ -153,16 +163,16 @@
                                             BorderBrush="Transparent"
                                             BorderThickness="1">
                                         <ContentPresenter Margin="0,3,0,0" Content="{TemplateBinding Content}"
-                                                          ClipToBounds="False"/>
+                                                          ClipToBounds="False" />
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#809AD0F0" />
+                                            <Setter TargetName="Border" Property="Background" Value="#409AD0F0" />
                                             <Setter TargetName="Border" Property="BorderBrush" Value="#604A70E0" />
                                             <Setter TargetName="Border" Property="BorderThickness" Value="1" />
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#D09AD0F0"></Setter>
+                                            <Setter TargetName="Border" Property="Background" Value="#809AD0F0"></Setter>
                                             <Setter TargetName="Border" Property="BorderBrush" Value="#604A70E0" />
                                             <Setter TargetName="Border" Property="BorderThickness" Value="1" />
                                         </Trigger>
@@ -193,6 +203,9 @@
                            Visibility="{Binding NameEditable,Converter={StaticResource CannotShowConverter}}">
                         <TextBlock TextWrapping="Wrap" Text="{Binding NameWithoutExtension}" MinWidth="5"
                                    TextAlignment="Center" />
+                        <Label.Effect>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="3" Opacity="1" Direction="-90"/>
+                        </Label.Effect>
                     </Label>
                     <TextBox Grid.Row="1" Text="{Binding NameWithoutExtension, Mode=TwoWay}"
                              HorizontalAlignment="Center" MaxWidth="96" Height="Auto"
@@ -211,12 +224,14 @@
         </Style>
 
     </Window.Resources>
-    <Grid Margin="{Binding WindowState,
+    <Grid
+        Margin="{Binding WindowState,
         RelativeSource={RelativeSource FindAncestor,
         AncestorType={x:Type local:MainWindow}},
         Converter={StaticResource WindowMarginConverter}}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding WindowState,
+            <RowDefinition
+                Height="{Binding WindowState,
                                     RelativeSource={RelativeSource FindAncestor,
                                     AncestorType={x:Type local:MainWindow}},
                                     Converter={StaticResource TitleBarHeightConverter}}" />
@@ -228,29 +243,29 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="300" />
-            <ColumnDefinition Width="150" MaxWidth="200" />
+            <ColumnDefinition Width="200" MaxWidth="600" />
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Viewbox Width="20" Height="20" Margin="8,0,2,0">
                 <Canvas Width="1000" Height="1000">
                     <Canvas.RenderTransform>
                         <TransformGroup>
-                            <ScaleTransform ScaleX="0.100000" ScaleY="-0.100000"/>
-                            <TranslateTransform X="0.000000" Y="511.000000"/>
+                            <ScaleTransform ScaleX="0.100000" ScaleY="-0.100000" />
+                            <TranslateTransform X="0.000000" Y="511.000000" />
                         </TransformGroup>
                     </Canvas.RenderTransform>
                     <Path Fill="#5c7ede"
-                          Data="{StaticResource PathApp1}"/>
+                          Data="{StaticResource PathApp1}" />
                     <Path Fill="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"
-                          Data="{StaticResource PathApp2}"/>
+                          Data="{StaticResource PathApp2}" />
                     <Path Fill="#99de88"
-                          Data="{StaticResource PathApp3}"/>
+                          Data="{StaticResource PathApp3}" />
                     <Path Fill="#f56875"
-                          Data="{StaticResource PathApp4}"/>
+                          Data="{StaticResource PathApp4}" />
                 </Canvas>
             </Viewbox>
             <Label Content="Game Drawer" VerticalContentAlignment="Center" FontSize="14"
-                   Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"/>
+                   Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
             <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
                                 DockPanel.Dock="Right"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -264,7 +279,9 @@
                                 Height="37"
                                 Width="50" />
             <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
-                                DockPanel.Dock="Right" Command="{Binding SyncCommand}"
+                                DockPanel.Dock="Right"
+                                Command="{Binding SyncCommand}"
+                                CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
                                 Margin="0,-8,0,0"
                                 DMSystemButtonForeground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"
@@ -275,7 +292,6 @@
                                 IsTabStop="False"
                                 Height="37"
                                 Width="50" />
-
             <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
                                 DockPanel.Dock="Right" Command="{Binding AddNewGameConsole}"
                                 HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -289,14 +305,14 @@
                                 Height="37"
                                 Width="50" />
         </DockPanel>
-        <Border Grid.Row="1" Grid.RowSpan="5"
-                Grid.Column="0" Grid.ColumnSpan="2" Background="#191921">
+        <Border x:Name="FullBackgroundBorder" Grid.Row="1" Grid.RowSpan="5"
+                Grid.Column="0" Grid.ColumnSpan="2" Background="#211919">
         </Border>
         <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="-1,0">
             <DockPanel HorizontalAlignment="Right" Visibility="Collapsed">
                 <dms:DMButton DockPanel.Dock="Right" Command="{Binding SyncCommand}"
                               Width="28" Height="28" CornerRadius="5"
-                              Background="#FF1E9FFF" Cursor="Hand"
+                              Background="#FF1E9FFF"
                               BorderBrush="Transparent">
                     <dms:DMButton.ToolTip>
                         <ToolTip>
@@ -307,12 +323,12 @@
                         </ToolTip>
                     </dms:DMButton.ToolTip>
                     <Viewbox Width="16" Height="16">
-                        <ContentPresenter Content="{StaticResource SvgWhiteRefresh}" />
+                        <ContentControl Template="{StaticResource WhiteRefreshControl}" />
                     </Viewbox>
                 </dms:DMButton>
                 <dms:DMButton DockPanel.Dock="Right" Command="{Binding AddNewGameConsole}"
                               Width="28" Height="28" CornerRadius="5"
-                              Background="#FF2BB669" Cursor="Hand"
+                              Background="#FF2BB669"
                               BorderBrush="Transparent">
                     <dms:DMButton.ToolTip>
                         <ToolTip>
@@ -323,55 +339,57 @@
                         </ToolTip>
                     </dms:DMButton.ToolTip>
                     <Viewbox Width="16" Height="16">
-                        <ContentPresenter Content="{StaticResource SvgWhitePlus}" />
+                        <ContentControl Template="{StaticResource WhitePlusControl}" />
                     </Viewbox>
                 </dms:DMButton>
             </DockPanel>
-             <ListView x:Name="FolderList" Background="Transparent"
-                          BorderThickness="0"
-                          ItemContainerStyle="{StaticResource ConsoleItemStyle}"
-                          ItemsSource="{Binding ConsoleMachines,Mode=OneWay}"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                          ScrollViewer.CanContentScroll="False"
-                          MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}">
-                    <ListView.Style>
-                        <Style TargetType="{x:Type ListView}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListBox}">
-                                        <Grid>
-                                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    Background="{StaticResource HorizonLinearBlackBrush2}"/>
-                                            <ScrollViewer Style="{DynamicResource SimpleScrollViewer}"
-                                                          Focusable="false" Background="{TemplateBinding Background}">
+            <ListView x:Name="FolderList" Background="Transparent"
+                      BorderThickness="0"
+                      ItemContainerStyle="{StaticResource ConsoleItemStyle}"
+                      ItemsSource="{Binding ConsoleMachines,Mode=OneWay}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.CanContentScroll="False"
+                      MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}">
+                <ListView.Style>
+                    <Style TargetType="{x:Type ListView}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBox}">
+                                    <Grid>
+                                        <Border x:Name="Border" 
+                                                Background="{StaticResource HorizonLinearBlackBrush2}" />
+                                        <ScrollViewer Style="{StaticResource SimpleScrollViewer}"
+                                                      Focusable="false" Background="{TemplateBinding Background}">
                                             <Grid>
-                                                <StackPanel Orientation="Horizontal" IsItemsHost="true" />
-
-                                                <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource ExtraLightBrush}" />
-                                            </Grid>  </ScrollViewer>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.Style>
-                </ListView>
+                                                <StackPanel Orientation="Horizontal" IsItemsHost="true" 
+                                                            Margin="0,0,0,2"/>
+                                                <Border BorderThickness="0,0,0,2"
+                                                        BorderBrush="{StaticResource GrayBrush}"
+                                                        Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}" />
+                                            </Grid>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.Style>
+            </ListView>
         </StackPanel>
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
               Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="2" Grid.RowSpan="2" Background="{StaticResource HorizonLinearBlackBrush}" />
             <Viewbox Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
                      Width="32" Height="32" HorizontalAlignment="Left" Margin="8,5,0,0">
-                <ContentPresenter Content="{StaticResource SvgWhiteQuote}" />
+                <ContentControl Template="{StaticResource WhiteQuoteControl}" />
             </Viewbox>
             <Viewbox Grid.Column="0" Grid.Row="1" Margin="32,3,0,3"
                      Height="{Binding ElementName=LblDescription,Path=ActualHeight,Converter={StaticResource QuoteHeightConverter}}"
@@ -379,7 +397,7 @@
                 <Canvas Width="30" Height="30">
                     <Path Stroke="{StaticResource LightGrayBrush}" StrokeThickness="30">
                         <Path.Data>
-                            <LineGeometry StartPoint="0,0" EndPoint="0,30"/>
+                            <LineGeometry StartPoint="0,0" EndPoint="0,30" />
                         </Path.Data>
                     </Path>
                 </Canvas>
@@ -387,21 +405,21 @@
             <Label x:Name="LblDescription" Grid.Column="1" Grid.Row="1" Margin="0,3,0,-4" Foreground="White"
                    VerticalAlignment="Center" HorizontalAlignment="Left">
                 <TextBlock TextWrapping="Wrap" Text="{Binding CurrentMachine.Description}"
-                           LineHeight="23"/>
+                           LineHeight="23" />
             </Label>
         </Grid>
         <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                  AcceptsReturn="True" TextWrapping="Wrap"
                  Text="{Binding CurrentMachine.Description, Mode=TwoWay}" Padding="3,5"
                  Visibility="Collapsed" />
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0"  Background="{StaticResource VerticalLinearBlackBrush}">
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0"
+                    Background="{StaticResource VerticalLinearBlackBrush}">
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RunCommand}"
-                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" >
+                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -411,13 +429,12 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="14" Height="14" Margin="1.5,0,0,0">
-                    <ContentPresenter Content="{StaticResource SvgBlackRun}" />
+                    <ContentControl Template="{StaticResource BlackRunControl}" />
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RenameCommand}">
                 <dms:DMButton.ToolTip>
@@ -429,36 +446,65 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="16" Height="16">
-                    <ContentPresenter Content="{StaticResource SvgBlackEdit}" />
+                    <ContentControl Template="{StaticResource BlackEditControl}" />
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
-                          Content="删除"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding RemoveCommand}" />
+                          Command="{Binding RemoveCommand}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel Margin="2">
+                            <TextBlock Margin="0,0,0,8" FontWeight="Heavy">移除游戏</TextBlock>
+                            <TextBlock>将选中的游戏移除至回收站。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentControl Template="{StaticResource BlackBinControl}" />
+                </Viewbox>
+            </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
-                          Content="设置此文件..."
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding GameConfigCommand}" />
+                          Command="{Binding GameConfigCommand}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel Margin="2">
+                            <TextBlock Margin="0,0,0,8" FontWeight="Heavy">设置游戏</TextBlock>
+                            <TextBlock>对游戏进行单独设置，包括图标、名称、运行参数等。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentControl Template="{StaticResource BlackGearControl}" />
+                </Viewbox>
+            </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
-                          Content="浏览"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding BrowseCommand}" />
+                          Command="{Binding BrowseCommand}">
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel Margin="2">
+                            <TextBlock Margin="0,0,0,8" FontWeight="Heavy">浏览目录</TextBlock>
+                            <TextBlock>打开游戏所在的目录。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentControl Template="{StaticResource BlackFolderControl}" />
+                </Viewbox>
+            </dms:DMButton>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding AddNewGameConsole}" CommandParameter="{Binding CurrentMachine}">
                 <dms:DMButton.ToolTip>
@@ -470,13 +516,12 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="16" Height="16">
-                    <ContentPresenter Content="{StaticResource SvgBlackPlus}" />
+                    <ContentControl Template="{StaticResource BlackPlusControl}" />
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RefreshConsole}">
                 <dms:DMButton.ToolTip>
@@ -488,13 +533,12 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="16" Height="16">
-                    <ContentPresenter Content="{StaticResource SvgBlackRefresh}" />
+                    <ContentControl Template="{StaticResource BlackRefreshControl}" />
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource ExtraLightBrush}"
                           BorderBrush="Gray"
-                          Cursor="Hand"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding ConsoleConfigCommand}">
                 <dms:DMButton.ToolTip>
@@ -506,7 +550,7 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="16" Height="16">
-                    <ContentPresenter Content="{StaticResource SvgBlackGear}" />
+                    <ContentControl Template="{StaticResource BlackGearControl}" />
                 </Viewbox>
             </dms:DMButton>
         </StackPanel>
@@ -517,12 +561,15 @@
                    Stretch="UniformToFill"
                    VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Image.Effect>
-                    <BlurEffect Radius="80"/>
+                    <BlurEffect Radius="10" />
                 </Image.Effect>
             </Image>
         </Border>
-        <ListView Grid.Row="4" Grid.Column="0" Background="Transparent" 
-                  x:Name="GameList"
+        <Border x:Name="BackCoverBorder" Grid.Row="4" Grid.Column="0"
+                Background="#b0000000">
+        </Border>
+        <ListView x:Name="GameList"
+                  Grid.Row="4" Grid.Column="0" Background="Transparent"
                   BorderThickness="0"
                   ItemContainerStyle="{StaticResource GameItemStyle}"
                   ItemsSource="{Binding CurrentMachine.VisibleGames,Mode=OneWay,IsAsync=True}"
@@ -538,29 +585,64 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
-        <Grid Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
-              Background="#7070A9F0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0">
-                <TextBlock TextWrapping="Wrap" Text="{Binding CurrentGame.Description}" />
-            </Label>
-            <TextBox Grid.Row="0"
-                     AcceptsReturn="True" TextWrapping="Wrap"
-                     Text="{Binding CurrentGame.Description, Mode=TwoWay}"
-                     VerticalContentAlignment="Center" Padding="3,0"
-                     Visibility="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource CanShowConverter}}" />
-            <Button Grid.Row="1"
-                    Content="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource ContentConverter}}"
-                    Command="{Binding ChangeEditabilityCommand}" />
-            <Label Grid.Row="2" Content="{Binding CurrentGame.Extension,Converter={StaticResource GameInfoConverter},ConverterParameter=concat;格式：;文件}" />
-            <Label Grid.Row="3" Content="{Binding CurrentGame.Length,Converter={StaticResource GameInfoConverter},ConverterParameter=convert-size|concat;大小：;}" />
-        </Grid>
-        <GridSplitter Grid.Row="4" Grid.Column="0" Width="4"></GridSplitter>
+        <Border x:Name="DetailBorder" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
+                BorderThickness="0,4,0,0" BorderBrush="{StaticResource VerticalLinearBlackBrush}">
+            <Grid x:Name="DetailGrid"
+                  Background="{StaticResource HorizonLinearBlackBrush2}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ScrollViewer x:Name="SvDescription" Grid.Row="0" MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                    <Label x:Name="LblGameDescription" Foreground="White">
+                        <TextBlock TextWrapping="Wrap" Text="{Binding CurrentGame.Description}" />
+                        <Label.Visibility>
+                            <MultiBinding Converter="{StaticResource CanShowMultiConverter}"
+                                          ConverterParameter="False">
+                                <Binding Path="CurrentMachine"/>
+                                <Binding Path="CurrentMachine.DescriptionEditable"/>
+                            </MultiBinding>
+                        </Label.Visibility>
+                    </Label>
+                </ScrollViewer>
+                <TextBox Name="TbGameDescription"
+                         Grid.Row="0" MaxHeight="{Binding ElementName=SvDescription,Path=MaxHeight}"
+                         AcceptsReturn="True" TextWrapping="Wrap"
+                         Text="{Binding CurrentGame.Description, Mode=OneWay}"
+                         VerticalAlignment="Top" VerticalScrollBarVisibility="Auto"
+                         VerticalContentAlignment="Top" Padding="3,4">
+                    <!--Visibility="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource CanShowConverter}}"-->
+                    <TextBox.Visibility>
+                        <MultiBinding Converter="{StaticResource CanShowMultiConverter}"
+                                      ConverterParameter="True">
+                            <Binding Path="CurrentMachine"/>
+                            <Binding Path="CurrentMachine.DescriptionEditable"/>
+                        </MultiBinding>
+                    </TextBox.Visibility>
+                </TextBox>
+                <dms:DMButton Grid.Row="1"
+                              Width="24" Height="24" CornerRadius="3" Margin="5"
+                              Background="Transparent"
+                              BorderBrush="{StaticResource ExtraLight20Brush}"
+                              HorizontalAlignment="Right"
+                              Command="{Binding ChangeEditabilityCommand}"
+                              CommandParameter="{Binding ElementName=TbGameDescription,Path=Text}"
+                              Visibility="{Binding CurrentGame,Converter={StaticResource VisibilityConverter}}"
+                              Cursor="Hand">
+                    <Viewbox Width="16" Height="16">
+                        <ContentControl
+                            Template="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource ContentConverter}}" />
+                    </Viewbox>
+                </dms:DMButton>
+                <Label Grid.Row="2" Foreground="White"
+                       Content="{Binding CurrentGame.Extension,Converter={StaticResource GameInfoConverter},ConverterParameter=concat;格式：;文件}" />
+                <Label Grid.Row="3" Foreground="White"
+                       Content="{Binding CurrentGame.Length,Converter={StaticResource GameInfoConverter},ConverterParameter=convert-size|concat;大小：;}" />
+            </Grid>
+        </Border>
+        <GridSplitter Grid.Row="4" Grid.Column="0" Width="4" Background="{StaticResource VerticalLinearBlackBrush}" />
         <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
