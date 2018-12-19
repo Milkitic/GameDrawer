@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DMSkin.Core, Version=2.5.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DMSkin.Core.2.5.1.1\lib\net40\DMSkin.Core.dll</HintPath>
@@ -72,6 +75,7 @@
     <Compile Include="Controls\ClippingBorder.cs" />
     <Compile Include="Converters\ConsoleConfigWindowConverter.cs" />
     <Compile Include="Converters\MainWindowConverter.cs" />
+    <Compile Include="Converters\MultiValueConverter.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="FocusExtension.cs" />
     <Compile Include="IO\FileExtension.cs" />
@@ -88,6 +92,7 @@
     <Compile Include="ShortCut.cs" />
     <Compile Include="ViewModel\AddConsolePageViewModel.cs" />
     <Compile Include="ViewModel\AddGamePageViewModel.cs" />
+    <Compile Include="ViewModel\AddViewModel.cs" />
     <Compile Include="ViewModel\ConsoleConfigWindowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Page Include="Pages\AddConsolePage.xaml">
@@ -95,6 +100,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\AddGamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ButtonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\DMTextBoxModified.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -156,6 +169,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

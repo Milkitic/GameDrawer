@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,9 +21,19 @@ namespace RomExplorer
 
         static App()
         {
+            SetAlignment();
             Config = Config.LoadOrCreateConfig();
-
             GameListLoader = new GameListLoader();
+        }
+
+        private static void SetAlignment()
+        {
+            var ifLeft = SystemParameters.MenuDropAlignment;
+
+            if (!ifLeft) return;
+            var t = typeof(SystemParameters);
+            var field = t.GetField("_menuDropAlignment", BindingFlags.NonPublic | BindingFlags.Static);
+            field?.SetValue(null, false);
         }
 
         private void Application_Activated(object sender, EventArgs e)

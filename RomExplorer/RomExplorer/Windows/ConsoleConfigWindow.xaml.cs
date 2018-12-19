@@ -67,5 +67,10 @@ namespace RomExplorer.Windows
         {
             Console.WriteLine(ViewModel?.UseWhiteList);
         }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            this.HideMinimizeAndMaximizeButtons();
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Milkitic.WpfApi;
 using Milkitic.WpfApi.Commands;
+using RomExplorer.IO;
 using RomExplorer.Model;
 using System;
 using System.Collections.Generic;
@@ -120,8 +121,18 @@ namespace RomExplorer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
+                    string validName;
+                    try
+                    {
+                        validName = FileExtension.ValidateFileName(Name);
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                     _fileModelBase.SetIcon(IconPath);
-                    _fileModelBase.NameWithoutExtension = Name.Trim();
+                    _fileModelBase.NameWithoutExtension = validName;
                     _fileModelBase.Description = Description.Trim();
                     _fileModelBase.CommitChanges();
                     _gameConsoleConfig.Identity = _fileModelBase.Identity;
@@ -138,7 +149,7 @@ namespace RomExplorer.ViewModel
                 });
             }
         }
-        
+
         public ICommand BrowseIconCommand
         {
             get

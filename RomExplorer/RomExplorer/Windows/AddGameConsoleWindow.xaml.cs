@@ -1,5 +1,6 @@
 ﻿using RomExplorer.Model;
 using RomExplorer.Pages;
+using RomExplorer.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace RomExplorer.Windows
     {
         private readonly ConsoleMachine _console;
 
+        public AddViewModel ViewModel { get; set; }
+
         public AddGameConsoleWindow(ConsoleMachine console)
         {
             _console = console;
@@ -31,6 +34,8 @@ namespace RomExplorer.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            ViewModel = (AddViewModel)DataContext;
+            ViewModel.ConsoleMachine = _console;
             if (_console == null)
             {
                 MainFrame.Navigate(new AddConsolePage(this));
@@ -39,6 +44,13 @@ namespace RomExplorer.Windows
             {
                 MainFrame.Navigate(new AddGamePage(this, _console));
             }
+
+            Height = MinHeight;
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            this.HideMinimizeAndMaximizeButtons();
         }
     }
 }

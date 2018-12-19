@@ -45,6 +45,11 @@ namespace RomExplorer.Pages
 
         private void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
+            if (!File.Exists(ViewModel.Path))
+            {
+                MessageBox.Show("文件不存在。", Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             var fileName = FileExtension.TryValidateFileName(ViewModel.Name, out var trueName)
                 ? trueName
                 : Path.GetFileNameWithoutExtension(ViewModel.Path);

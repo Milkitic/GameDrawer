@@ -42,7 +42,16 @@ namespace RomExplorer.Pages
 
         private void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
-            var trueName = FileExtension.ValidateFileName(ViewModel.Name);
+            string trueName;
+            try
+            {
+                trueName = FileExtension.ValidateFileName(ViewModel.Name);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             var path = Path.Combine(App.Config.GameDirectory, trueName);
             Directory.CreateDirectory(path);
             var console = new ConsoleMachine(path);

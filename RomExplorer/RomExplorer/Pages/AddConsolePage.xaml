@@ -1,33 +1,82 @@
 ﻿<Page x:Class="RomExplorer.Pages.AddConsolePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:RomExplorer.Pages"
       xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
-      mc:Ignorable="d" 
+      xmlns:dms="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
+      mc:Ignorable="d"
       d:DesignHeight="225" d:DesignWidth="450"
       Title="AddConsolePage" Loaded="Page_Loaded">
     <Page.DataContext>
         <viewModel:AddConsolePageViewModel />
     </Page.DataContext>
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Viewbox Grid.Row="0" Width="32" Height="32">
-            <Image Source="{Binding IconPath,Mode=TwoWay}" RenderOptions.BitmapScalingMode="HighQuality"/>
-        </Viewbox>
-        <Button Grid.Row="1" HorizontalAlignment="Center" Content="选择图标..."
-                Command="{Binding SelectIconPath}" />
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5,0" HorizontalAlignment="Center">
-            <Label Content="名称："/>
-            <TextBox Text="{Binding Name,Mode=TwoWay}" MinWidth="300"/>
-        </StackPanel>
-        <Button Grid.Row="3" HorizontalAlignment="Center" Content="确定"
-                Click="BtnCreate_Click"/>
+        <GroupBox Margin="10,5">
+            <GroupBox.Header>
+                <Label Content="常规" Foreground="{StaticResource ExtraLightBrush}" />
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition  />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="名称" Foreground="{StaticResource ExtraLightBrush}"
+                       VerticalContentAlignment="Center" />
+                <dms:DMTextBox Grid.Row="1" Text="{Binding Name,Mode=TwoWay}"
+                               Height="28" Margin="10,2" Padding="2,0"
+                               Foreground="{StaticResource ExtraLightBrush}"
+                               CaretBrush="{StaticResource ExtraLightBrush}"
+                               VerticalContentAlignment="Center" />
+                <Label Grid.Column="0" Grid.Row="2" Foreground="{StaticResource ExtraLightBrush}"
+                       Content="图标" VerticalContentAlignment="Center" />
+                <StackPanel Grid.Row="3" Grid.Column="0"
+                            Orientation="Horizontal">
+                    <Border Background="{StaticResource VerticalLinearBlackBrush2}" Width="64" Height="64"
+                            Margin="10,3,5,10">
+                        <Viewbox Width="48" Height="48">
+                            <Image Source="{Binding IconPath,Mode=TwoWay}"
+                                   RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.Effect>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="5" Opacity="0.5" Direction="-90" />
+                                </Image.Effect>
+                            </Image>
+                        </Viewbox>
+                    </Border>
+                    <dms:DMButton Width="24" Height="24" CornerRadius="3" Margin="5"
+                                  Background="Transparent"
+                                  BorderBrush="{StaticResource ExtraLight40Brush}"
+                                  HorizontalAlignment="Right"
+                                  Command="{Binding SelectIconPath}">
+                        <Viewbox Width="16" Height="16">
+                            <ContentControl
+                                Template="{StaticResource WhiteEditControl}" />
+                        </Viewbox>
+                    </dms:DMButton>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <dms:DMButton Grid.Row="1"
+                      Margin="10,4" Padding="5,0"
+                      Height="28" Width="80"
+                      CornerRadius="3"
+                      Content="确定" HorizontalAlignment="Right"
+                      Click="BtnCreate_Click">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="#c4c4c4" />
+                    <GradientStop Offset="0.4" Color="#c4c4c4" />
+                    <GradientStop Offset="0.6" Color="#f0f0f0" />
+                    <GradientStop Offset="1" Color="#f0f0f0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </dms:DMButton>
     </Grid>
 </Page>

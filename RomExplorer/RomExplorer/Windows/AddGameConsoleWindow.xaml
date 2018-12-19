@@ -4,9 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RomExplorer.Windows"
+        xmlns:model="clr-namespace:RomExplorer.Model"
+        xmlns:viewModel="clr-namespace:RomExplorer.ViewModel"
         mc:Ignorable="d"
-        Title="AddGameConsoleWindow" Height="371.875" Width="571.875"
-        Loaded="Window_Loaded">
+        Title="{Binding ConsoleMachine,Converter={StaticResource WindowConverter},ConverterParameter=Title}"
+        MinHeight="{Binding ConsoleMachine,Converter={StaticResource WindowConverter},ConverterParameter=Height}"
+        Height="365"
+        Width="450"
+        Loaded="Window_Loaded" WindowStartupLocation="CenterOwner"
+        SourceInitialized="Window_SourceInitialized"
+        Background="{StaticResource HorizonLinearBlackBrush2}">
+    <Window.DataContext>
+        <viewModel:AddViewModel />
+    </Window.DataContext>
     <Grid>
         <Frame x:Name="MainFrame" Content=""></Frame>
     </Grid>

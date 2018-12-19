@@ -18,14 +18,16 @@ namespace RomExplorer.Converters
             bool isConsole = value is ConsoleMachine;
             switch (type)
             {
+                case "FileModel":
+                    return isConsole ? "分类设置" : "游戏设置";
                 case "Name":
-                    return isConsole ? "文件夹名：" : "文件名：";
+                    return isConsole ? "分类名称" : "游戏名称";
                 case "Host":
-                    return isConsole ? "默认启动程序：" : "启动程序：";
+                    return isConsole ? "默认启动程序" : "启动程序";
                 case "Arg":
-                    return isConsole ? "默认启动参数：" : "启动参数：";
+                    return isConsole ? "默认启动参数" : "启动参数";
                 case "Des":
-                    return isConsole ? "分类描述：" : "文件描述：";
+                    return isConsole ? "分类描述" : "文件描述";
                 default:
                     return null;
             }

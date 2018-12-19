@@ -19,8 +19,8 @@
             <Setter Property="WindowChrome.WindowChrome">
                 <Setter.Value>
                     <WindowChrome CornerRadius="0"
-                                  CaptionHeight="44"
-                                  GlassFrameThickness="1,44,1,1"
+                                  CaptionHeight="31"
+                                  GlassFrameThickness="1,31,1,1"
                                   UseAeroCaptionButtons="True"
                                   NonClientFrameEdges="None"
                                   ResizeBorderThickness="3" />
@@ -54,6 +54,9 @@
         <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
         <converters:GameInfoConverter x:Key="GameInfoConverter" />
+
+        <!--search-->
+        <converters:NotEmptyShowConverter x:Key="NotEmptyShowConverter" />
 
         <ControlTemplate x:Key="ConsoleItemTemplate" TargetType="{x:Type ListBoxItem}">
             <ToggleButton x:Name="BtnConsole" VerticalAlignment="Top"
@@ -246,7 +249,7 @@
             <ColumnDefinition Width="200" MaxWidth="600" />
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <Viewbox Width="20" Height="20" Margin="8,0,2,0">
+            <Viewbox Width="16" Height="16" Margin="8,0,2,0">
                 <Canvas Width="1000" Height="1000">
                     <Canvas.RenderTransform>
                         <TransformGroup>
@@ -264,118 +267,158 @@
                           Data="{StaticResource PathApp4}" />
                 </Canvas>
             </Viewbox>
-            <Label Content="Game Drawer" VerticalContentAlignment="Center" FontSize="14"
+            <Label Content="Game Drawer" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
-            <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
-                                DockPanel.Dock="Right"
-                                HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Margin="0,-8,145,0"
-                                DMSystemButtonForeground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"
-                                DMSystemButtonHoverForeground="{Binding WindowActivated,Converter={StaticResource ChromeHoverForegroundConverter}}"
-                                DMSystemButtonHoverColor="{Binding WindowActivated,Converter={StaticResource ChromeHoverBackgroundConverter}}"
-                                DMSystemButtonSize="45"
-                                Icon="{StaticResource PathGear}"
-                                IsTabStop="False"
-                                Height="37"
-                                Width="50" />
-            <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
-                                DockPanel.Dock="Right"
-                                Command="{Binding SyncCommand}"
-                                CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
-                                HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Margin="0,-8,0,0"
-                                DMSystemButtonForeground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"
-                                DMSystemButtonHoverForeground="{Binding WindowActivated,Converter={StaticResource ChromeHoverForegroundConverter}}"
-                                DMSystemButtonHoverColor="{Binding WindowActivated,Converter={StaticResource ChromeHoverBackgroundConverter}}"
-                                DMSystemButtonSize="45"
-                                Icon="{StaticResource PathLightRefresh}"
-                                IsTabStop="False"
-                                Height="37"
-                                Width="50" />
-            <dms:DMSystemButton WindowChrome.IsHitTestVisibleInChrome="True"
-                                DockPanel.Dock="Right" Command="{Binding AddNewGameConsole}"
-                                HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Margin="0,-8,0,0"
-                                DMSystemButtonForeground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}"
-                                DMSystemButtonHoverForeground="{Binding WindowActivated,Converter={StaticResource ChromeHoverForegroundConverter}}"
-                                DMSystemButtonHoverColor="{Binding WindowActivated,Converter={StaticResource ChromeHoverBackgroundConverter}}"
-                                DMSystemButtonSize="45"
-                                Icon="{StaticResource PathLightPlus}"
-                                IsTabStop="False"
-                                Height="37"
-                                Width="50" />
+            <StackPanel Margin="0,0,148,0" DockPanel.Dock="Right" Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Grid>
+                    <dms:DMTextBox 
+                        x:Name="ConsoleSearchBox"
+                        CornerRadius="11" Padding="5,0"
+                        VerticalContentAlignment="Center"
+                        Background="White"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Height="22" Width="150"
+                        Text="{Binding ConsoleSearchString,Mode=TwoWay}"
+                        TextChanged="ConsoleSearchBox_TextChanged"
+                        Hint="搜索分类" />
+                    <dms:DMButton
+                        Visibility="{Binding ElementName=ConsoleSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Command="{Binding ClearConsoleSearchBoxCommand}"
+                        IsTabStop="False"
+                        HorizontalAlignment="Right"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="20" Height="20"
+                        Margin="3,0">
+                        <Viewbox Width="18" Height="18">
+                            <Viewbox.Effect>
+                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                            </Viewbox.Effect>
+                            <ContentControl Template="{StaticResource BlackNoControl}"/>
+                        </Viewbox>
+                    </dms:DMButton>
+                </Grid>
+                <Button WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource ChromeButtonStyle}"
+                        Command="{Binding AddNewGameConsole}"
+                        IsTabStop="False"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="30"
+                        Margin="1,0">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource MultiCommandParameterConverter}">
+                            <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                    <Button.Content>
+                        <Viewbox Width="14" Height="14">
+                            <Viewbox.Effect>
+                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                            </Viewbox.Effect>
+                            <ContentControl Template="{StaticResource WhiteLightPlusControl}"/>
+                        </Viewbox>
+                    </Button.Content>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            <StackPanel Margin="2">
+                                <TextBlock Margin="0,0,0,8" FontWeight="Heavy">添加分类</TextBlock>
+                                <TextBlock>在主页上添加一个分类。</TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource ChromeButtonStyle}"
+                        Command="{Binding SyncCommand}"
+                        CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
+                        IsTabStop="False"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="30"
+                        Margin="1,0">
+                    <Button.Content>
+                        <Viewbox Width="14" Height="14">
+                            <Viewbox.Effect>
+                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                            </Viewbox.Effect>
+                            <ContentControl Template="{StaticResource WhiteLightRefreshControl}"/>
+                        </Viewbox>
+                    </Button.Content>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            <StackPanel Margin="2">
+                                <TextBlock Margin="0,0,0,8" FontWeight="Heavy">同步资源</TextBlock>
+                                <TextBlock>重新加载硬盘上的所有分类。</TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button WindowChrome.IsHitTestVisibleInChrome="True"
+                        Style="{StaticResource ChromeButtonStyle}"
+                        IsTabStop="False"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="30"
+                        Margin="1,0">
+                    <Button.Content>
+                        <Viewbox Width="16" Height="16">
+                            <Viewbox.Effect>
+                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                            </Viewbox.Effect>
+                            <ContentControl Template="{StaticResource WhiteLightGearControl}"/>
+                        </Viewbox>
+                    </Button.Content>
+                    <Button.ToolTip>
+                        <ToolTip>
+                            <StackPanel Margin="2">
+                                <TextBlock Margin="0,0,0,8" FontWeight="Heavy">全局设置</TextBlock>
+                                <TextBlock>进行程序的全局设置和偏好设置。</TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>
         </DockPanel>
         <Border x:Name="FullBackgroundBorder" Grid.Row="1" Grid.RowSpan="5"
                 Grid.Column="0" Grid.ColumnSpan="2" Background="#211919">
         </Border>
-        <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="-1,0">
-            <DockPanel HorizontalAlignment="Right" Visibility="Collapsed">
-                <dms:DMButton DockPanel.Dock="Right" Command="{Binding SyncCommand}"
-                              Width="28" Height="28" CornerRadius="5"
-                              Background="#FF1E9FFF"
-                              BorderBrush="Transparent">
-                    <dms:DMButton.ToolTip>
-                        <ToolTip>
-                            <StackPanel Margin="2">
-                                <TextBlock Margin="0,0,0,8" FontWeight="Heavy">同步资源</TextBlock>
-                                <TextBlock>重新加载硬盘上的所有分类</TextBlock>
-                            </StackPanel>
-                        </ToolTip>
-                    </dms:DMButton.ToolTip>
-                    <Viewbox Width="16" Height="16">
-                        <ContentControl Template="{StaticResource WhiteRefreshControl}" />
-                    </Viewbox>
-                </dms:DMButton>
-                <dms:DMButton DockPanel.Dock="Right" Command="{Binding AddNewGameConsole}"
-                              Width="28" Height="28" CornerRadius="5"
-                              Background="#FF2BB669"
-                              BorderBrush="Transparent">
-                    <dms:DMButton.ToolTip>
-                        <ToolTip>
-                            <StackPanel Margin="2">
-                                <TextBlock Margin="0,0,0,8" FontWeight="Heavy">添加分类</TextBlock>
-                                <TextBlock>在主页上添加一个分类</TextBlock>
-                            </StackPanel>
-                        </ToolTip>
-                    </dms:DMButton.ToolTip>
-                    <Viewbox Width="16" Height="16">
-                        <ContentControl Template="{StaticResource WhitePlusControl}" />
-                    </Viewbox>
-                </dms:DMButton>
-            </DockPanel>
-            <ListView x:Name="FolderList" Background="Transparent"
-                      BorderThickness="0"
-                      ItemContainerStyle="{StaticResource ConsoleItemStyle}"
-                      ItemsSource="{Binding ConsoleMachines,Mode=OneWay}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.CanContentScroll="False"
-                      MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}">
-                <ListView.Style>
-                    <Style TargetType="{x:Type ListView}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBox}">
-                                    <Grid>
-                                        <Border x:Name="Border" 
-                                                Background="{StaticResource HorizonLinearBlackBrush2}" />
-                                        <ScrollViewer Style="{StaticResource SimpleScrollViewer}"
-                                                      Focusable="false" Background="{TemplateBinding Background}">
-                                            <Grid>
-                                                <StackPanel Orientation="Horizontal" IsItemsHost="true" 
-                                                            Margin="0,0,0,2"/>
-                                                <Border BorderThickness="0,0,0,2"
-                                                        BorderBrush="{StaticResource GrayBrush}"
-                                                        Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}" />
-                                            </Grid>
-                                        </ScrollViewer>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.Style>
-            </ListView>
-        </StackPanel>
+        <ListView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="-1,0"
+                  x:Name="FolderList" Background="Transparent"
+                  BorderThickness="0"
+                  ItemContainerStyle="{StaticResource ConsoleItemStyle}"
+                  ItemsSource="{Binding SearchedConsoleMachines,Mode=OneWay}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.CanContentScroll="False"
+                  MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}"
+                  MinHeight="90">
+            <ListView.Style>
+                <Style TargetType="{x:Type ListView}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBox}">
+                                <Grid>
+                                    <Border x:Name="Border"
+                                            Background="{StaticResource HorizonLinearBlackBrush2}" />
+                                    <ScrollViewer Style="{StaticResource SimpleScrollViewer}"
+                                                  Focusable="false" Background="{TemplateBinding Background}">
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal" IsItemsHost="true"
+                                                        Margin="0,0,0,2" />
+                                            <Border BorderThickness="0,0,0,2"
+                                                    BorderBrush="{StaticResource GrayBrush}"
+                                                    Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}" />
+                                        </Grid>
+                                    </ScrollViewer>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Style>
+        </ListView>
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
               Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}">
             <Grid.RowDefinitions>
@@ -415,11 +458,19 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0"
                     Background="{StaticResource VerticalLinearBlackBrush}">
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RunCommand}"
                           CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                        <GradientStop Offset="0" Color="#73b839"/>
+                        <GradientStop Offset="0.4" Color="#73b839"/>
+                        <GradientStop Offset="0.6" Color="#8dc45c"/>
+                        <GradientStop Offset="1" Color="#8dc45c"/>
+                    </LinearGradientBrush>
+                </Button.Background>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -429,12 +480,36 @@
                     </ToolTip>
                 </dms:DMButton.ToolTip>
                 <Viewbox Width="14" Height="14" Margin="1.5,0,0,0">
-                    <ContentControl Template="{StaticResource BlackRunControl}" />
+                    <ContentControl Template="{StaticResource WhiteRunControl}" />
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
+                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
+                          Command="{Binding RemoveCommand}">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                        <GradientStop Offset="0" Color="#ff4d40"/>
+                        <GradientStop Offset="0.4" Color="#ff4d40"/>
+                        <GradientStop Offset="0.6" Color="#ff715e"/>
+                        <GradientStop Offset="1" Color="#ff715e"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+                <dms:DMButton.ToolTip>
+                    <ToolTip>
+                        <StackPanel Margin="2">
+                            <TextBlock Margin="0,0,0,8" FontWeight="Heavy">移除游戏</TextBlock>
+                            <TextBlock>将选中的游戏移除至回收站。</TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </dms:DMButton.ToolTip>
+                <Viewbox Width="16" Height="16">
+                    <ContentControl Template="{StaticResource WhiteBinControl}" />
+                </Viewbox>
+            </dms:DMButton>
+            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RenameCommand}">
                 <dms:DMButton.ToolTip>
@@ -450,25 +525,8 @@
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
-                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding RemoveCommand}">
-                <dms:DMButton.ToolTip>
-                    <ToolTip>
-                        <StackPanel Margin="2">
-                            <TextBlock Margin="0,0,0,8" FontWeight="Heavy">移除游戏</TextBlock>
-                            <TextBlock>将选中的游戏移除至回收站。</TextBlock>
-                        </StackPanel>
-                    </ToolTip>
-                </dms:DMButton.ToolTip>
-                <Viewbox Width="16" Height="16">
-                    <ContentControl Template="{StaticResource BlackBinControl}" />
-                </Viewbox>
-            </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding GameConfigCommand}">
                 <dms:DMButton.ToolTip>
@@ -484,8 +542,8 @@
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding BrowseCommand}">
                 <dms:DMButton.ToolTip>
@@ -502,11 +560,46 @@
             </dms:DMButton>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right">
+            <Grid>
+                <dms:DMTextBox 
+                    x:Name="GameSearchBox"
+                    CornerRadius="11" Padding="5,0"
+                    VerticalContentAlignment="Center"
+                    Background="White"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Height="22" Width="150"
+                    Text="{Binding GameSearchString,Mode=TwoWay}"
+                    TextChanged="GameSearchBox_TextChanged"
+                    Hint="搜索游戏" />
+                <dms:DMButton
+                    Visibility="{Binding ElementName=GameSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Command="{Binding ClearGameSearchBoxCommand}"
+                    IsTabStop="False"
+                    HorizontalAlignment="Right"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="20" Height="20"
+                    Margin="3,0">
+                    <Viewbox Width="18" Height="18">
+                        <Viewbox.Effect>
+                            <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                        </Viewbox.Effect>
+                        <ContentControl Template="{StaticResource BlackNoControl}"/>
+                    </Viewbox>
+                </dms:DMButton>
+            </Grid>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding AddNewGameConsole}" CommandParameter="{Binding CurrentMachine}">
+                          Command="{Binding AddNewGameConsole}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiCommandParameterConverter}">
+                        <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
+                        <Binding Path="CurrentMachine"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -520,8 +613,8 @@
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RefreshConsole}">
                 <dms:DMButton.ToolTip>
@@ -537,10 +630,11 @@
                 </Viewbox>
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource ExtraLightBrush}"
-                          BorderBrush="Gray"
+                          Background="{StaticResource NormalButtonBrush}"
+                          BorderBrush="{StaticResource ExtraLight20Brush}"
                           IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
-                          Command="{Binding ConsoleConfigCommand}">
+                          Command="{Binding ConsoleConfigCommand}"
+                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -566,7 +660,7 @@
             </Image>
         </Border>
         <Border x:Name="BackCoverBorder" Grid.Row="4" Grid.Column="0"
-                Background="#b0000000">
+                Background="#00000000">
         </Border>
         <ListView x:Name="GameList"
                   Grid.Row="4" Grid.Column="0" Background="Transparent"

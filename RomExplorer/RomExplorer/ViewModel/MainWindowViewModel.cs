@@ -28,6 +28,9 @@ namespace RomExplorer.ViewModel
         private CancellationTokenSource _cts;
         private Task _syncTask;
         private bool _windowActivated;
+        private string _consoleSearchString = "";
+        private string _gameSearchString;
+        private ObservableCollection<ConsoleMachine> _searchedConsoleMachines;
 
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
@@ -35,6 +38,15 @@ namespace RomExplorer.ViewModel
             set
             {
                 _consoleMachines = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<ConsoleMachine> SearchedConsoleMachines
+        {
+            get => _searchedConsoleMachines;
+            set
+            {
+                _searchedConsoleMachines = value;
                 OnPropertyChanged();
             }
         }
@@ -55,6 +67,25 @@ namespace RomExplorer.ViewModel
             set
             {
                 _currentGame = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string ConsoleSearchString
+        {
+            get => _consoleSearchString;
+            set
+            {
+                _consoleSearchString = value;
+                OnPropertyChanged();
+            }
+        }
+        public string GameSearchString
+        {
+            get => _gameSearchString;
+            set
+            {
+                _gameSearchString = value;
                 OnPropertyChanged();
             }
         }
@@ -98,7 +129,10 @@ namespace RomExplorer.ViewModel
                 return new DelegateCommand(obj =>
                 {
                     if (CurrentMachine == null) return;
-                    var window = new ConsoleConfigWindow(CurrentMachine);
+                    var window = new ConsoleConfigWindow(CurrentMachine)
+                    {
+                        Owner = (MainWindow)obj
+                    };
 
                     Execute.OnUiThread(() =>
                     {
@@ -120,6 +154,8 @@ namespace RomExplorer.ViewModel
                             if (!Directory.Exists(CurrentMachine.Path))
                             {
                                 ConsoleMachines.Remove(CurrentMachine);
+                                ConsoleSearchString = "";
+                                GameSearchString = "";
                                 CurrentMachine = null;
                             }
                             else
@@ -223,10 +259,13 @@ namespace RomExplorer.ViewModel
                         if (gameConfig != null || consoleConfig != null)
                         {
                             string host = null, args = null;
-                            if (!string.IsNullOrEmpty(consoleConfig?.HostApplication)) host = consoleConfig?.HostApplication;
-                            if (!string.IsNullOrEmpty(consoleConfig?.StartupArguments)) args = consoleConfig?.StartupArguments;
+                            if (!string.IsNullOrEmpty(consoleConfig?.HostApplication))
+                                host = consoleConfig?.HostApplication;
+                            if (!string.IsNullOrEmpty(consoleConfig?.StartupArguments))
+                                args = consoleConfig?.StartupArguments;
                             if (!string.IsNullOrEmpty(gameConfig?.HostApplication)) host = gameConfig?.HostApplication;
-                            if (!string.IsNullOrEmpty(gameConfig?.StartupArguments)) args = gameConfig?.StartupArguments;
+                            if (!string.IsNullOrEmpty(gameConfig?.StartupArguments))
+                                args = gameConfig?.StartupArguments;
 
                             if (host == null && args == null)
                             {
@@ -247,7 +286,8 @@ namespace RomExplorer.ViewModel
                                     StartInfo = new ProcessStartInfo
                                     {
                                         FileName = host ?? CurrentGame.Path,
-                                        Arguments = $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
+                                        Arguments =
+                                            $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
                                     },
                                     EnableRaisingEvents = true
                                 };
@@ -264,6 +304,7 @@ namespace RomExplorer.ViewModel
                                 EnableRaisingEvents = true
                             };
                         }
+
                         var window = (MainWindow)obj;
                         var prevState = window.WindowState;
                         proc.Exited += (sender, e) =>
@@ -281,9 +322,20 @@ namespace RomExplorer.ViewModel
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                        if (!(e is System.ComponentModel.Win32Exception))
+                        {
+                            MessageBox.Show(e.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
 
+                        var window = (MainWindow)obj;
+                        var prevState = window.WindowState;
+                        if (window.WindowState == WindowState.Minimized)
+                        {
+                            window.WindowState = prevState;
+                            window.Topmost = true;
+                            window.Topmost = false;
+                        }
+                    }
                 });
             }
         }
@@ -296,12 +348,14 @@ namespace RomExplorer.ViewModel
                 {
                     try
                     {
+                        GameSearchString = "";
                         var newName = new DirectoryInfo(CurrentGame.MetaDirectory).Name + " - " +
                                       DateTime.Now.ToString("yyyyMMddHHmmss");
                         var newPath = Path.Combine(Config.BackupDirectory, newName);
                         Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(CurrentGame.Path,
                             Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                             Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                        new DirectoryInfo(CurrentGame.MetaDirectory).Attributes &= ~FileAttributes.Hidden;
                         Directory.Move(CurrentGame.MetaDirectory, newPath);
                         _currentMachine.Games.Remove(CurrentGame);
                         CurrentGame = null;
@@ -328,6 +382,7 @@ namespace RomExplorer.ViewModel
 
                     var list = App.GameListLoader.LoadConsoles(true);
                     ConsoleMachines = list;
+                    SearchedConsoleMachines = list;
                     CurrentMachine = null;
                     CurrentGame = null;
                     //CurrentMachine = ConsoleMachines.FirstOrDefault(k => k.Path == CurrentMachine?.Path);
@@ -360,17 +415,43 @@ namespace RomExplorer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-                    var window = new AddGameConsoleWindow((ConsoleMachine)obj);
-                    window.ShowDialog();
+                    if (obj is object[] objects)
+                    {
+                        var mainWindow = (MainWindow)objects[0];
+                        var machine = objects.Length > 1 ? objects[1] : null;
+                        var window = new AddGameConsoleWindow((ConsoleMachine)machine)
+                        {
+                            Owner = mainWindow
+                        };
+                        window.ShowDialog();
+                    }
                 });
+            }
+        }
+
+        public ICommand ClearConsoleSearchBoxCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj => { ConsoleSearchString = ""; });
+            }
+        }
+
+        public ICommand ClearGameSearchBoxCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj => { GameSearchString = ""; });
             }
         }
 
         public void StartScanTask()
         {
-            if (CurrentMachine.Games.Count < 100)
+            if (CurrentMachine.SearchedGames == null)
+                CurrentMachine.SearchedGames = CurrentMachine.Games;
+            if (CurrentMachine.SearchedGames.Count < 100)
             {
-                CurrentMachine.VisibleGames = CurrentMachine.Games;
+                CurrentMachine.VisibleGames = CurrentMachine.SearchedGames;
             }
             else
             {
@@ -378,7 +459,7 @@ namespace RomExplorer.ViewModel
                 _syncTask = Task.Run(() =>
                 {
                     var id = CurrentMachine.Identity;
-                    foreach (var game in CurrentMachine.Games)
+                    foreach (var game in CurrentMachine.SearchedGames)
                     {
                         if (id != CurrentMachine.Identity || _cts.IsCancellationRequested)
                             return;

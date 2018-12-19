@@ -45,6 +45,7 @@ namespace RomExplorer
 
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.ConsoleMachines = list;
+            ViewModel.SearchedConsoleMachines = list;
             SynchronizationContext = SynchronizationContext.Current;
         }
 
@@ -59,7 +60,7 @@ namespace RomExplorer
             await ViewModel.StopScanTask();
 
             var identity = (string)((ToggleButton)sender).Tag;
-            ViewModel.CurrentMachine = ViewModel.ConsoleMachines.First(k => k.Identity == identity);
+            ViewModel.CurrentMachine = ViewModel.ConsoleMachines.FirstOrDefault(k => k.Identity == identity);
 
             ViewModel.StartScanTask();
             ViewModel.CurrentGame = null;
@@ -121,6 +122,43 @@ namespace RomExplorer
         private void Window_Deactivated(object sender, EventArgs e)
         {
             ViewModel.WindowActivated = false;
+        }
+
+        private async void GameSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ViewModel.CurrentMachine == null) return;
+            var text = GameSearchBox.Text;
+            await ViewModel.StopScanTask();
+            if (string.IsNullOrEmpty(text))
+            {
+                ViewModel.CurrentMachine.SearchedGames = ViewModel.CurrentMachine.Games;
+            }
+            else
+            {
+                string[] keywords = text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var sb = ViewModel.CurrentMachine.Games.Select(k => k);
+                ViewModel.CurrentMachine.SearchedGames = new ObservableCollection<Game>(keywords.Aggregate(sb,
+                    (current, keyword) =>
+                        current.Where(k => k.NameWithoutExtension.ToLower().Contains(keyword.ToLower()))));
+            }
+            ViewModel.StartScanTask();
+        }
+
+        private void ConsoleSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = ConsoleSearchBox.Text;
+            if (string.IsNullOrEmpty(text))
+            {
+                ViewModel.SearchedConsoleMachines = ViewModel.ConsoleMachines;
+            }
+            else
+            {
+                string[] keywords = text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var sb = ViewModel.ConsoleMachines.Select(k => k);
+                ViewModel.SearchedConsoleMachines = new ObservableCollection<ConsoleMachine>(keywords.Aggregate(sb,
+                    (current, keyword) =>
+                        current.Where(k => k.NameWithoutExtension.ToLower().Contains(keyword.ToLower()))));
+            }
         }
     }
 }

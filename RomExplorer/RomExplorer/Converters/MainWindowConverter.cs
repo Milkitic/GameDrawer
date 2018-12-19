@@ -32,7 +32,7 @@ namespace RomExplorer.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var state = (WindowState)value;
-            return state == WindowState.Maximized ? 37 : 43;
+            return state == WindowState.Maximized ? 24 : 30;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -322,6 +322,19 @@ namespace RomExplorer.Converters
             }
 
             return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    internal class NotEmptyShowConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var str = (string)value;
+            return string.IsNullOrEmpty(str) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

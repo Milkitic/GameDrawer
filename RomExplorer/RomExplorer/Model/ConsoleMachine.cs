@@ -11,6 +11,8 @@ namespace RomExplorer.Model
 {
     public sealed class ConsoleMachine : FileModelBase
     {
+        private ObservableCollection<Game> _searchedGames;
+        private ObservableCollection<Game> _visibleGames;
         protected override string SuspendedDescription { get; set; } = "暂无主机介绍";
         public override string IconPath //view property
             => File.Exists(InnerIconPath)
@@ -53,7 +55,26 @@ namespace RomExplorer.Model
         public string EmulatorDirectoryPath => IoPath.Combine(Path, "HostApp");
 
         public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
-        public ObservableCollection<Game> VisibleGames { get; set; }
+
+        public ObservableCollection<Game> SearchedGames
+        {
+            get => _searchedGames;
+            set
+            {
+                _searchedGames = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Game> VisibleGames
+        {
+            get => _visibleGames;
+            set
+            {
+                _visibleGames = value;
+                OnPropertyChanged();
+            }
+        }
 
         public void InitDescription()
         {
@@ -64,7 +85,7 @@ namespace RomExplorer.Model
         {
             if (SuspendedName != NameWithoutExtension)
             {
-                var validName =FileExtension. ValidateFileName(SuspendedName);
+                var validName = FileExtension.ValidateFileName(SuspendedName);
 
                 var newPath = IoPath.Combine(new DirectoryInfo(Path).Parent.FullName, validName);
                 var success = FileExtension.MoveFile(Path, newPath);
