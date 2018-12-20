@@ -160,6 +160,8 @@ namespace RomExplorer.ViewModel
                                 ConsoleSearchString = "";
                                 GameSearchString = "";
                                 CurrentMachine = null;
+                                App.GameListLoader.SaveCache();
+                                App.Config.SaveConfig();
                             }
                             else
                             {
