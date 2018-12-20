@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
@@ -13,7 +14,7 @@ namespace RomExplorer.Model
     public class FileModelBase : ViewModelBase
     {
         public event EventHandler Committed;
-
+        
         protected virtual string InnerIconPath => IoPath.Combine(Path, "icon.png");
         protected virtual string SuspendedName { get; set; }
         protected virtual string SuspendedDescription { get; set; } = "暂无介绍";
@@ -30,13 +31,14 @@ namespace RomExplorer.Model
             set => SuspendedDescription = value;
         }
 
-        public string GetDescriptionFromFile()
+        private string GetDescriptionFromFile()
         {
             return File.ReadAllText(DescriptionPath);
         }
 
         private bool _descriptionEditable;
 
+        [JsonIgnore]
         public bool DescriptionEditable
         {
             get => _descriptionEditable;
@@ -48,7 +50,9 @@ namespace RomExplorer.Model
         }
 
         private bool _nameEditable;
+        private string _path;
 
+        [JsonIgnore]
         public bool NameEditable
         {
             get => _nameEditable;
@@ -59,15 +63,23 @@ namespace RomExplorer.Model
             }
         }
 
+        [JsonIgnore]
         public string Identity => IdentityHelper.GetRelativePath(Path);
+
+        [JsonIgnore]
         public virtual string IconPath //view property
             => File.Exists(InnerIconPath)
                 ? InnerIconPath
                 : IoPath.Combine(Config.IconCacheDirectory, $"{IoPath.GetExtension(Path)}.png");
 
+        [JsonIgnore]
         public virtual string DescriptionPath => System.IO.Path.Combine(Path, "description.txt");
 
-        public virtual string Path { get; set; } //view property
+        public virtual string Path
+        {
+            get => _path;
+            set => _path = value;
+        } //view property
 
         public virtual void CommitChanges()
         {

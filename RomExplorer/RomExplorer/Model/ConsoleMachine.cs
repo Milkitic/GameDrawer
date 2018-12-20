@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
@@ -51,11 +52,14 @@ namespace RomExplorer.Model
             //OnCommitted(sender, e);
         }
 
+        [JsonIgnore]
         public string RomDirectoryPath => IoPath.Combine(Path, "Apps");
+        [JsonIgnore]
         public string EmulatorDirectoryPath => IoPath.Combine(Path, "HostApp");
 
         public ObservableCollection<Game> Games { get; set; } = new ObservableCollection<Game>();
 
+        [JsonIgnore]
         public ObservableCollection<Game> SearchedGames
         {
             get => _searchedGames;
@@ -66,6 +70,7 @@ namespace RomExplorer.Model
             }
         }
 
+        [JsonIgnore]
         public ObservableCollection<Game> VisibleGames
         {
             get => _visibleGames;

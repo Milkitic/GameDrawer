@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -352,24 +353,30 @@ namespace RomExplorer.ViewModel
         {
             get
             {
-                return new DelegateCommand(obj =>
+                return new DelegateCommand(async obj =>
                 {
                     try
                     {
+                        await StopScanTask();
                         GameSearchString = "";
                         var newName = new DirectoryInfo(CurrentGame.MetaDirectory).Name + " - " +
                                       DateTime.Now.ToString("yyyyMMddHHmmss");
                         var newPath = Path.Combine(Config.BackupDirectory, newName);
+                        _currentMachine.Games.Remove(CurrentGame);
+                        if (_currentMachine.VisibleGames.Contains(CurrentGame))
+                            _currentMachine.VisibleGames.Remove(CurrentGame);
+                        if (_currentMachine.SearchedGames.Contains(CurrentGame))
+                            _currentMachine.SearchedGames.Remove(CurrentGame);
                         Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(CurrentGame.Path,
                             Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                             Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
                         new DirectoryInfo(CurrentGame.MetaDirectory).Attributes &= ~FileAttributes.Hidden;
+                        //CurrentGame.IsDeleted = true;
                         Directory.Move(CurrentGame.MetaDirectory, newPath);
-                        _currentMachine.Games.Remove(CurrentGame);
                         CurrentGame = null;
                         App.GameListLoader.SaveCache();
                         App.Config.SaveConfig();
-                        //RefreshConsole.Execute(null);
+                        RefreshConsole.Execute(null);
                     }
                     catch (Exception e)
                     {

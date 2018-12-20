@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using IoPath = System.IO.Path;
 
 namespace RomExplorer.Model
@@ -21,13 +22,19 @@ namespace RomExplorer.Model
             set => SuspendedName = value;
         }
 
+        [JsonIgnore]
         public string Name => IoPath.GetFileName(Path); //view property
+        [JsonIgnore]
         public string Extension => IoPath.GetExtension(Path)?.Trim('.').ToLower(); //view property
         public long Length { get; set; }
 
+        [JsonIgnore]
         public string MetaDirectory => Path + ".meta";
+        [JsonIgnore]
         public override string DescriptionPath => IoPath.Combine(MetaDirectory, "description.txt");
         protected override string InnerIconPath => IoPath.Combine(MetaDirectory, "icon.png");
+
+        [JsonIgnore]
         public override string IconPath //view property
         {
             get
@@ -61,6 +68,7 @@ namespace RomExplorer.Model
             }
         }
 
+        [JsonIgnore]
         public string ScreenShotDirectory => IoPath.Combine(MetaDirectory, "screenshots");
 
         public void InitDescription()

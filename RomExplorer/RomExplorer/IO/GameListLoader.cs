@@ -161,7 +161,7 @@ namespace RomExplorer.IO
 
         public void SaveCache()
         {
-            File.WriteAllText(CachePath, JsonConvert.SerializeObject(_consoleMachines));
+            File.WriteAllText(CachePath, JsonConvert.SerializeObject(_consoleMachines, Formatting.Indented));
         }
 
         private static ObservableCollection<ConsoleMachine> RefreshConsoles()
