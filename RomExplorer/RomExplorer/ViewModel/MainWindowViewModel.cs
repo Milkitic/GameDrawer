@@ -33,6 +33,8 @@ namespace RomExplorer.ViewModel
         private string _gameSearchString;
         private ObservableCollection<ConsoleMachine> _searchedConsoleMachines;
 
+        private bool IsScanRunning => _syncTask != null && !(_syncTask.IsCanceled || _syncTask.IsCompleted || _syncTask.IsFaulted);
+
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
             get => _consoleMachines;
@@ -357,6 +359,7 @@ namespace RomExplorer.ViewModel
                 {
                     try
                     {
+                        var running = IsScanRunning;
                         await StopScanTask();
                         GameSearchString = "";
                         var newName = new DirectoryInfo(CurrentGame.MetaDirectory).Name + " - " +
@@ -376,7 +379,7 @@ namespace RomExplorer.ViewModel
                         CurrentGame = null;
                         App.GameListLoader.SaveCache();
                         App.Config.SaveConfig();
-                        RefreshConsole.Execute(null);
+                        if (running) RefreshConsole.Execute(null);
                     }
                     catch (Exception e)
                     {
