@@ -36,11 +36,24 @@ namespace RomExplorer.Model
                     return InnerIconPath;
                 else
                 {
-                    if (Extension == "exe" || Extension == "lnk")
+                    if (SpecialExtensions.Contains(Extension))
                     {
                         var iconName = $"{Identity.Replace("/", "").Replace("\\", "").Replace(" ", "")}.png";
                         return IoPath.Combine(Config.IconCacheDirectory, iconName);
                     }
+                    //else if (Extension == "url")
+                    //{
+                    //    var sr = new StreamReader(Path);
+                    //    var line = sr.ReadLine();
+                    //    while (line != null)
+                    //    {
+                    //        if (line.StartsWith("URL="))
+                    //        {
+                    //            throw new NotImplementedException();
+                    //        }
+                    //        line = sr.ReadLine();
+                    //    }
+                    //}
                     else
                         return IoPath.Combine(Config.IconCacheDirectory, $"{Extension}.png");
 
@@ -84,5 +97,6 @@ namespace RomExplorer.Model
         }
 
         public static string DefaultDescription => "暂无游戏介绍";
+        public static string[] SpecialExtensions { get; } = { "exe", "lnk", "url" };
     }
 }
