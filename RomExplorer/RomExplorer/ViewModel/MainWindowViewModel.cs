@@ -281,13 +281,21 @@ namespace RomExplorer.ViewModel
                             else
                             {
                                 bool useQuote = CurrentGame.Path.Contains(' ');
+                                var path = useQuote ? $"\"{CurrentGame.Path}\"" : CurrentGame.Path;
+                                string arguments;
+                                const string flag = "%APPPATH%";
+                                if (args?.Contains(flag) == true)
+                                    arguments = args.Replace(flag, path);
+                                else
+                                {
+                                    arguments = args == null ? path : $"{path} {args}";
+                                }
                                 proc = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
                                     {
                                         FileName = host ?? CurrentGame.Path,
-                                        Arguments =
-                                            $"{(useQuote ? "\"" : "")}{CurrentGame.Path}{(useQuote ? "\"" : "")} {args}"
+                                        Arguments = arguments
                                     },
                                     EnableRaisingEvents = true
                                 };
@@ -322,7 +330,7 @@ namespace RomExplorer.ViewModel
                     }
                     catch (Exception e)
                     {
-                        if (!(e is System.ComponentModel.Win32Exception))
+                        //if (!(e is System.ComponentModel.Win32Exception))
                         {
                             MessageBox.Show(e.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
                         }

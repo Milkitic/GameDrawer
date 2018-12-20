@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,9 +22,24 @@ namespace RomExplorer
 
         static App()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; ;
+
             SetAlignment();
             Config = Config.LoadOrCreateConfig();
             GameListLoader = new GameListLoader();
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!e.IsTerminating) return;
+            MessageBox.Show(
+                string.Format("发生严重错误，即将退出。。。详情请查看error.log。{0}{1}", Environment.NewLine,
+                    (e.ExceptionObject as Exception)?.Message), "Osu Player", MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            File.AppendAllText("error.log",
+                string.Format(@"===================={0}===================={1}{2}{3}{4}", DateTime.Now,
+                    Environment.NewLine, e.ExceptionObject, Environment.NewLine, Environment.NewLine));
+            Environment.Exit(1);
         }
 
         private static void SetAlignment()
