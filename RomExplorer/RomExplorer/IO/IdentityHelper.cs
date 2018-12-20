@@ -15,7 +15,7 @@ namespace RomExplorer.IO
             var baseUri = new Uri(App.Config.GameDirectory, UriKind.Absolute);
             var fileUri = new Uri(fileName, UriKind.Absolute);
 
-            return baseUri.MakeRelativeUri(fileUri).OriginalString;
+            return baseUri.MakeRelativeUri(fileUri).ToString();
         }
     }
 }
