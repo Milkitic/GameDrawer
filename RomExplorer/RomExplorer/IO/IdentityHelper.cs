@@ -10,12 +10,14 @@ namespace RomExplorer.IO
 {
     public static class IdentityHelper
     {
-        public static string GetRelativePath(string fileName)
+        public static string GetRelativePath(string filePath)
         {
-            var baseUri = new Uri(App.Config.GameDirectory, UriKind.Absolute);
-            var fileUri = new Uri(fileName, UriKind.Absolute);
+            var dir = new FileInfo(filePath).Directory?.Parent?.Name;
+            return dir + Path.GetFileNameWithoutExtension(filePath);
+            //var baseUri = new Uri(App.Config.GameDirectory, UriKind.Absolute);
+            //var fileUri = new Uri(fileName, UriKind.Absolute);
 
-            return baseUri.MakeRelativeUri(fileUri).ToString();
+            //return baseUri.MakeRelativeUri(fileUri).ToString();
         }
     }
 }

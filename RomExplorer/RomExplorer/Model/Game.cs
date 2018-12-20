@@ -38,7 +38,8 @@ namespace RomExplorer.Model
                 {
                     if (Extension == "exe" || Extension == "lnk")
                     {
-                        return IoPath.Combine(Config.IconCacheDirectory, $"{Identity.Replace("/", "")}.png");
+                        var iconName = $"{Identity.Replace("/", "").Replace("\\", "").Replace(" ", "")}.png";
+                        return IoPath.Combine(Config.IconCacheDirectory, iconName);
                     }
                     else
                         return IoPath.Combine(Config.IconCacheDirectory, $"{Extension}.png");

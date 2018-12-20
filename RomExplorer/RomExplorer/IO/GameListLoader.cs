@@ -261,11 +261,12 @@ namespace RomExplorer.IO
                     string iconPath;
                     if (game.Extension == "exe" || game.Extension == "lnk")
                     {
-                        iconPath = Path.Combine(Config.IconCacheDirectory,
-                            $"{game.Identity.Replace("/", "").Replace("\\", "")}.png");
+                        var iconName = $"{game.Identity.Replace("/", "").Replace("\\", "").Replace(" ", "")}.png";
+                        iconPath = Path.Combine(Config.IconCacheDirectory, iconName);
                     }
                     else
                         iconPath = Path.Combine(Config.IconCacheDirectory, game.Extension + ".png");
+
 
                     if (!File.Exists(iconPath))
                     {
