@@ -150,24 +150,20 @@ namespace RomExplorer.ViewModel
                         }
                     });
 
-                    if (window.DialogResult == true)
+                    if (window.DialogResult != true) return;
+                    if (CurrentMachine == null) return;
+                    if (!Directory.Exists(CurrentMachine.Path))
                     {
-                        if (CurrentMachine != null)
-                        {
-                            if (!Directory.Exists(CurrentMachine.Path))
-                            {
-                                ConsoleMachines.Remove(CurrentMachine);
-                                ConsoleSearchString = "";
-                                GameSearchString = "";
-                                CurrentMachine = null;
-                                App.GameListLoader.SaveCache();
-                                App.Config.SaveConfig();
-                            }
-                            else
-                            {
-                                CurrentMachine.Refresh();
-                            }
-                        }
+                        ConsoleMachines.Remove(CurrentMachine);
+                        ConsoleSearchString = "";
+                        GameSearchString = "";
+                        CurrentMachine = null;
+                        App.GameListLoader.SaveCache();
+                        App.Config.SaveConfig();
+                    }
+                    else
+                    {
+                        CurrentMachine.Refresh();
                     }
                 });
             }

@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>RomExplorer.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DMSkin.Core, Version=2.5.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DMSkin.Core.2.5.1.1\lib\net40\DMSkin.Core.dll</HintPath>
@@ -89,6 +92,7 @@
     <Compile Include="Pages\AddGamePage.xaml.cs">
       <DependentUpon>AddGamePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="ShortCut.cs" />
     <Compile Include="ViewModel\AddConsolePageViewModel.cs" />
     <Compile Include="ViewModel\AddGamePageViewModel.cs" />
