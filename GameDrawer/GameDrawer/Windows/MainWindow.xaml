@@ -270,6 +270,8 @@
             </Viewbox>
             <Label Content="Game Drawer" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
+            <Label Content="{x:Static gameDrawer:Program.RunningAsAdministrator}" VerticalContentAlignment="Center"
+                   Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
             <StackPanel Margin="0,0,148,0" DockPanel.Dock="Right" Orientation="Horizontal"
                         HorizontalAlignment="Right">
                 <Grid>
