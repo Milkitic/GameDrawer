@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
-using GameDrawer.IO;
+﻿using GameDrawer.IO;
 using GameDrawer.Model;
 using GameDrawer.ViewModel;
 using GameDrawer.Windows;
+using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using Path = System.IO.Path;
 
 namespace GameDrawer.Pages
@@ -29,7 +29,7 @@ namespace GameDrawer.Pages
             ViewModel = (AddConsolePageViewModel)DataContext;
         }
 
-        private void BtnCreate_Click(object sender, RoutedEventArgs e)
+        private async void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
             string trueName;
             try
@@ -45,7 +45,7 @@ namespace GameDrawer.Pages
             Directory.CreateDirectory(path);
             var console = new ConsoleMachine(path);
             App.GameListLoader.ConsoleMachines.Add(console);
-            console.Refresh();
+            await console.Refresh();
             _baseWindow.Close();
         }
     }

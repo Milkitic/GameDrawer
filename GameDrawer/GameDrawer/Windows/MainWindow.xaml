@@ -10,6 +10,7 @@
         xmlns:converters="clr-namespace:GameDrawer.Converters"
         xmlns:gameDrawer="clr-namespace:GameDrawer"
         xmlns:local="clr-namespace:GameDrawer.Windows"
+        xmlns:model="clr-namespace:GameDrawer.Model"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="960"
         Loaded="Window_Loaded"
@@ -55,7 +56,7 @@
         <converters:IsEnabledConverter x:Key="IsEnabledConverter" />
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
         <converters:GameInfoConverter x:Key="GameInfoConverter" />
-
+        <converters:SyncRunningConverter x:Key="SyncRunningConverter" />
         <!--search-->
         <converters:NotEmptyShowConverter x:Key="NotEmptyShowConverter" />
 
@@ -337,6 +338,7 @@
                         Style="{StaticResource ChromeButtonStyle}"
                         Command="{Binding SyncCommand}"
                         CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
+                        IsEnabled="{Binding GameListProperties.IsSyncRunningView,Converter={StaticResource SyncRunningConverter}}"
                         IsTabStop="False"
                         Background="Transparent"
                         BorderThickness="0"

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using GameDrawer.Model;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GameDrawer.Model;
 
 namespace GameDrawer.Converters
 {
@@ -330,6 +330,24 @@ namespace GameDrawer.Converters
         {
             var str = (string)value;
             return string.IsNullOrEmpty(str) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class SyncRunningConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch (parameter)
+            {
+                default:
+                    var b = (bool)value;
+                    return !b;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

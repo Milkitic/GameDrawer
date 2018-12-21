@@ -102,6 +102,8 @@
     <Compile Include="Extension.cs" />
     <Compile Include="FocusExtension.cs" />
     <Compile Include="IO\FileExtension.cs" />
+    <Compile Include="Model\GameListExtensionProperties.cs" />
+    <Compile Include="Model\GameListProperties.cs" />
     <Compile Include="IO\IdentityHelper.cs" />
     <Compile Include="Model\DataEventArgs.cs" />
     <Compile Include="Model\FileModelBase.cs" />

@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameDrawer.IO
 {
@@ -18,6 +20,8 @@ namespace GameDrawer.IO
         private FileSystemWatcher _fileSystemWatcher;
         public static string CachePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameListCache.json");
         public static string GamePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Games");
+
+        public static GameListProperties GameListProperties { get; } = new GameListProperties();
 
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
@@ -29,11 +33,11 @@ namespace GameDrawer.IO
                 ObservableCollection<ConsoleMachine> list;
                 try
                 {
-                    list = LoadConsoles(false);
+                    list = LoadConsoles(false).Result;
                 }
                 catch (Exception e)
                 {
-                    list = LoadConsoles(true);
+                    list = LoadConsoles(true).Result;
                 }
 
                 return list;
@@ -78,28 +82,26 @@ namespace GameDrawer.IO
                             console.NameWithoutExtension = name;
                             console.CommitChanges();
                             //Execute.InitializeWithDispatcher();
-                            Execute.OnUiThread(() => { console.Refresh(); }, MainWindow.SynchronizationContext);
+                            Execute.OnUiThread(async () => { await console.Refresh(); },
+                                MainWindow.SynchronizationContext);
                         }
                     }
                 }
             }
             else
             {
-
             }
         }
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-
         }
 
         private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
         {
-
         }
 
-        public ObservableCollection<ConsoleMachine> LoadConsoles(bool refresh)
+        public async Task<ObservableCollection<ConsoleMachine>> LoadConsoles(bool refresh)
         {
             if (_consoleMachines != null)
             {
@@ -109,7 +111,7 @@ namespace GameDrawer.IO
             ObservableCollection<ConsoleMachine> consoleMachines;
             if (refresh || !File.Exists(CachePath))
             {
-                consoleMachines = RefreshConsoles();
+                consoleMachines = await RefreshConsoles();
             }
             else
             {
@@ -121,40 +123,13 @@ namespace GameDrawer.IO
                 }
                 catch
                 {
-                    consoleMachines = RefreshConsoles();
+                    consoleMachines = await RefreshConsoles();
                 }
             }
 
             _consoleMachines = consoleMachines;
             SaveCache();
-            //consoleMachines.CollectionChanged += ConsoleMachines_CollectionChanged;
             return consoleMachines;
-        }
-
-        private void ConsoleMachines_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (var newItem in e.NewItems)
-                {
-                    var consoleMachine = (ConsoleMachine)newItem;
-                    consoleMachine.Committed += ConsoleMachine_Committed;
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (var newItem in e.OldItems)
-                {
-                    var consoleMachine = (ConsoleMachine)newItem;
-                    consoleMachine.Committed -= ConsoleMachine_Committed;
-                }
-            }
-        }
-
-        private void ConsoleMachine_Committed(object sender, EventArgs e)
-        {
-            SaveCache();
         }
 
         public void SaveCache()
@@ -162,122 +137,172 @@ namespace GameDrawer.IO
             File.WriteAllText(CachePath, JsonConvert.SerializeObject(_consoleMachines, Formatting.Indented));
         }
 
-        private static ObservableCollection<ConsoleMachine> RefreshConsoles()
+        private static async Task<ObservableCollection<ConsoleMachine>> RefreshConsoles()
         {
             ObservableCollection<ConsoleMachine> consoleMachines
                 = new ObservableCollection<ConsoleMachine>();
             var gameDirectoryInfo = new DirectoryInfo(GamePath);
-            foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
+
+            await StopRunningScanAsync();
+            GameListProperties.SyncTask = Task.Run(async () =>
             {
-                //Thread.Sleep(500);
-                string consoleDirectoryPath = consoleDirectoryInfo.FullName;
-                var console = new ConsoleMachine(consoleDirectoryPath);
-
-                var iconPath = Path.Combine(Config.IconCacheDirectory, "Folder.png");
-
-                if (!File.Exists(iconPath))
+                foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
                 {
-                    W32FileInfo.GetLargeIcon(console.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                    if (GameListProperties.SyncCts.IsCancellationRequested) //break thread here
+                    {
+                        break;
+                    }
+                    
+                    string consoleDirectoryPath = consoleDirectoryInfo.FullName;
+                    var console = new ConsoleMachine(consoleDirectoryPath);
+
+                    var iconPath = Path.Combine(Config.IconCacheDirectory, "Folder.png");
+
+                    if (!File.Exists(iconPath))
+                    {
+                        W32FileInfo.GetLargeIcon(console.Path).ToBitmap().Save(iconPath, ImageFormat.Png);
+                    }
+
+                    consoleMachines.Add(console);
+                    await console.RefreshWithoutCache();
                 }
-
-                consoleMachines.Add(console);
-                console.RefreshWithoutCache();
-            }
-
+            });
+            GameListProperties.NotifySyncChanged();
+            await GameListProperties.SyncTask.ConfigureAwait(false);
+            GameListProperties.NotifySyncChanged();
             return consoleMachines;
+        }
+
+        private static async Task StopRunningScanAsync()
+        {
+            GameListProperties.SyncCts?.Cancel();
+            if (GameListProperties.SyncTask != null)
+                await Task.Run(() =>
+                {
+                    if (GameListProperties.SyncTask != null) Task.WaitAll(GameListProperties.SyncTask);
+                });
+            GameListProperties.SyncCts = new CancellationTokenSource();
         }
     }
 
     public static class GameListExtension
     {
-        public static void Refresh(this ConsoleMachine console)
+        public static GameListExtensionProperties GameListExtensionProperties { get; } =
+            new GameListExtensionProperties();
+
+        public static async Task Refresh(this ConsoleMachine console)
         {
-            RefreshWithoutCache(console);
+            await RefreshWithoutCache(console);
 
             App.GameListLoader.SaveCache();
         }
 
-        public static void RefreshWithoutCache(this ConsoleMachine console)
+        public static async Task RefreshWithoutCache(this ConsoleMachine console)
         {
-            if (!File.Exists(console.DescriptionPath))
+            await StopRunningRefreshAsync();
+            GameListExtensionProperties.RefreshTask = Task.Run(() =>
             {
-                console.InitDescription();
-            }
-
-            if (!Directory.Exists(console.RomDirectoryPath))
-                Directory.CreateDirectory(console.RomDirectoryPath);
-            else
-            {
-                console.Games.Clear();
-                var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
-                var config = App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == console.Identity);
-                string[] filter = null;
-                bool filterUseWhiteList = false;
-                if (config != null)
+                if (!File.Exists(console.DescriptionPath))
                 {
-                    filter = config.ExtensionFilter?.Split('|').Select(k => "." + k.Trim().TrimStart('.')).ToArray() ??
-                             new string[0];
-                    filterUseWhiteList = config.UseWhiteList;
+                    console.InitDescription();
                 }
 
-                foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
+                if (!Directory.Exists(console.RomDirectoryPath))
+                    Directory.CreateDirectory(console.RomDirectoryPath);
+                else
                 {
+                    console.Games.Clear();
+                    var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
+                    var config = App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == console.Identity);
+                    string[] filter = null;
+                    bool filterUseWhiteList = false;
                     if (config != null)
                     {
-                        if (filterUseWhiteList)
+                        filter =
+                            config.ExtensionFilter?.Split('|').Select(k => "." + k.Trim().TrimStart('.')).ToArray() ??
+                            new string[0];
+                        filterUseWhiteList = config.UseWhiteList;
+                    }
+
+                    foreach (var romFileInfo in romDirectoryInfo.EnumerateFiles())
+                    {
+                        if (GameListExtensionProperties.RefreshCts.IsCancellationRequested) //break thread here
                         {
-                            if (!filter.Contains(romFileInfo.Extension))
+                            break;
+                        }
+
+                        if (config != null)
+                        {
+                            if (filterUseWhiteList)
                             {
-                                continue;
+                                if (!filter.Contains(romFileInfo.Extension))
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                if (filter.Contains(romFileInfo.Extension))
+                                    continue;
                             }
                         }
-                        else
+
+                        var romPath = romFileInfo.FullName;
+                        var game = new Game(romPath);
+
+                        if (!Directory.Exists(game.MetaDirectory))
                         {
-                            if (filter.Contains(romFileInfo.Extension))
-                                continue;
+                            Directory.CreateDirectory(game.MetaDirectory);
+                            var metaDir = new DirectoryInfo(game.MetaDirectory);
+                            metaDir.Attributes = metaDir.Attributes | FileAttributes.Hidden;
                         }
+
+                        if (!Directory.Exists(game.ScreenShotDirectory))
+                            Directory.CreateDirectory(game.ScreenShotDirectory);
+
+                        if (!File.Exists(game.DescriptionPath))
+                        {
+                            game.InitDescription();
+                        }
+
+                        string iconPath;
+                        if (Game.SpecialExtensions.Contains(game.Extension))
+                        {
+                            var iconName = $"{game.Identity.Replace("/", "").Replace("\\", "").Replace(" ", "")}.png";
+                            iconPath = Path.Combine(Config.IconCacheDirectory, iconName);
+                        }
+                        else
+                            iconPath = Path.Combine(Config.IconCacheDirectory, game.Extension + ".png");
+
+
+                        if (!File.Exists(iconPath))
+                        {
+                            Icon.ExtractAssociatedIcon(game.Path)?.ToBitmap().Save(iconPath, ImageFormat.Png);
+                        }
+
+                        game.Length = romFileInfo.Length;
+                        console.Games.Add(game);
                     }
-
-                    var romPath = romFileInfo.FullName;
-                    var game = new Game(romPath);
-
-                    if (!Directory.Exists(game.MetaDirectory))
-                    {
-                        Directory.CreateDirectory(game.MetaDirectory);
-                        var metaDir = new DirectoryInfo(game.MetaDirectory);
-                        metaDir.Attributes = metaDir.Attributes | FileAttributes.Hidden;
-                    }
-
-                    if (!Directory.Exists(game.ScreenShotDirectory))
-                        Directory.CreateDirectory(game.ScreenShotDirectory);
-
-                    if (!File.Exists(game.DescriptionPath))
-                    {
-                        game.InitDescription();
-                    }
-
-                    string iconPath;
-                    if (Game.SpecialExtensions.Contains(game.Extension))
-                    {
-                        var iconName = $"{game.Identity.Replace("/", "").Replace("\\", "").Replace(" ", "")}.png";
-                        iconPath = Path.Combine(Config.IconCacheDirectory, iconName);
-                    }
-                    else
-                        iconPath = Path.Combine(Config.IconCacheDirectory, game.Extension + ".png");
-
-
-                    if (!File.Exists(iconPath))
-                    {
-                        Icon.ExtractAssociatedIcon(game.Path)?.ToBitmap().Save(iconPath, ImageFormat.Png);
-                    }
-
-                    game.Length = romFileInfo.Length;
-                    console.Games.Add(game);
                 }
-            }
 
-            if (!Directory.Exists(console.EmulatorDirectoryPath))
-                Directory.CreateDirectory(console.EmulatorDirectoryPath);
+                if (!Directory.Exists(console.EmulatorDirectoryPath))
+                    Directory.CreateDirectory(console.EmulatorDirectoryPath);
+            });
+            GameListExtensionProperties.NotifyRefreshChanged();
+            await GameListExtensionProperties.RefreshTask.ConfigureAwait(false);
+            GameListExtensionProperties.NotifyRefreshChanged();
+        }
+
+        private static async Task StopRunningRefreshAsync()
+        {
+            GameListExtensionProperties.RefreshCts?.Cancel();
+            if (GameListExtensionProperties.RefreshTask != null)
+                await Task.Run(() =>
+                {
+                    if (GameListExtensionProperties.RefreshTask != null)
+                        Task.WaitAll(GameListExtensionProperties.RefreshTask);
+                });
+            GameListExtensionProperties.RefreshCts = new CancellationTokenSource();
         }
 
         public static void Refresh(this Game game)

@@ -39,6 +39,7 @@ namespace GameDrawer.ViewModel
                 OnPropertyChanged();
             }
         }
+
         public ObservableCollection<ConsoleMachine> SearchedConsoleMachines
         {
             get => _searchedConsoleMachines;
@@ -88,6 +89,9 @@ namespace GameDrawer.ViewModel
             }
         }
 
+        public GameListProperties GameListProperties { get; } = GameListLoader.GameListProperties;
+        public GameListExtensionProperties GameListExtensionProperties { get; } = GameListExtension.GameListExtensionProperties;
+
         public ICommand ChangeEditabilityCommand
         {
             get
@@ -124,7 +128,7 @@ namespace GameDrawer.ViewModel
         {
             get
             {
-                return new DelegateCommand(obj =>
+                return new DelegateCommand(async obj =>
                 {
                     if (CurrentMachine == null) return;
                     var window = new ConsoleConfigWindow(CurrentMachine)
@@ -158,7 +162,7 @@ namespace GameDrawer.ViewModel
                     }
                     else
                     {
-                        CurrentMachine.Refresh();
+                        await CurrentMachine.Refresh();
                     }
                 });
             }
@@ -233,7 +237,7 @@ namespace GameDrawer.ViewModel
                 return new DelegateCommand(async obj =>
                 {
                     await StopScanTask();
-                    CurrentMachine.Refresh();
+                    await CurrentMachine.Refresh();
                     StartScanTask();
                 });
             }
@@ -391,7 +395,7 @@ namespace GameDrawer.ViewModel
                 {
                     await StopScanTask();
 
-                    var list = App.GameListLoader.LoadConsoles(true);
+                    var list = await App.GameListLoader.LoadConsoles(true);
                     ConsoleMachines = list;
                     SearchedConsoleMachines = list;
                     CurrentMachine = null;

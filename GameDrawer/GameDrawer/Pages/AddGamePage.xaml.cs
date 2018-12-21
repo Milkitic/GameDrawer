@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using GameDrawer.IO;
+﻿using GameDrawer.IO;
 using GameDrawer.Model;
 using GameDrawer.ViewModel;
 using GameDrawer.Windows;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using Path = System.IO.Path;
 
 namespace GameDrawer.Pages
@@ -32,7 +32,7 @@ namespace GameDrawer.Pages
             ViewModel = (AddGamePageViewModel)DataContext;
         }
 
-        private void BtnCreate_Click(object sender, RoutedEventArgs e)
+        private async void BtnCreate_Click(object sender, RoutedEventArgs e)
         {
             if (!File.Exists(ViewModel.Path))
             {
@@ -59,7 +59,7 @@ namespace GameDrawer.Pages
                 File.Copy(ViewModel.Path, Path.Combine(_baseConsole.RomDirectoryPath, fileName + ext));
             }
 
-            _baseConsole.Refresh();
+            await _baseConsole.Refresh();
             var game = _baseConsole.Games.FirstOrDefault(k => k.NameWithoutExtension == fileName);
             if (File.Exists(ViewModel.IconPath))
                 game?.SetIcon(ViewModel.IconPath);
