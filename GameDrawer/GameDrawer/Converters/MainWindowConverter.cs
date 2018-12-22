@@ -1,7 +1,10 @@
 ﻿using GameDrawer.Model;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -271,14 +274,33 @@ namespace GameDrawer.Converters
             throw new NotImplementedException();
         }
     }
-    internal class IsEnabledConverter : IValueConverter
+    internal class IsEnabledConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    return !(value is null);
+        //}
+
+        //public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(value is null);
+            if (values.Length == 1)
+            {
+                return !(values[0] is null);
+            }
+            else
+            {
+                var consoleObj = values[0];
+                var isRefreshing = (bool)values[1];
+                return !(values[0] is null) && !isRefreshing;
+            }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -342,15 +364,80 @@ namespace GameDrawer.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            var isRunning = (bool)value;
             switch (parameter)
             {
+                case "Visibility":
+                    return isRunning ? Visibility.Visible : Visibility.Hidden;
+                case "VisibilityNegative":
+                    return isRunning ? Visibility.Hidden : Visibility.Visible;
+                case "IsIndeterminate":
+                    return isRunning;
                 default:
-                    var b = (bool)value;
-                    return !b;
+
+                    return !isRunning;
             }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class RefreshRunningConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var isRunning = (bool)value;
+            switch (parameter)
+            {
+                case "Visibility":
+                    return isRunning ? Visibility.Visible : Visibility.Hidden;
+                case "VisibilityNegative":
+                    return isRunning ? Visibility.Hidden : Visibility.Visible;
+                case "IsIndeterminate":
+                    return isRunning;
+                default:
+
+                    return !isRunning;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class SortConverter : IMultiValueConverter
+    {
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            //var type = (string)values[1];
+            //if (values[0] is IEnumerable<FileModelBase> fileModelBases)
+            //{
+            //    throw new NotImplementedException();
+            //    return new ObservableCollection<FileModelBase>(SortFiles(type, fileModelBases));
+            //}
+
+            return values[0];
+        }
+
+        private static IEnumerable<FileModelBase> SortFiles(string type, IEnumerable<FileModelBase> consoleMachines)
+        {
+            switch (type)
+            {
+                case "DateTime":
+                    return consoleMachines.OrderBy(k => k.NameWithoutExtension);
+                case "Name":
+                default:
+                    return consoleMachines.OrderBy(k => k.NameWithoutExtension);
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

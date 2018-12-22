@@ -17,25 +17,45 @@ namespace GameDrawer.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal MainWindowViewModel ViewModel;
+        public event EventHandler Shown;
+        private MainWindowViewModel ViewModel { get; set; }
         private readonly OptionContainer _consoleOption = new OptionContainer();
         private readonly OptionContainer _gameOption = new OptionContainer();
 
         public static SynchronizationContext SynchronizationContext { get; private set; }
-
+        private bool _shown;
         public MainWindow()
         {
+            Shown += Window_Shown;
             InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var list = App.GameListLoader.ConsoleMachines;
-
+            SynchronizationContext = SynchronizationContext.Current;
+            App.GameListLoader = new GameListLoader();
             ViewModel = (MainWindowViewModel)DataContext;
+        }
+
+        private void Window_Shown(object sender, EventArgs e)
+        {
+            var list = App.GameListLoader.ConsoleMachines;
             ViewModel.ConsoleMachines = list;
             ViewModel.SearchedConsoleMachines = list;
-            SynchronizationContext = SynchronizationContext.Current;
+            if (list == null)
+            {
+                ViewModel.SyncCommand.Execute(null);
+            }
+        }
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+
+            if (_shown) return;
+            _shown = true;
+
+            Shown?.Invoke(this, e);
         }
 
         /// <summary>

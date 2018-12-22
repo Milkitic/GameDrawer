@@ -11,6 +11,7 @@
         xmlns:gameDrawer="clr-namespace:GameDrawer"
         xmlns:local="clr-namespace:GameDrawer.Windows"
         xmlns:model="clr-namespace:GameDrawer.Model"
+        xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="960"
         Loaded="Window_Loaded"
@@ -57,6 +58,8 @@
         <converters:VisibilityConverter x:Key="VisibilityConverter" />
         <converters:GameInfoConverter x:Key="GameInfoConverter" />
         <converters:SyncRunningConverter x:Key="SyncRunningConverter" />
+        <converters:RefreshRunningConverter x:Key="RefreshRunningConverter" />
+        <converters:SortConverter x:Key="SortConverter" />
         <!--search-->
         <converters:NotEmptyShowConverter x:Key="NotEmptyShowConverter" />
 
@@ -271,39 +274,48 @@
             </Viewbox>
             <Label Content="Game Drawer" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
+            <Grid Margin="20,0,10,0">
+                <dms:DMTextBox 
+                    x:Name="ConsoleSearchBox"
+                    CornerRadius="11" Padding="5,0"
+                    VerticalContentAlignment="Center"
+                    Background="White"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Height="22" Width="150"
+                    Text="{Binding ConsoleSearchString,Mode=TwoWay}"
+                    TextChanged="ConsoleSearchBox_TextChanged"
+                    Hint="搜索分类" />
+                <dms:DMButton
+                    Visibility="{Binding ElementName=ConsoleSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    Command="{Binding ClearConsoleSearchBoxCommand}"
+                    IsTabStop="False"
+                    HorizontalAlignment="Right"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Width="20" Height="20"
+                    Margin="3,0">
+                    <Viewbox Width="18" Height="18">
+                        <Viewbox.Effect>
+                            <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                        </Viewbox.Effect>
+                        <ContentControl Template="{StaticResource BlackNoControl}"/>
+                    </Viewbox>
+                </dms:DMButton>
+            </Grid>
             <Label Content="{x:Static gameDrawer:Program.RunningAsAdministrator}" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
             <StackPanel Margin="0,0,148,0" DockPanel.Dock="Right" Orientation="Horizontal"
                         HorizontalAlignment="Right">
-                <Grid>
-                    <dms:DMTextBox 
-                        x:Name="ConsoleSearchBox"
-                        CornerRadius="11" Padding="5,0"
-                        VerticalContentAlignment="Center"
-                        Background="White"
-                        WindowChrome.IsHitTestVisibleInChrome="True"
-                        Height="22" Width="150"
-                        Text="{Binding ConsoleSearchString,Mode=TwoWay}"
-                        TextChanged="ConsoleSearchBox_TextChanged"
-                        Hint="搜索分类" />
-                    <dms:DMButton
-                        Visibility="{Binding ElementName=ConsoleSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
-                        WindowChrome.IsHitTestVisibleInChrome="True"
-                        Command="{Binding ClearConsoleSearchBoxCommand}"
-                        IsTabStop="False"
-                        HorizontalAlignment="Right"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Width="20" Height="20"
-                        Margin="3,0">
-                        <Viewbox Width="18" Height="18">
-                            <Viewbox.Effect>
-                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
-                            </Viewbox.Effect>
-                            <ContentControl Template="{StaticResource BlackNoControl}"/>
-                        </Viewbox>
-                    </dms:DMButton>
-                </Grid>
+                <ComboBox x:Name="ConsoleSort"
+                          Visibility="Hidden"
+                          WindowChrome.IsHitTestVisibleInChrome="True"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Width="120">
+                    <ComboBoxItem IsSelected="True" Content="按名称排序" Tag="Name" />
+                    <ComboBoxItem Content="按上次运行排序" Tag="DateTime" />
+                </ComboBox>
                 <Button WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource ChromeButtonStyle}"
                         Command="{Binding AddNewGameConsole}"
@@ -390,15 +402,20 @@
         <Border x:Name="FullBackgroundBorder" Grid.Row="1" Grid.RowSpan="5"
                 Grid.Column="0" Grid.ColumnSpan="2" Background="#211919">
         </Border>
-        <ListView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="-1,0"
+        <ListView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="0"
                   x:Name="FolderList" Background="Transparent"
                   BorderThickness="0"
                   ItemContainerStyle="{StaticResource ConsoleItemStyle}"
-                  ItemsSource="{Binding SearchedConsoleMachines,Mode=OneWay}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.CanContentScroll="False"
                   MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type StackPanel}}}"
                   MinHeight="90">
+            <ListView.ItemsSource>
+                <MultiBinding Converter="{StaticResource SortConverter}" Mode="OneWay">
+                    <Binding Path="SearchedConsoleMachines" />
+                    <Binding Path="SelectedItem.Tag" ElementName="ConsoleSort" />
+                </MultiBinding>
+            </ListView.ItemsSource>
             <ListView.Style>
                 <Style TargetType="{x:Type ListView}">
                     <Setter Property="Template">
@@ -407,8 +424,13 @@
                                 <Grid>
                                     <Border x:Name="Border"
                                             Background="{StaticResource HorizonLinearBlackBrush2}" />
-                                    <ScrollViewer Style="{StaticResource SimpleScrollViewer}"
-                                                  Focusable="false" Background="{TemplateBinding Background}">
+                                    <ScrollViewer
+                                        Style="{StaticResource SimpleScrollViewer}"
+                                        Visibility="{Binding GameListProperties.IsSyncRunningView,
+                                                     Converter={StaticResource SyncRunningConverter},
+                                                     ConverterParameter=VisibilityNegative}"
+                                        Focusable="false"
+                                        Background="{TemplateBinding Background}">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal" IsItemsHost="true"
                                                         Margin="0,0,0,2" />
@@ -424,6 +446,27 @@
                 </Style>
             </ListView.Style>
         </ListView>
+        <Border
+            Margin="1,0"
+            x:Name="SyncLoadingCover" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+            Visibility="{Binding GameListProperties.IsSyncRunningView,
+                         Converter={StaticResource SyncRunningConverter},
+                         ConverterParameter=Visibility}">
+            <StackPanel VerticalAlignment="Center">
+                <loaders:ChromeLoader
+                    Foreground="Orange"
+                    Thickness="3"
+                    IsIndeterminate="{Binding GameListProperties.IsSyncRunningView,
+                                  Converter={StaticResource SyncRunningConverter},
+                                  ConverterParameter=IsIndeterminate}"
+                    Width="40" Height="40" />
+                <Label
+                    Margin="0,5,0,0"
+                    Content="  同步中..."
+                    Foreground="{StaticResource ExtraLightBrush}"
+                    HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
               Visibility="{Binding CurrentMachine,Converter={StaticResource VisibilityConverter}}">
             <Grid.RowDefinitions>
@@ -463,11 +506,14 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0"
                     Background="{StaticResource VerticalLinearBlackBrush}">
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RunCommand}"
                           CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentGame"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <Button.Background>
                     <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
                         <GradientStop Offset="0" Color="#73b839"/>
@@ -490,8 +536,12 @@
             </dms:DMButton>
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RemoveCommand}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentGame"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <Button.Background>
                     <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
                         <GradientStop Offset="0" Color="#ff4d40"/>
@@ -515,8 +565,12 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RenameCommand}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentGame"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -532,8 +586,12 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentGame,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding GameConfigCommand}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentGame"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -549,8 +607,12 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding BrowseCommand}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentMachine"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -597,8 +659,12 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding AddNewGameConsole}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentMachine"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource MultiCommandParameterConverter}">
                         <Binding Mode="OneWay" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}"/>
@@ -620,8 +686,13 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding RefreshConsole}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentMachine"/>
+                        <Binding Path="GameListExtensionProperties.IsRefreshRunningView"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -637,9 +708,13 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          IsEnabled="{Binding CurrentMachine,Converter={StaticResource IsEnabledConverter}}"
                           Command="{Binding ConsoleConfigCommand}"
                           CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource IsEnabledConverter}">
+                        <Binding Path="CurrentMachine"/>
+                    </MultiBinding>
+                </Button.IsEnabled>
                 <dms:DMButton.ToolTip>
                     <ToolTip>
                         <StackPanel Margin="2">
@@ -671,19 +746,45 @@
                   Grid.Row="4" Grid.Column="0" Background="Transparent"
                   BorderThickness="0"
                   ItemContainerStyle="{StaticResource GameItemStyle}"
-                  ItemsSource="{Binding CurrentMachine.VisibleGames,Mode=OneWay,IsAsync=True}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.CanContentScroll="False"
                   MaxWidth="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ScrollViewer}}}">
+            <ListView.ItemsSource>
+                <MultiBinding Converter="{StaticResource SortConverter}" Mode="OneWay">
+                    <Binding Path="CurrentMachine.VisibleGames" IsAsync="True" />
+                    <Binding Path="SelectedItem.Tag" ElementName="ConsoleSort" />
+                </MultiBinding>
+            </ListView.ItemsSource>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <controls:VirtualizingWrapPanel Width="{Binding ElementName=GameList,Path=ActualWidth}"
-                                                    IsItemsHost="True"
-                                                    VerticalAlignment="Top" />
+                    <controls:VirtualizingWrapPanel
+                        Width="{Binding ElementName=GameList,Path=ActualWidth}"
+                        IsItemsHost="True"
+                        VerticalAlignment="Top" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
+        <Border
+            Grid.Row="4" Grid.Column="0"
+            x:Name="ConsoleLoadingCover"
+            Visibility="{Binding GameListExtensionProperties.IsRefreshRunningView,
+                         Converter={StaticResource RefreshRunningConverter},
+                         ConverterParameter=Visibility}">
+            <StackPanel VerticalAlignment="Center">
+                <loaders:ChromeLoader
+                    Thickness="3"
+                    IsIndeterminate="{Binding GameListExtensionProperties.IsRefreshRunningView,
+                                  Converter={StaticResource SyncRunningConverter},
+                                  ConverterParameter=IsIndeterminate}"
+                    Width="40" Height="40" />
+                <Label
+                    Margin="0,5,0,0"
+                    Content="  加载中..."
+                    Foreground="{StaticResource ExtraLightBrush}"
+                    HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
         <Border x:Name="DetailBorder" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
                 BorderThickness="0,4,0,0" BorderBrush="{StaticResource VerticalLinearBlackBrush}">
             <Grid x:Name="DetailGrid"

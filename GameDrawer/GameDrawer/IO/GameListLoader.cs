@@ -22,7 +22,7 @@ namespace GameDrawer.IO
         public static string GamePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Games");
 
         public static GameListProperties GameListProperties { get; } = new GameListProperties();
-
+        public const int NotifyDelay = 300;
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
             get
@@ -37,7 +37,8 @@ namespace GameDrawer.IO
                 }
                 catch (Exception e)
                 {
-                    list = LoadConsoles(true).Result;
+                    list = null;
+                    //list = LoadConsoles(true).Result;
                 }
 
                 return list;
@@ -111,7 +112,7 @@ namespace GameDrawer.IO
             ObservableCollection<ConsoleMachine> consoleMachines;
             if (refresh || !File.Exists(CachePath))
             {
-                consoleMachines = await RefreshConsoles();
+                consoleMachines = await RefreshConsolesAsync();
             }
             else
             {
@@ -123,7 +124,7 @@ namespace GameDrawer.IO
                 }
                 catch
                 {
-                    consoleMachines = await RefreshConsoles();
+                    consoleMachines = await RefreshConsolesAsync();
                 }
             }
 
@@ -137,7 +138,7 @@ namespace GameDrawer.IO
             File.WriteAllText(CachePath, JsonConvert.SerializeObject(_consoleMachines, Formatting.Indented));
         }
 
-        private static async Task<ObservableCollection<ConsoleMachine>> RefreshConsoles()
+        private static async Task<ObservableCollection<ConsoleMachine>> RefreshConsolesAsync()
         {
             ObservableCollection<ConsoleMachine> consoleMachines
                 = new ObservableCollection<ConsoleMachine>();
@@ -167,8 +168,16 @@ namespace GameDrawer.IO
                     await console.RefreshWithoutCache();
                 }
             });
-            GameListProperties.NotifySyncChanged();
+            bool notify = true;
+            Task.Run(() =>
+            {
+                Thread.Sleep(NotifyDelay);
+                if (notify)
+                    GameListProperties.NotifySyncChanged();
+            });
             await GameListProperties.SyncTask.ConfigureAwait(false);
+
+            notify = false;
             GameListProperties.NotifySyncChanged();
             return consoleMachines;
         }
@@ -211,7 +220,11 @@ namespace GameDrawer.IO
                     Directory.CreateDirectory(console.RomDirectoryPath);
                 else
                 {
-                    console.Games.Clear();
+                    Execute.OnUiThread(() =>
+                    {
+                        console.Games.Clear();
+                    }, MainWindow.SynchronizationContext);
+
                     var romDirectoryInfo = new DirectoryInfo(console.RomDirectoryPath);
                     var config = App.Config.GameConsoleConfigs.FirstOrDefault(k => k.Identity == console.Identity);
                     string[] filter = null;
@@ -281,15 +294,26 @@ namespace GameDrawer.IO
                         }
 
                         game.Length = romFileInfo.Length;
-                        console.Games.Add(game);
+                        Execute.OnUiThread(() =>
+                        {
+                            console.Games.Add(game);
+                        }, MainWindow.SynchronizationContext);
                     }
                 }
 
                 if (!Directory.Exists(console.EmulatorDirectoryPath))
                     Directory.CreateDirectory(console.EmulatorDirectoryPath);
             });
-            GameListExtensionProperties.NotifyRefreshChanged();
+            bool notify = true;
+            Task.Run(() =>
+            {
+                Thread.Sleep(GameListLoader.NotifyDelay);
+                if (notify)
+                    GameListExtensionProperties.NotifyRefreshChanged();
+            });
             await GameListExtensionProperties.RefreshTask.ConfigureAwait(false);
+
+            notify = false;
             GameListExtensionProperties.NotifyRefreshChanged();
         }
 

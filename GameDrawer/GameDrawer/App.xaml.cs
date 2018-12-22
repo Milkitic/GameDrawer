@@ -17,11 +17,10 @@ namespace GameDrawer
 
         static App()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; ;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             SetAlignment();
             Config = Config.LoadOrCreateConfig();
-            GameListLoader = new GameListLoader();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
