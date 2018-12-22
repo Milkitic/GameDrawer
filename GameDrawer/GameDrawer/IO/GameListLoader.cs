@@ -175,7 +175,7 @@ namespace GameDrawer.IO
                 if (notify)
                     GameListProperties.NotifySyncChanged();
             });
-            await GameListProperties.SyncTask.ConfigureAwait(false);
+            await GameListProperties.SyncTask.ConfigureAwait(true);
 
             notify = false;
             GameListProperties.NotifySyncChanged();
@@ -311,7 +311,7 @@ namespace GameDrawer.IO
                 if (notify)
                     GameListExtensionProperties.NotifyRefreshChanged();
             });
-            await GameListExtensionProperties.RefreshTask.ConfigureAwait(false);
+            await GameListExtensionProperties.RefreshTask.ConfigureAwait(true);
 
             notify = false;
             GameListExtensionProperties.NotifyRefreshChanged();
