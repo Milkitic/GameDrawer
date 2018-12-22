@@ -23,27 +23,28 @@ namespace GameDrawer.IO
 
         public static GameListProperties GameListProperties { get; } = new GameListProperties();
         public const int NotifyDelay = 300;
-        public ObservableCollection<ConsoleMachine> ConsoleMachines
+        public async Task<ObservableCollection<ConsoleMachine>> GetConsoleMachines()
         {
-            get
+            if (_consoleMachines != null)
+                return _consoleMachines;
+
+            ObservableCollection<ConsoleMachine> list;
+            try
             {
-                if (_consoleMachines != null)
-                    return _consoleMachines;
-
-                ObservableCollection<ConsoleMachine> list;
-                try
-                {
-                    list = LoadConsoles(false).Result;
-                }
-                catch (Exception e)
-                {
-                    list = null;
-                    //list = LoadConsoles(true).Result;
-                }
-
-                return list;
+                list = await LoadConsoles(false);
             }
-            set => _consoleMachines = value;
+            catch (Exception e)
+            {
+                list = null;
+                //list = LoadConsoles(true).Result;
+            }
+
+            return list;
+        }
+
+        public void AddConsoleMachine(ConsoleMachine consoleMachine)
+        {
+            _consoleMachines.Add(consoleMachine);
         }
 
         public GameListLoader()
@@ -153,7 +154,7 @@ namespace GameDrawer.IO
                     {
                         break;
                     }
-                    
+
                     string consoleDirectoryPath = consoleDirectoryInfo.FullName;
                     var console = new ConsoleMachine(consoleDirectoryPath);
 

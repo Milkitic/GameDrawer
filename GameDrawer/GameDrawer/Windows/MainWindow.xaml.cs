@@ -37,12 +37,12 @@ namespace GameDrawer.Windows
             ViewModel = (MainWindowViewModel)DataContext;
         }
 
-        private void Window_Shown(object sender, EventArgs e)
+        private async void Window_Shown(object sender, EventArgs e)
         {
-            var list = App.GameListLoader.ConsoleMachines;
-            ViewModel.ConsoleMachines = list;
-            ViewModel.SearchedConsoleMachines = list;
-            if (list == null)
+            var list = App.GameListLoader.GetConsoleMachines();
+            ViewModel.ConsoleMachines = await list;
+            ViewModel.SearchedConsoleMachines = await list;
+            if (ViewModel.ConsoleMachines == null)
             {
                 ViewModel.SyncCommand.Execute(null);
             }

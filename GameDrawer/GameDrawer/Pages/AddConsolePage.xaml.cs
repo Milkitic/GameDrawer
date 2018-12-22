@@ -44,7 +44,7 @@ namespace GameDrawer.Pages
             var path = Path.Combine(App.Config.GameDirectory, trueName);
             Directory.CreateDirectory(path);
             var console = new ConsoleMachine(path);
-            App.GameListLoader.ConsoleMachines.Add(console);
+            App.GameListLoader.AddConsoleMachine(console);
             await console.Refresh();
             _baseWindow.Close();
         }
