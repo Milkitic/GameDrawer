@@ -375,6 +375,8 @@
                 </Button>
                 <Button WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource ChromeButtonStyle}"
+                        Command="{Binding ConfigProgram}"
+                        CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
                         IsTabStop="False"
                         Background="Transparent"
                         BorderThickness="0"
@@ -586,7 +588,8 @@
             <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
                           Background="{StaticResource NormalButtonBrush}"
                           BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding GameConfigCommand}">
+                          Command="{Binding GameConfigCommand}"
+                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentGame"/>

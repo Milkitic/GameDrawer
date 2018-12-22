@@ -98,7 +98,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ClippingBorder.cs" />
     <Compile Include="Converters\ConsoleConfigWindowConverter.cs" />
     <Compile Include="Converters\MainWindowConverter.cs" />
     <Compile Include="Converters\MultiValueConverter.cs" />
@@ -122,6 +121,7 @@
     <Compile Include="ViewModel\AddConsolePageViewModel.cs" />
     <Compile Include="ViewModel\AddGamePageViewModel.cs" />
     <Compile Include="ViewModel\AddViewModel.cs" />
+    <Compile Include="ViewModel\ConfigWindowViewModel.cs" />
     <Compile Include="ViewModel\ConsoleConfigWindowViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Page Include="Pages\AddConsolePage.xaml">
@@ -148,6 +148,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\ConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\ConsoleConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -167,6 +171,9 @@
     <Compile Include="W32FileInfo.cs" />
     <Compile Include="Windows\AddGameConsoleWindow.xaml.cs">
       <DependentUpon>AddGameConsoleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ConfigWindow.xaml.cs">
+      <DependentUpon>ConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ConsoleConfigWindow.xaml.cs">
       <DependentUpon>ConsoleConfigWindow.xaml</DependentUpon>
@@ -221,7 +228,9 @@
   <ItemGroup>
     <Resource Include="Resources\default\game.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\default\bg.jpg" />
   </ItemGroup>

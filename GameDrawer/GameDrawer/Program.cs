@@ -30,7 +30,7 @@ namespace GameDrawer
         {
             if (IsAdministrator)
             {
-                MessageBox.Show("请勿将此程序以管理员权限运行。", "Game Drawer", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("请勿将此程序以管理员权限运行。", "", MessageBoxButton.OK, MessageBoxImage.Warning);
                 RunningAsAdministrator = "（当前为管理员模式，不当操作可能会丢失用户文件或损害系统。）";
             }
         }

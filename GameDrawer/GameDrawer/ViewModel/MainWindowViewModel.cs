@@ -460,6 +460,21 @@ namespace GameDrawer.ViewModel
             }
         }
 
+        public ICommand ConfigProgram
+        {
+            get
+            {
+                return new DelegateCommand(obj => {
+                    var mainWindow = (MainWindow)obj;
+                    var window = new ConfigWindow()
+                    {
+                        Owner = mainWindow
+                    };
+                    window.ShowDialog();
+                });
+            }
+        }
+
         public void StartScanTask()
         {
             if (CurrentMachine.SearchedGames == null)

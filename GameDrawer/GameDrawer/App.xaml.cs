@@ -18,7 +18,6 @@ namespace GameDrawer
         static App()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
             SetAlignment();
             Config = Config.LoadOrCreateConfig();
         }

@@ -22,6 +22,7 @@ namespace GameDrawer.Model
         }
 
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
+        public bool AutoStartup { get; set; }
 
         public List<GameConsoleConfig> GameConsoleConfigs { get; set; }
             = new List<GameConsoleConfig>();
@@ -31,7 +32,7 @@ namespace GameDrawer.Model
         [JsonIgnore] public static string CacheDirectory => Path.Combine(BaseDirectory, "Cache");
         [JsonIgnore] public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
         [JsonIgnore] public static string IconCacheDirectory => Path.Combine(CacheDirectory, "Icon");
-
+       
         public void SaveConfig()
         {
             File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this));
