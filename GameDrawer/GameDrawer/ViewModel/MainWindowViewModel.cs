@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using IWshRuntimeLibrary;
 
 namespace GameDrawer.ViewModel
 {
@@ -292,16 +293,31 @@ namespace GameDrawer.ViewModel
                             }
                             else
                             {
-                                bool useQuote = CurrentGame.Path.Contains(' ');
-                                var path = useQuote ? $"\"{CurrentGame.Path}\"" : CurrentGame.Path;
+                                string path;
+                                if (Path.GetExtension(CurrentGame.Path)?.ToLower() == ".lnk")
+                                {
+                                    WshShell shell = new WshShell(); //Create a new WshShell Interface
+                                    IWshShortcut link = (IWshShortcut)shell.CreateShortcut(CurrentGame.Path); //Link the interface to our shortcut
+                                    bool useQuote = link.TargetPath.Contains(' ');
+                                    path = useQuote ? $"\"{link.TargetPath}\"" : link.TargetPath;
+                                }
+                                else
+                                {
+                                    bool useQuote = CurrentGame.Path.Contains(' ');
+                                    path = useQuote ? $"\"{CurrentGame.Path}\"" : CurrentGame.Path;
+                                }
                                 string arguments;
                                 const string flag = "%APPPATH%";
                                 if (args?.Contains(flag) == true)
                                     arguments = args.Replace(flag, path);
                                 else
                                 {
-                                    arguments = args == null ? path : $"{path} {args}";
+                                    if (args == null)
+                                        arguments = path;
+                                    else
+                                        arguments = host == null ? args : $"{path} {args}";
                                 }
+
                                 proc = new Process
                                 {
                                     StartInfo = new ProcessStartInfo
