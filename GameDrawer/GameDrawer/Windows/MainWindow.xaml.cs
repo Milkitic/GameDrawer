@@ -35,6 +35,7 @@ namespace GameDrawer.Windows
             SynchronizationContext = SynchronizationContext.Current;
             App.GameListLoader = new GameListLoader();
             ViewModel = (MainWindowViewModel)DataContext;
+            ViewModel.SetConfig(App.Config);
         }
 
         private async void Window_Shown(object sender, EventArgs e)

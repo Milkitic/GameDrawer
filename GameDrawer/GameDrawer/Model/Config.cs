@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Milkitic.WpfApi;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Milkitic.WpfApi;
-using Newtonsoft.Json;
+using System.Windows.Media;
 
 namespace GameDrawer.Model
 {
-    public class Config
+    public class Config:ViewModelBase
     {
+        private Color _themeColor = Color.FromRgb(212, 198, 198);
+
         public Config()
         {
             if (!Directory.Exists(BackupDirectory))
@@ -24,6 +27,16 @@ namespace GameDrawer.Model
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
         public bool AutoStartup { get; set; }
 
+        public Color ThemeColor
+        {
+            get => _themeColor;
+            set
+            {
+                _themeColor = value;
+                OnPropertyChanged();
+            }
+        }
+
         public List<GameConsoleConfig> GameConsoleConfigs { get; set; }
             = new List<GameConsoleConfig>();
 
@@ -32,7 +45,7 @@ namespace GameDrawer.Model
         [JsonIgnore] public static string CacheDirectory => Path.Combine(BaseDirectory, "Cache");
         [JsonIgnore] public static string BackupDirectory => Path.Combine(BaseDirectory, "MetaBackup");
         [JsonIgnore] public static string IconCacheDirectory => Path.Combine(CacheDirectory, "Icon");
-       
+
         public void SaveConfig()
         {
             File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this));

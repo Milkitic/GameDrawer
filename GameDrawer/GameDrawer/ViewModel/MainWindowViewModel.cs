@@ -1,6 +1,7 @@
 ﻿using GameDrawer.IO;
 using GameDrawer.Model;
 using GameDrawer.Windows;
+using Microsoft.VisualBasic.FileIO;
 using Milkitic.WpfApi;
 using Milkitic.WpfApi.Commands;
 using System;
@@ -27,8 +28,19 @@ namespace GameDrawer.ViewModel
         private string _consoleSearchString = "";
         private string _gameSearchString;
         private ObservableCollection<ConsoleMachine> _searchedConsoleMachines;
+        private Config _config;
 
         private bool IsScanRunning => _syncTask != null && !(_syncTask.IsCanceled || _syncTask.IsCompleted || _syncTask.IsFaulted);
+
+        public Config Config
+        {
+            get => _config;
+            private set
+            {
+                _config = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ObservableCollection<ConsoleMachine> ConsoleMachines
         {
@@ -460,19 +472,47 @@ namespace GameDrawer.ViewModel
             }
         }
 
-        public ICommand ConfigProgram
+        public ICommand ConfigCommand
         {
             get
             {
-                return new DelegateCommand(obj => {
+                return new DelegateCommand(obj =>
+                {
                     var mainWindow = (MainWindow)obj;
+                    var oldPath = Path.GetFullPath(Config.GameDirectory.EndsWith("\\")
+                        ? Config.GameDirectory
+                        : Config.GameDirectory + "\\");
                     var window = new ConfigWindow()
                     {
                         Owner = mainWindow
                     };
                     window.ShowDialog();
+                    var newPath = Path.GetFullPath(Config.GameDirectory.EndsWith("\\")
+                        ? Config.GameDirectory
+                        : Config.GameDirectory + "\\");
+                    if (oldPath != newPath)
+                    {
+                        var result = MessageBox.Show($"你已改变游戏游戏目录：\r\n从 {oldPath}\r\n至 {newPath}\r\n是否自动迁移？", "", MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            //var di = new DirectoryInfo(oldPath);
+                            //foreach (var dir in di.EnumerateDirectories())
+                            //{
+                            //    FileSystem.MoveDirectory(dir.FullName, Path.Combine(newPath, dir.Name),
+                            //        UIOption.AllDialogs, UICancelOption.DoNothing);
+                            //}
+                            FileSystem.MoveDirectory(oldPath, newPath, UIOption.AllDialogs, UICancelOption.DoNothing);
+                        }
+
+                        SyncCommand.Execute(null);
+                    }
                 });
             }
+        }
+        public void SetConfig(Config config)
+        {
+            Config = config;
         }
 
         public void StartScanTask()

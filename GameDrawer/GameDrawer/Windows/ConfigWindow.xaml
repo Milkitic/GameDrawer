@@ -5,37 +5,79 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameDrawer.Windows"
         xmlns:viewModel="clr-namespace:GameDrawer.ViewModel"
-        xmlns:controls="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
+        xmlns:dms="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:converters="clr-namespace:GameDrawer.Converters"
         mc:Ignorable="d"
-        Title="ConfigWindow" Height="326.214" Width="545.146"
-        Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+        Title="全局设置" Height="320" Width="480" MinHeight="320" MinWidth="480"
+        Loaded="Window_Loaded" Closed="Window_Closed" SourceInitialized="Window_SourceInitialized"
+        WindowStartupLocation="CenterOwner"
+        Background="Black">
     <Window.DataContext>
         <viewModel:ConfigWindowViewModel />
     </Window.DataContext>
-    <Grid>
+    <Grid Background="{StaticResource HorizonLinearBlackBrush2}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TabControl>
-            <TabItem Header="常规设置" DockPanel.Dock="Left" HorizontalAlignment="Left">
-                <Grid Background="Transparent">
+        <TabControl Background="Transparent" BorderThickness="0">
+            <TabItem DockPanel.Dock="Left" HorizontalAlignment="Left"
+                     Style="{StaticResource TabStyle}">
+                <TabItem.Header>
+                    常规设置
+                </TabItem.Header>
+                <Grid Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Label Content="Path:" Grid.Column="0" Grid.Row="0" />
-                    <controls:DMTextBox
+                    <Label Foreground="{StaticResource ExtraLightBrush}"
+                           Grid.Column="0" Grid.Row="0"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           Content="游戏目录：" />
+                    <dms:DMTextBox
+                        Foreground="{StaticResource ExtraLightBrush}"
+                        CaretBrush="{StaticResource ExtraLightBrush}"
                         Text="{Binding GameDirectory,Mode=TwoWay}"
+                        Height="28"
+                        Margin="0,5"
                         Grid.Column="1" Grid.Row="0"
                         VerticalContentAlignment="Center" />
+                    <Label Foreground="{StaticResource ExtraLightBrush}"
+                           Grid.Column="0" Grid.Row="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           Content="主题颜色：" />
+                    <xctk:ColorPicker
+                        x:Name="ColorPicker"
+                        Height="28"
+                        Margin="0,5"
+                        Background="Transparent"
+                        Grid.Column="1" Grid.Row="1"
+                        AvailableColorsHeader="主题颜色"
+                        StandardButtonHeader="内置"
+                        AdvancedButtonHeader="自定义"
+                        ShowStandardColors="False"
+                        UsingAlphaChannel="False"
+                        SelectedColor="{Binding Config.ThemeColor,Mode=TwoWay}"/>
+                    <dms:DMCheckBox
+                        Grid.Column="1" Grid.Row="2"
+                        VerticalAlignment="Center" Margin="3,0" Content="开机时启动"
+                        Foreground="{StaticResource ExtraLightBrush}"
+                        IsChecked="{Binding AutoStartup,
+                                    ConverterParameter=True,Mode=TwoWay}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="TabItem" DockPanel.Dock="Left" HorizontalAlignment="Left">
+            <TabItem DockPanel.Dock="Left" HorizontalAlignment="Left"
+                     Style="{StaticResource TabStyle}">
+                <TabItem.Header>
+                    其他设置
+                </TabItem.Header>
                 <Grid Background="Transparent" />
             </TabItem>
             <TabControl.Template>
@@ -80,6 +122,23 @@
                 </ControlTemplate>
             </TabControl.Template>
         </TabControl>
-        <Button x:Name="SaveButton" Grid.Row="1" Content="Save" HorizontalAlignment="Right" />
+        <dms:DMButton
+            x:Name="SaveButton"
+            Grid.Row="1"
+            Margin="5" Padding="5,0"
+            Height="28" Width="80"
+            CornerRadius="3"
+            Content="保存" HorizontalAlignment="Right"
+            Command="{Binding SaveCommand}"
+            Click="SaveButton_Click">
+            <Button.Background>
+                <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="#c4c4c4" />
+                    <GradientStop Offset="0.4" Color="#c4c4c4" />
+                    <GradientStop Offset="0.6" Color="#f0f0f0" />
+                    <GradientStop Offset="1" Color="#f0f0f0" />
+                </LinearGradientBrush>
+            </Button.Background>
+        </dms:DMButton>
     </Grid>
 </Window>

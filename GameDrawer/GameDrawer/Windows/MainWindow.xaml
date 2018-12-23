@@ -375,7 +375,7 @@
                 </Button>
                 <Button WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource ChromeButtonStyle}"
-                        Command="{Binding ConfigProgram}"
+                        Command="{Binding ConfigCommand}"
                         CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}"
                         IsTabStop="False"
                         Background="Transparent"
@@ -402,7 +402,18 @@
             </StackPanel>
         </DockPanel>
         <Border x:Name="FullBackgroundBorder" Grid.Row="1" Grid.RowSpan="5"
-                Grid.Column="0" Grid.ColumnSpan="2" Background="#211919">
+                Grid.Column="0" Grid.ColumnSpan="2">
+            <Border.Background>
+                <SolidColorBrush Color="{Binding Config.ThemeColor}"/>
+                <!--<SolidColorBrush Color="Black"/>-->
+            </Border.Background>
+        </Border>
+        <Border x:Name="FullBackgroundLayer" Grid.Row="1" Grid.RowSpan="5"
+                Grid.Column="0" Grid.ColumnSpan="2">
+            <Border.Background>
+                <SolidColorBrush Color="#C0000000"/>
+                <!--<SolidColorBrush Color="Black"/>-->
+            </Border.Background>
         </Border>
         <ListView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="0"
                   x:Name="FolderList" Background="Transparent"
@@ -425,7 +436,7 @@
                             <ControlTemplate TargetType="{x:Type ListBox}">
                                 <Grid>
                                     <Border x:Name="Border"
-                                            Background="{StaticResource HorizonLinearBlackBrush2}" />
+                                            Background="{StaticResource HorizonLinearWhiteBrush2}" />
                                     <ScrollViewer
                                         Style="{StaticResource SimpleScrollViewer}"
                                         Visibility="{Binding GameListProperties.IsSyncRunningView,
@@ -564,10 +575,11 @@
                     <ContentControl Template="{StaticResource WhiteBinControl}" />
                 </Viewbox>
             </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding RenameCommand}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding RenameCommand}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentGame"/>
@@ -585,11 +597,12 @@
                     <ContentControl Template="{StaticResource BlackEditControl}" />
                 </Viewbox>
             </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding GameConfigCommand}"
-                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding GameConfigCommand}"
+                CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentGame"/>
@@ -607,10 +620,11 @@
                     <ContentControl Template="{StaticResource BlackGearControl}" />
                 </Viewbox>
             </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding BrowseCommand}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding BrowseCommand}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentMachine"/>
@@ -638,6 +652,7 @@
                     Background="White"
                     WindowChrome.IsHitTestVisibleInChrome="True"
                     Height="22" Width="150"
+                    BorderBrush="{StaticResource ExtraLight20Brush}"
                     Text="{Binding GameSearchString,Mode=TwoWay}"
                     TextChanged="GameSearchBox_TextChanged"
                     Hint="搜索游戏" />
@@ -659,10 +674,11 @@
                     </Viewbox>
                 </dms:DMButton>
             </Grid>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding AddNewGameConsole}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding AddNewGameConsole}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentMachine"/>
@@ -686,10 +702,11 @@
                     <ContentControl Template="{StaticResource BlackPlusControl}" />
                 </Viewbox>
             </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding RefreshConsole}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding RefreshConsole}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentMachine"/>
@@ -708,11 +725,12 @@
                     <ContentControl Template="{StaticResource BlackRefreshControl}" />
                 </Viewbox>
             </dms:DMButton>
-            <dms:DMButton Width="24" Height="24" CornerRadius="8" Margin="2"
-                          Background="{StaticResource NormalButtonBrush}"
-                          BorderBrush="{StaticResource ExtraLight20Brush}"
-                          Command="{Binding ConsoleConfigCommand}"
-                          CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
+            <dms:DMButton
+                Width="24" Height="24" CornerRadius="8" Margin="2"
+                Background="{StaticResource NormalButtonBrush}"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Command="{Binding ConsoleConfigCommand}"
+                CommandParameter="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource IsEnabledConverter}">
                         <Binding Path="CurrentMachine"/>
@@ -781,24 +799,26 @@
                                   Converter={StaticResource SyncRunningConverter},
                                   ConverterParameter=IsIndeterminate}"
                     Width="40" Height="40" />
-                <Label
-                    Margin="0,5,0,0"
-                    Content="  加载中..."
-                    Foreground="{StaticResource ExtraLightBrush}"
-                    HorizontalAlignment="Center"/>
+                <Label Margin="0,5,0,0"
+                       Content="  加载中..."
+                       Foreground="{StaticResource ExtraLightBrush}"
+                       HorizontalAlignment="Center" />
             </StackPanel>
         </Border>
         <Border x:Name="DetailBorder" Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"
                 BorderThickness="0,4,0,0" BorderBrush="{StaticResource VerticalLinearBlackBrush}">
             <Grid x:Name="DetailGrid"
-                  Background="{StaticResource HorizonLinearBlackBrush2}">
+                  Background="{StaticResource HorizonLinearWhiteBrush2}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <ScrollViewer x:Name="SvDescription" Grid.Row="0" MaxHeight="300" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer x:Name="SvDescription" 
+                              Grid.Row="0" 
+                              MaxHeight="300" 
+                              VerticalScrollBarVisibility="Auto">
                     <Label x:Name="LblGameDescription" Foreground="White">
                         <TextBlock TextWrapping="Wrap" Text="{Binding CurrentGame.Description}" />
                         <Label.Visibility>
@@ -825,15 +845,16 @@
                         </MultiBinding>
                     </TextBox.Visibility>
                 </TextBox>
-                <dms:DMButton Grid.Row="1"
-                              Width="24" Height="24" CornerRadius="3" Margin="5"
-                              Background="Transparent"
-                              BorderBrush="{StaticResource ExtraLight20Brush}"
-                              HorizontalAlignment="Right"
-                              Command="{Binding ChangeEditabilityCommand}"
-                              CommandParameter="{Binding ElementName=TbGameDescription,Path=Text}"
-                              Visibility="{Binding CurrentGame,Converter={StaticResource VisibilityConverter}}"
-                              Cursor="Hand">
+                <dms:DMButton
+                    Grid.Row="1"
+                    Width="24" Height="24" CornerRadius="3" Margin="5"
+                    Background="Transparent"
+                    BorderBrush="{StaticResource ExtraLight20Brush}"
+                    HorizontalAlignment="Right"
+                    Command="{Binding ChangeEditabilityCommand}"
+                    CommandParameter="{Binding ElementName=TbGameDescription,Path=Text}"
+                    Visibility="{Binding CurrentGame,Converter={StaticResource VisibilityConverter}}"
+                    Cursor="Hand">
                     <Viewbox Width="16" Height="16">
                         <ContentControl
                             Template="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource ContentConverter}}" />

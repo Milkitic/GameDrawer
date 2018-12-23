@@ -78,6 +78,15 @@
         <GradientStop Offset="0" Color="#c0c0c0"/>
         <GradientStop Offset="1" Color="#a0a0a0"/>
     </LinearGradientBrush>
+    <LinearGradientBrush x:Key="HorizonLinearWhiteBrush2" StartPoint="0,1" EndPoint="1,0">
+        <GradientStop Offset="0" Color="#00FFFFFF"/>
+        <GradientStop Offset="0.2" Color="#06FFFFFF"/>
+        <GradientStop Offset="0.3" Color="#10FFFFFF"/>
+        <GradientStop Offset="0.5" Color="#00FFFFFF"/>
+        <GradientStop Offset="0.7" Color="#13FFFFFF"/>
+        <GradientStop Offset="0.8" Color="#13FFFFFF"/>
+        <GradientStop Offset="1" Color="#00FFFFFF"/>
+    </LinearGradientBrush>
     <!-- Simple Thumb - The Thumb is the draggable part of the Scrollbar -->
     <Style x:Key="SimpleThumbStyle" TargetType="{x:Type Thumb}" BasedOn="{x:Null}">
         <Setter Property="Template">

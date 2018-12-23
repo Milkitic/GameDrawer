@@ -8,7 +8,7 @@
         Title="{Binding ConsoleMachine,Converter={StaticResource WindowConverter},ConverterParameter=Title}"
         MinHeight="{Binding ConsoleMachine,Converter={StaticResource WindowConverter},ConverterParameter=Height}"
         Height="365"
-        Width="450"
+        Width="450" MinWidth="450"
         Loaded="Window_Loaded" WindowStartupLocation="CenterOwner"
         SourceInitialized="Window_SourceInitialized"
         Background="{StaticResource HorizonLinearBlackBrush2}">

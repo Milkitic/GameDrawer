@@ -10,7 +10,8 @@
                 <ResourceDictionary Source="Styles/GeneralStyle.xaml" />
                 <ResourceDictionary Source="Styles/ButtonStyle.xaml" />
                 <ResourceDictionary Source="Styles/SvgStyle.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;Component/Styles/DMSkin.xaml" />
+                <ResourceDictionary Source="Styles/TabStyle.xaml" />
+          <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;Component/Styles/DMSkin.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;component/Styles/DMButton.xaml" />
                 <ResourceDictionary Source="Styles/DMTextboxModified.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;component/Styles/DMRadioButton.xaml" />

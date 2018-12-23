@@ -19,7 +19,7 @@ namespace GameDrawer.IO
         private ObservableCollection<ConsoleMachine> _consoleMachines;
         private FileSystemWatcher _fileSystemWatcher;
         public static string CachePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GameListCache.json");
-        public static string GamePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Games");
+        public static string GamePath => App.Config.GameDirectory;
 
         public static GameListProperties GameListProperties { get; } = new GameListProperties();
         public const int NotifyDelay = 300;
@@ -132,6 +132,11 @@ namespace GameDrawer.IO
         {
             ObservableCollection<ConsoleMachine> consoleMachines
                 = new ObservableCollection<ConsoleMachine>();
+            if (!Directory.Exists(GamePath))
+            {
+                Directory.CreateDirectory(GamePath);
+            }
+            
             var gameDirectoryInfo = new DirectoryInfo(GamePath);
 
             await StopRunningScanAsync();
