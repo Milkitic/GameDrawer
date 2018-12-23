@@ -23,29 +23,6 @@ namespace GameDrawer.IO
 
         public static GameListProperties GameListProperties { get; } = new GameListProperties();
         public const int NotifyDelay = 300;
-        public async Task<ObservableCollection<ConsoleMachine>> GetConsoleMachines()
-        {
-            if (_consoleMachines != null)
-                return _consoleMachines;
-
-            ObservableCollection<ConsoleMachine> list;
-            try
-            {
-                list = await LoadConsoles(false);
-            }
-            catch (Exception e)
-            {
-                list = null;
-                //list = LoadConsoles(true).Result;
-            }
-
-            return list;
-        }
-
-        public void AddConsoleMachine(ConsoleMachine consoleMachine)
-        {
-            _consoleMachines.Add(consoleMachine);
-        }
 
         public GameListLoader()
         {
@@ -61,6 +38,30 @@ namespace GameDrawer.IO
             _fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
             _fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
             _fileSystemWatcher.EnableRaisingEvents = true;
+        }
+
+        public async Task<ObservableCollection<ConsoleMachine>> GetConsoleMachines()
+        {
+            if (_consoleMachines != null)
+                return _consoleMachines;
+
+            ObservableCollection<ConsoleMachine> list;
+            try
+            {
+                list = await LoadConsoles(false);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                list = null;
+            }
+
+            return list;
+        }
+
+        public void AddConsoleMachine(ConsoleMachine consoleMachine)
+        {
+            _consoleMachines.Add(consoleMachine);
         }
 
         private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
@@ -105,15 +106,10 @@ namespace GameDrawer.IO
 
         public async Task<ObservableCollection<ConsoleMachine>> LoadConsoles(bool refresh)
         {
-            if (_consoleMachines != null)
-            {
-                //_consoleMachines.CollectionChanged -= ConsoleMachines_CollectionChanged;
-            }
-
             ObservableCollection<ConsoleMachine> consoleMachines;
             if (refresh || !File.Exists(CachePath))
             {
-                consoleMachines = await RefreshConsolesAsync();
+                consoleMachines = await RefreshConsolesAsync().ConfigureAwait(false);
             }
             else
             {
@@ -125,7 +121,7 @@ namespace GameDrawer.IO
                 }
                 catch
                 {
-                    consoleMachines = await RefreshConsolesAsync();
+                    consoleMachines = await RefreshConsolesAsync().ConfigureAwait(false);
                 }
             }
 
@@ -148,6 +144,7 @@ namespace GameDrawer.IO
             await StopRunningScanAsync();
             GameListProperties.SyncTask = Task.Run(async () =>
             {
+                Thread.Sleep(1000);
                 foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
                 {
                     if (GameListProperties.SyncCts.IsCancellationRequested) //break thread here
@@ -170,13 +167,14 @@ namespace GameDrawer.IO
                 }
             });
             bool notify = true;
-            Task.Run(() =>
+            var notifyTask = new Task(() =>
             {
                 Thread.Sleep(NotifyDelay);
                 if (notify)
                     GameListProperties.NotifySyncChanged();
             });
-            await GameListProperties.SyncTask.ConfigureAwait(true);
+            notifyTask.Start();
+            await GameListProperties.SyncTask.ConfigureAwait(false);
 
             notify = false;
             GameListProperties.NotifySyncChanged();
@@ -306,13 +304,14 @@ namespace GameDrawer.IO
                     Directory.CreateDirectory(console.EmulatorDirectoryPath);
             });
             bool notify = true;
-            Task.Run(() =>
+            var notifyTask = new Task(() =>
             {
                 Thread.Sleep(GameListLoader.NotifyDelay);
                 if (notify)
                     GameListExtensionProperties.NotifyRefreshChanged();
             });
-            await GameListExtensionProperties.RefreshTask.ConfigureAwait(true);
+            notifyTask.Start();
+            await GameListExtensionProperties.RefreshTask.ConfigureAwait(false);
 
             notify = false;
             GameListExtensionProperties.NotifyRefreshChanged();
@@ -333,17 +332,17 @@ namespace GameDrawer.IO
         public static void Refresh(this Game game)
         {
             return;
-            if (!Directory.Exists(game.MetaDirectory))
-                Directory.CreateDirectory(game.MetaDirectory);
-            if (!Directory.Exists(game.ScreenShotDirectory))
-                Directory.CreateDirectory(game.ScreenShotDirectory);
+            //if (!Directory.Exists(game.MetaDirectory))
+            //    Directory.CreateDirectory(game.MetaDirectory);
+            //if (!Directory.Exists(game.ScreenShotDirectory))
+            //    Directory.CreateDirectory(game.ScreenShotDirectory);
 
-            if (!File.Exists(game.DescriptionPath))
-            {
-                game.InitDescription();
-            }
+            //if (!File.Exists(game.DescriptionPath))
+            //{
+            //    game.InitDescription();
+            //}
 
-            game.Path = game.Path;
+            //game.Path = game.Path;
         }
     }
 }
