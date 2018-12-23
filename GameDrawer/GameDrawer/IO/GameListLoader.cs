@@ -75,21 +75,14 @@ namespace GameDrawer.IO
             if (attr.HasFlag(FileAttributes.Directory))
             {
                 var di = new DirectoryInfo(path);
-                if (di.Parent?.FullName == new DirectoryInfo(GamePath).FullName)
-                {
-                    if (_consoleMachines.All(k => k.Path != path))
-                    {
-                        var console = _consoleMachines.FirstOrDefault(k => k.Path == oldPath);
-                        if (console != null)
-                        {
-                            console.NameWithoutExtension = name;
-                            console.CommitChanges();
-                            //Execute.InitializeWithDispatcher();
-                            Execute.OnUiThread(async () => { await console.Refresh(); },
-                                MainWindow.SynchronizationContext);
-                        }
-                    }
-                }
+                if (di.Parent?.FullName != new DirectoryInfo(GamePath).FullName) return;
+                if (_consoleMachines.Any(k => k.Path == path)) return;
+                var console = _consoleMachines.FirstOrDefault(k => k.Path == oldPath);
+                if (console == null) return;
+                console.NameWithoutExtension = name;
+                console.CommitChanges();
+                Execute.OnUiThread(async () => { await console.Refresh(); },
+                    MainWindow.SynchronizationContext);
             }
             else
             {
@@ -144,7 +137,6 @@ namespace GameDrawer.IO
             await StopRunningScanAsync();
             GameListProperties.SyncTask = Task.Run(async () =>
             {
-                Thread.Sleep(1000);
                 foreach (var consoleDirectoryInfo in gameDirectoryInfo.EnumerateDirectories())
                 {
                     if (GameListProperties.SyncCts.IsCancellationRequested) //break thread here
