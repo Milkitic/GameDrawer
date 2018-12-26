@@ -24,7 +24,7 @@
                     <WindowChrome CornerRadius="0"
                                   CaptionHeight="31"
                                   GlassFrameThickness="1,31,1,1"
-                                  UseAeroCaptionButtons="True"
+                                  UseAeroCaptionButtons="False"
                                   NonClientFrameEdges="None"
                                   ResizeBorderThickness="3" />
                     <!--<WindowChrome CornerRadius="0"
@@ -253,7 +253,8 @@
             <ColumnDefinition MinWidth="300" />
             <ColumnDefinition Width="200" MaxWidth="600" />
         </Grid.ColumnDefinitions>
-        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                   Background="#2d2d30">
             <Viewbox Width="16" Height="16" Margin="8,0,2,0">
                 <Canvas Width="1000" Height="1000">
                     <Canvas.RenderTransform>
@@ -274,38 +275,9 @@
             </Viewbox>
             <Label Content="Game Drawer" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
-            <Grid Margin="20,0,10,0">
-                <dms:DMTextBox 
-                    x:Name="ConsoleSearchBox"
-                    CornerRadius="11" Padding="5,0"
-                    VerticalContentAlignment="Center"
-                    Background="White"
-                    WindowChrome.IsHitTestVisibleInChrome="True"
-                    Height="22" Width="150"
-                    Text="{Binding ConsoleSearchString,Mode=TwoWay}"
-                    TextChanged="ConsoleSearchBox_TextChanged"
-                    Hint="搜索分类" />
-                <dms:DMButton
-                    Visibility="{Binding ElementName=ConsoleSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
-                    WindowChrome.IsHitTestVisibleInChrome="True"
-                    Command="{Binding ClearConsoleSearchBoxCommand}"
-                    IsTabStop="False"
-                    HorizontalAlignment="Right"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Width="20" Height="20"
-                    Margin="3,0">
-                    <Viewbox Width="18" Height="18">
-                        <Viewbox.Effect>
-                            <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
-                        </Viewbox.Effect>
-                        <ContentControl Template="{StaticResource BlackNoControl}"/>
-                    </Viewbox>
-                </dms:DMButton>
-            </Grid>
             <Label Content="{x:Static gameDrawer:Program.RunningAsAdministrator}" VerticalContentAlignment="Center"
                    Foreground="{Binding WindowActivated,Converter={StaticResource ChromeForegroundConverter}}" />
-            <StackPanel Margin="0,0,148,0" DockPanel.Dock="Right" Orientation="Horizontal"
+            <StackPanel Margin="0,0,5,0" DockPanel.Dock="Right" Orientation="Horizontal"
                         HorizontalAlignment="Right">
                 <ComboBox x:Name="ConsoleSort"
                           Visibility="Hidden"
@@ -316,6 +288,35 @@
                     <ComboBoxItem IsSelected="True" Content="按名称排序" Tag="Name" />
                     <ComboBoxItem Content="按上次运行排序" Tag="DateTime" />
                 </ComboBox>
+                <Grid Margin="20,0,10,0">
+                    <dms:DMTextBox 
+                        x:Name="ConsoleSearchBox"
+                        CornerRadius="11" Padding="5,0"
+                        VerticalContentAlignment="Center"
+                        Background="White"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Height="22" Width="150"
+                        Text="{Binding ConsoleSearchString,Mode=TwoWay}"
+                        TextChanged="ConsoleSearchBox_TextChanged"
+                        Hint="搜索分类" />
+                    <dms:DMButton
+                        Visibility="{Binding ElementName=ConsoleSearchBox,Path=Text,Converter={StaticResource NotEmptyShowConverter}}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Command="{Binding ClearConsoleSearchBoxCommand}"
+                        IsTabStop="False"
+                        HorizontalAlignment="Right"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="20" Height="20"
+                        Margin="3,0">
+                        <Viewbox Width="18" Height="18">
+                            <Viewbox.Effect>
+                                <DropShadowEffect ShadowDepth="0" Opacity="0.5" BlurRadius="2" />
+                            </Viewbox.Effect>
+                            <ContentControl Template="{StaticResource BlackNoControl}"/>
+                        </Viewbox>
+                    </dms:DMButton>
+                </Grid>
                 <Button WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource ChromeButtonStyle}"
                         Command="{Binding AddNewGameConsole}"
@@ -399,6 +400,28 @@
                         </ToolTip>
                     </Button.ToolTip>
                 </Button>
+                <dms:DMSystemMinButton
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    IsTabStop="False"
+                    DMSystemButtonForeground="{StaticResource ExtraLight80Brush}"
+                    DMSystemButtonHoverForeground="{StaticResource ExtraLightBrush}"
+                    DMSystemButtonSize="22"
+                    VerticalAlignment="Center"
+                    Margin="30,0,8,0" />
+
+                <dms:DMSystemMaxButton
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    IsTabStop="False"
+                    DMSystemButtonForeground="{StaticResource ExtraLight80Brush}"
+                    DMSystemButtonHoverForeground="{StaticResource ExtraLightBrush}"
+                    DMSystemButtonSize="22"
+                    VerticalAlignment="Center"
+                    Margin="0,0,8,0" />
+                <dms:DMSystemCloseButton
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    IsTabStop="False"
+                    DMSystemButtonSize="22"
+                    VerticalAlignment="Center" />
             </StackPanel>
         </DockPanel>
         <Border x:Name="FullBackgroundBorder" Grid.Row="1" Grid.RowSpan="5"

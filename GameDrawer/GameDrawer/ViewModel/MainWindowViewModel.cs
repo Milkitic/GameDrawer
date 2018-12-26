@@ -276,7 +276,8 @@ namespace GameDrawer.ViewModel
                                 host = consoleConfig?.HostApplication;
                             if (!string.IsNullOrEmpty(consoleConfig?.StartupArguments))
                                 args = consoleConfig?.StartupArguments;
-                            if (!string.IsNullOrEmpty(gameConfig?.HostApplication)) host = gameConfig?.HostApplication;
+                            if (!string.IsNullOrEmpty(gameConfig?.HostApplication))
+                                host = gameConfig?.HostApplication;
                             if (!string.IsNullOrEmpty(gameConfig?.StartupArguments))
                                 args = gameConfig?.StartupArguments;
 

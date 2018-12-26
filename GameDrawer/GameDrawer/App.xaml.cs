@@ -1,9 +1,10 @@
-﻿using System;
+﻿using GameDrawer.IO;
+using Milkitic.ApplicationUpdater;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using GameDrawer.IO;
-using GameDrawer.Model;
+using Config = GameDrawer.Model.Config;
 
 namespace GameDrawer
 {
@@ -12,6 +13,7 @@ namespace GameDrawer
     /// </summary>
     public partial class App : Application
     {
+        public static Updater Updater { get; }
         public static Config Config { get; set; }
         internal static GameListLoader GameListLoader { get; set; }
 
@@ -20,6 +22,11 @@ namespace GameDrawer
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             SetAlignment();
             Config = Config.LoadOrCreateConfig();
+            UpdaterConfig.SavePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.zip");
+            UpdaterConfig.RequestUri = "http://api.github.com/repos/Milkitic/GameDrawer/releases";
+            UpdaterConfig.AssertName = "GameDrawer.zip";
+
+            Updater = new Updater();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

@@ -77,7 +77,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GameDrawer\GameDrawer.csproj">
       <Project>{3f5327b3-336b-4d08-bb28-d1aaf01c8587}</Project>
-      <Name>RomExplorer</Name>
+      <Name>GameDrawer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

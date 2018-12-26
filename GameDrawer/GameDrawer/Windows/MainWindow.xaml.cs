@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using Milkitic.ApplicationUpdater;
 
 namespace GameDrawer.Windows
 {
@@ -30,12 +31,23 @@ namespace GameDrawer.Windows
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SynchronizationContext = SynchronizationContext.Current;
             App.GameListLoader = new GameListLoader();
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.SetConfig(App.Config);
+
+            bool? hasUpdate = await App.Updater.CheckUpdateAsync();
+            if (hasUpdate == true)
+            {
+                NewVersionWindow newVersionWindow = new NewVersionWindow(App.Updater.NewRelease,() =>
+                {
+
+                });
+
+                newVersionWindow.ShowDialog();
+            }
         }
 
         private async void Window_Shown(object sender, EventArgs e)

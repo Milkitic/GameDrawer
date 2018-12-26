@@ -76,9 +76,70 @@
             <TabItem DockPanel.Dock="Left" HorizontalAlignment="Left"
                      Style="{StaticResource TabStyle}">
                 <TabItem.Header>
-                    其他设置
+                    程序信息
                 </TabItem.Header>
-                <Grid Background="Transparent" />
+                <Grid Background="Transparent">
+                    <StackPanel Margin="10">
+                        <Label Foreground="{StaticResource ExtraLightBrush}"
+                               Content="软件更新："
+                               HorizontalAlignment="Left" />
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="{StaticResource ExtraLightBrush}"
+                                   Content="当前版本：" />
+                            <Label x:Name="CurrentVer"
+                                   Foreground="{StaticResource ExtraLightBrush}"
+                                   Margin="-5,0,0,0"
+                                   Content="v100.20" VerticalContentAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Foreground="{StaticResource ExtraLightBrush}"
+                                   Content="上次检查时间：" />
+                            <Label x:Name="LastUpdate"
+                                   Foreground="{StaticResource ExtraLightBrush}"
+                                   Margin="-5,0,0,0"
+                                   Content="1970-06-07" VerticalContentAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" >
+                            <dms:DMButton
+                                x:Name="CheckUpdate" Background="#484852" Foreground="White"
+                                Width="80" Height="25" CornerRadius="5"
+                                BorderThickness="0" Cursor="Hand"
+                                Margin="8"
+                                Content="检查更新"
+                                Command="{Binding CheckUpdateCommand}"
+                                HorizontalAlignment="Left" />
+                            <Label x:Name="NewVersion" VerticalAlignment="Center" Visibility="Collapsed">
+                                <dms:DMLinkButton
+                                    Foreground="#FF1E9FFF"
+                                    DMSystemButtonHoverColor="Transparent"
+                                    DMSystemButtonHoverForeground="#FF6EBFFF"
+                                    Content="! 有新版本 !"
+                                    Command="{Binding OpenUpdateWindowCommand}" />
+                            </Label>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Stretch="None">
+                                <ContentControl Template="{StaticResource GithubControl}" />
+                            </Viewbox>
+                            <Label>
+                                <dms:DMLinkButton
+                                    Foreground="#FF1E9FFF"
+                                    DMSystemButtonHoverColor="Transparent"
+                                    DMSystemButtonHoverForeground="#949494"
+                                    Content="项目地址"
+                                    Command="{Binding LinkGithubCommand}" />
+                            </Label>
+                            <Label>
+                                <dms:DMLinkButton
+                                    Foreground="#FF1E9FFF"
+                                    DMSystemButtonHoverColor="Transparent"
+                                    DMSystemButtonHoverForeground="#949494"
+                                    Command="{Binding LinkIssueCommand}" 
+                                    Content="意见反馈" />
+                            </Label>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
             </TabItem>
             <TabControl.Template>
                 <ControlTemplate TargetType="{x:Type TabControl}">
@@ -128,7 +189,7 @@
             Margin="5" Padding="5,0"
             Height="28" Width="80"
             CornerRadius="3"
-            Content="保存" HorizontalAlignment="Right"
+            Content="确定" HorizontalAlignment="Right"
             Command="{Binding SaveCommand}"
             Click="SaveButton_Click">
             <Button.Background>

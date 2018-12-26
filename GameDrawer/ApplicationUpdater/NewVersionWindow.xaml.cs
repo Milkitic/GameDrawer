@@ -1,0 +1,62 @@
+﻿using Milkitic.ApplicationUpdater.Github;
+using System;
+using System.Windows;
+
+namespace Milkitic.ApplicationUpdater
+{
+    /// <summary>
+    /// NewVersionWindow.xaml 的交互逻辑
+    /// </summary>
+    public partial class NewVersionWindow : Window
+    {
+        private readonly Action _updateCallback;
+        private readonly Action _laterCallback;
+        private readonly Action _skipCallback;
+        private bool _later = false;
+        public NewVersionWindow(Release release, Action updateCallback)
+            : this(release, updateCallback, null, null)
+        {
+
+        }
+
+        public NewVersionWindow(Release release, Action updateCallback, Action laterCallback)
+            : this(release, updateCallback, laterCallback, null)
+        {
+        }
+
+        public NewVersionWindow(Release release, Action updateCallback, Action laterCallback, Action skipCallback)
+        {
+            _updateCallback = updateCallback;
+            _laterCallback = laterCallback;
+            _skipCallback = skipCallback;
+
+            InitializeComponent();
+            MainGrid.DataContext = release;
+        }
+
+        private void BtnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            _updateCallback?.Invoke();
+            Close();
+        }
+
+        private void BtnSkip_Click(object sender, RoutedEventArgs e)
+        {
+            _skipCallback?.Invoke();
+            Close();
+        }
+
+        private void BtnLater_Click(object sender, RoutedEventArgs e)
+        {
+            _later = true;
+            Close();
+        }
+
+        public new void Close()
+        {
+            if (_later)
+                _laterCallback?.Invoke();
+            base.Close();
+        }
+    }
+}

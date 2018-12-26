@@ -62,7 +62,51 @@ namespace GameDrawer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-                   
+
+                });
+            }
+        }
+
+        public ICommand CheckUpdateCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+
+                });
+            }
+        }
+
+        public ICommand LinkGithubCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+
+                });
+            }
+        }
+
+        public ICommand LinkIssueCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+
+                });
+            }
+        }
+
+        public ICommand OpenUpdateWindowCommand
+        {
+            get
+            {
+                return new DelegateCommand(obj =>
+                {
+
                 });
             }
         }
