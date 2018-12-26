@@ -29,6 +29,7 @@ namespace GameDrawer.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null) return 30;
             var state = (WindowState)value;
             return state == WindowState.Maximized ? 24 : 30;
         }
@@ -112,7 +113,8 @@ namespace GameDrawer.Converters
             if (windowActivated)
             {
                 if (_color1 == null)
-                    _color1 = ColorExtension.GetChromeColor();
+                    //_color1 = ColorExtension.GetChromeColor();
+                    _color1 = System.Drawing.Color.Black;
                 if (_color1 != null)
                 {
                     var color = _color1.Value;
@@ -145,20 +147,8 @@ namespace GameDrawer.Converters
             throw new NotImplementedException();
         }
     }
-    internal class CanShowConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var b = (bool?)value;
-            return b == true ? Visibility.Visible : Visibility.Collapsed;
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    internal class CanShowMultiConverter : IMultiValueConverter
+    internal class CanShowComponentConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -173,19 +163,6 @@ namespace GameDrawer.Converters
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    internal class CannotShowConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var b = (bool?)value;
-            return b == true ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

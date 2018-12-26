@@ -25,7 +25,7 @@ namespace GameDrawer
             UpdaterConfig.SavePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.zip");
             UpdaterConfig.RequestUri = "http://api.github.com/repos/Milkitic/GameDrawer/releases";
             UpdaterConfig.AssertName = "GameDrawer.zip";
-
+            UpdaterConfig.CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Updater = new Updater();
         }
 

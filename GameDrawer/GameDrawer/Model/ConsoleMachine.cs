@@ -20,33 +20,6 @@ namespace GameDrawer.Model
         public ConsoleMachine(string directoryPath)
         {
             Path = directoryPath;
-            Games.CollectionChanged += Games_CollectionChanged;
-        }
-
-        private void Games_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (var newItem in e.NewItems)
-                {
-                    var game = (Game)newItem;
-                    game.Committed += Game_Committed;
-                }
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (var newItem in e.OldItems)
-                {
-                    var game = (Game)newItem;
-                    game.Committed -= Game_Committed;
-                }
-            }
-        }
-
-        private void Game_Committed(object sender, EventArgs e)
-        {
-            //OnCommitted(sender, e);
         }
 
         [JsonIgnore]

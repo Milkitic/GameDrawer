@@ -116,9 +116,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\DateTimeToStringConverter.cs" />
+    <Compile Include="Converters\ShowConverter.cs" />
     <Compile Include="Converters\ConsoleConfigWindowConverter.cs" />
     <Compile Include="Converters\MainWindowConverter.cs" />
     <Compile Include="Converters\MultiValueConverter.cs" />
+    <Compile Include="Converters\NegativeBooleanConverter.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="FocusExtension.cs" />
     <Compile Include="IO\FileExtension.cs" />

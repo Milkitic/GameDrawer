@@ -1,5 +1,6 @@
 ﻿using GameDrawer.Model;
 using Microsoft.Win32;
+using Milkitic.ApplicationUpdater;
 using Milkitic.WpfApi;
 using Milkitic.WpfApi.Commands;
 using System;
@@ -18,6 +19,8 @@ namespace GameDrawer.ViewModel
         private Config _config;
         private string _gameDirectory;
         private bool _autoStartup;
+        private UpdaterViewModel _updaterViewModel;
+        private bool _hasNewVersion;
 
         public void SetConfig(Config config)
         {
@@ -56,6 +59,16 @@ namespace GameDrawer.ViewModel
             }
         }
 
+        public UpdaterViewModel UpdaterViewModel
+        {
+            get => _updaterViewModel;
+            set
+            {
+                _updaterViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand SaveCommand
         {
             get
@@ -71,9 +84,20 @@ namespace GameDrawer.ViewModel
         {
             get
             {
-                return new DelegateCommand(obj =>
+                return new DelegateCommand(async obj =>
                 {
+                    bool? hasUpdate = await App.Updater.CheckUpdateAsync();
+                    Config.LastUpdateCheck = DateTime.Now;
+                    Config.SaveConfig();
+                    if (hasUpdate == true)
+                    {
+                        NewVersionWindow newVersionWindow = new NewVersionWindow(UpdaterViewModel.NewRelease, () =>
+                        {
 
+                        });
+
+                        newVersionWindow.ShowDialog();
+                    }
                 });
             }
         }
@@ -84,7 +108,7 @@ namespace GameDrawer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-
+                    Process.Start("https://github.com/Milkitic/GameDrawer");
                 });
             }
         }
@@ -95,7 +119,7 @@ namespace GameDrawer.ViewModel
             {
                 return new DelegateCommand(obj =>
                 {
-
+                    //Process.Start("https://github.com/Milkitic/GameDrawer/issues/new");
                 });
             }
         }

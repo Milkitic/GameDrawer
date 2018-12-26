@@ -1,6 +1,7 @@
 ﻿using GameDrawer.IO;
 using GameDrawer.Model;
 using GameDrawer.ViewModel;
+using Milkitic.ApplicationUpdater;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using Milkitic.ApplicationUpdater;
 
 namespace GameDrawer.Windows
 {
@@ -41,7 +41,7 @@ namespace GameDrawer.Windows
             bool? hasUpdate = await App.Updater.CheckUpdateAsync();
             if (hasUpdate == true)
             {
-                NewVersionWindow newVersionWindow = new NewVersionWindow(App.Updater.NewRelease,() =>
+                NewVersionWindow newVersionWindow = new NewVersionWindow(App.Updater.UpdaterViewModel.NewRelease, () =>
                 {
 
                 });

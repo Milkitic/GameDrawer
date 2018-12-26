@@ -8,9 +8,10 @@ using System.Windows.Media;
 
 namespace GameDrawer.Model
 {
-    public class Config:ViewModelBase
+    public class Config : ViewModelBase
     {
         private Color _themeColor = Color.FromRgb(212, 198, 198);
+        private DateTime? _lastUpdateCheck;
 
         public Config()
         {
@@ -26,6 +27,16 @@ namespace GameDrawer.Model
 
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
         public bool AutoStartup { get; set; }
+
+        public DateTime? LastUpdateCheck
+        {
+            get => _lastUpdateCheck;
+            set
+            {
+                _lastUpdateCheck = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Color ThemeColor
         {

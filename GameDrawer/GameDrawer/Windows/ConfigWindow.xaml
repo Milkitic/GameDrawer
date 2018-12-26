@@ -8,6 +8,7 @@
         xmlns:dms="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:converters="clr-namespace:GameDrawer.Converters"
+        xmlns:loaders="clr-namespace:Loaders;assembly=MrMitch.Loaders"
         mc:Ignorable="d"
         Title="全局设置" Height="320" Width="480" MinHeight="320" MinWidth="480"
         Loaded="Window_Loaded" Closed="Window_Closed" SourceInitialized="Window_SourceInitialized"
@@ -16,6 +17,12 @@
     <Window.DataContext>
         <viewModel:ConfigWindowViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <converters:NegativeBooleanConverter x:Key="NegativeBooleanConverter"/>
+        <converters:CannotShowMultiConverter x:Key="CannotShowMultiConverter"/>
+        <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+       <converters:CanShowConverter x:Key="CanShowConverter"/>
+  </Window.Resources>
     <Grid Background="{StaticResource HorizonLinearBlackBrush2}">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -76,20 +83,18 @@
             <TabItem DockPanel.Dock="Left" HorizontalAlignment="Left"
                      Style="{StaticResource TabStyle}">
                 <TabItem.Header>
-                    程序信息
+                    软件信息
                 </TabItem.Header>
                 <Grid Background="Transparent">
-                    <StackPanel Margin="10">
-                        <Label Foreground="{StaticResource ExtraLightBrush}"
-                               Content="软件更新："
-                               HorizontalAlignment="Left" />
+                    <StackPanel Margin="5">
                         <StackPanel Orientation="Horizontal">
                             <Label Foreground="{StaticResource ExtraLightBrush}"
                                    Content="当前版本：" />
                             <Label x:Name="CurrentVer"
                                    Foreground="{StaticResource ExtraLightBrush}"
                                    Margin="-5,0,0,0"
-                                   Content="v100.20" VerticalContentAlignment="Center" />
+                                   Content="{Binding UpdaterViewModel.CurrentVersion}"
+                                   VerticalContentAlignment="Center" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Foreground="{StaticResource ExtraLightBrush}"
@@ -97,25 +102,44 @@
                             <Label x:Name="LastUpdate"
                                    Foreground="{StaticResource ExtraLightBrush}"
                                    Margin="-5,0,0,0"
-                                   Content="1970-06-07" VerticalContentAlignment="Center" />
+                                   Content="{Binding Config.LastUpdateCheck,
+                                             Converter={StaticResource DateTimeToStringConverter},
+                                             ConverterParameter=g}"
+                                   VerticalContentAlignment="Center" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" >
                             <dms:DMButton
                                 x:Name="CheckUpdate" Background="#484852" Foreground="White"
                                 Width="80" Height="25" CornerRadius="5"
-                                BorderThickness="0" Cursor="Hand"
+                                BorderThickness="0"
                                 Margin="8"
                                 Content="检查更新"
                                 Command="{Binding CheckUpdateCommand}"
+                                IsEnabled="{Binding UpdaterViewModel.IsRunningChecking,Converter={StaticResource NegativeBooleanConverter}}"
                                 HorizontalAlignment="Left" />
-                            <Label x:Name="NewVersion" VerticalAlignment="Center" Visibility="Collapsed">
+                            <Label x:Name="NewVersion"
+                                   VerticalAlignment="Center">
+                                <Label.Visibility>
+                                    <MultiBinding Converter="{StaticResource CannotShowMultiConverter}"
+                                                  ConverterParameter="Any">
+                                        <Binding Path="UpdaterViewModel.IsRunningChecking" />
+                                        <Binding Path="UpdaterViewModel.HasNoNewVersion" />
+                                    </MultiBinding>
+                                </Label.Visibility>
                                 <dms:DMLinkButton
                                     Foreground="#FF1E9FFF"
                                     DMSystemButtonHoverColor="Transparent"
                                     DMSystemButtonHoverForeground="#FF6EBFFF"
-                                    Content="! 有新版本 !"
+                                    Content="有新版本"
                                     Command="{Binding OpenUpdateWindowCommand}" />
                             </Label>
+                            <loaders:ChromeLoader
+                                Foreground="Orange"
+                                Thickness="3"
+                                Visibility="{Binding UpdaterViewModel.IsRunningChecking,
+                                                  Converter={StaticResource CanShowConverter}}"
+                                IsIndeterminate="{Binding UpdaterViewModel.IsRunningChecking}"
+                                Width="28" Height="28" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Stretch="None">

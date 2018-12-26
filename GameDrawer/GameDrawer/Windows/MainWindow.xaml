@@ -48,7 +48,7 @@
         <converters:ChromeHoverForegroundConverter x:Key="ChromeHoverForegroundConverter" />
         <converters:ChromeHoverBackgroundConverter x:Key="ChromeHoverBackgroundConverter" />
         <converters:QuoteHeightConverter x:Key="QuoteHeightConverter" />
-        <converters:CanShowMultiConverter x:Key="CanShowMultiConverter" />
+        <converters:CanShowComponentConverter x:Key="CanShowComponentConverter" />
         <converters:CanShowConverter x:Key="CanShowConverter" />
         <converters:CannotShowConverter x:Key="CannotShowConverter" />
         <converters:ContentConverter x:Key="ContentConverter" />
@@ -395,7 +395,7 @@
                         <ToolTip>
                             <StackPanel Margin="2">
                                 <TextBlock Margin="0,0,0,8" FontWeight="Heavy">全局设置</TextBlock>
-                                <TextBlock>进行程序的全局设置和偏好设置。</TextBlock>
+                                <TextBlock>进行软件的全局设置和偏好设置。</TextBlock>
                             </StackPanel>
                         </ToolTip>
                     </Button.ToolTip>
@@ -845,7 +845,7 @@
                     <Label x:Name="LblGameDescription" Foreground="White">
                         <TextBlock TextWrapping="Wrap" Text="{Binding CurrentGame.Description}" />
                         <Label.Visibility>
-                            <MultiBinding Converter="{StaticResource CanShowMultiConverter}"
+                            <MultiBinding Converter="{StaticResource CanShowComponentConverter}"
                                           ConverterParameter="False">
                                 <Binding Path="CurrentMachine"/>
                                 <Binding Path="CurrentMachine.DescriptionEditable"/>
@@ -861,7 +861,7 @@
                          VerticalContentAlignment="Top" Padding="3,4">
                     <!--Visibility="{Binding CurrentMachine.DescriptionEditable,Converter={StaticResource CanShowConverter}}"-->
                     <TextBox.Visibility>
-                        <MultiBinding Converter="{StaticResource CanShowMultiConverter}"
+                        <MultiBinding Converter="{StaticResource CanShowComponentConverter}"
                                       ConverterParameter="True">
                             <Binding Path="CurrentMachine"/>
                             <Binding Path="CurrentMachine.DescriptionEditable"/>

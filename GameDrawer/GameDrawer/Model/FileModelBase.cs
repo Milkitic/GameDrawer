@@ -9,8 +9,6 @@ namespace GameDrawer.Model
 {
     public class FileModelBase : ViewModelBase
     {
-        public event EventHandler Committed;
-        
         protected virtual string InnerIconPath => IoPath.Combine(Path, "icon.png");
         protected virtual string SuspendedName { get; set; }
         protected virtual string SuspendedDescription { get; set; } = "暂无介绍";
@@ -97,11 +95,6 @@ namespace GameDrawer.Model
         public void ResetSuspended()
         {
             SuspendedName = NameWithoutExtension;
-        }
-
-        public virtual void OnCommitted(object sender, EventArgs e)
-        {
-            //Committed?.Invoke(sender, e);
         }
 
         public void RaisePropertyChanged(string propertyName)

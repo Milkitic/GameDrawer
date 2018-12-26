@@ -12,5 +12,6 @@ namespace Milkitic.ApplicationUpdater
         public static string SavePath { get; set; }
         public static string RequestUri { get; set; }
         public static string AssertName { get; set; }
+        public static string CurrentVersion { get; set; }
     }
 }

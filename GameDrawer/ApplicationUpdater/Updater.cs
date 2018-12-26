@@ -12,16 +12,14 @@ namespace Milkitic.ApplicationUpdater
 {
     public class Updater
     {
-        public string CurrentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString().TrimEnd('.', '0');
-        private const int Timeout = 10000;
+         private const int Timeout = 10000;
         private const int RetryCount = 3;
         private static readonly HttpClient HttpClient;
-        public Release NewRelease { get; private set; }
-        public bool IsRunningChecking;
+        public UpdaterViewModel UpdaterViewModel { get; } = new UpdaterViewModel();
 
         public async Task<bool?> CheckUpdateAsync()
         {
-            IsRunningChecking = true;
+            UpdaterViewModel.IsRunningChecking = true;
             bool? result = null;
             await Task.Run(() =>
             {
@@ -39,7 +37,7 @@ namespace Milkitic.ApplicationUpdater
                         .FirstOrDefault(k => !k.Draft && !k.Prerelease);
                     if (latest == null)
                     {
-                        NewRelease = null;
+                        UpdaterViewModel. NewRelease = null;
                         result = false;
                         return;
                     }
@@ -47,19 +45,20 @@ namespace Milkitic.ApplicationUpdater
                     var latestVer = latest.TagName.TrimStart('v').TrimEnd('.', '0');
 
                     Version latestVerObj = new Version(latestVer);
-                    Version nowVerObj = new Version(CurrentVersion);
+                    Version nowVerObj = new Version(UpdaterViewModel.CurrentVersion);
 
                     if (latestVerObj <= nowVerObj)
                     {
-                        NewRelease = null;
+                        UpdaterViewModel.NewRelease = null;
                         result = false;
                         return;
                     }
 
-                    NewRelease = latest;
-                    NewRelease.NewVerString = "v" + latestVer;
-                    NewRelease.NowVerString = "v" + CurrentVersion;
-                    NewRelease.Body = NewRelease.HtmlUrl + Environment.NewLine + NewRelease.Body;
+                    UpdaterViewModel.NewRelease = latest;
+                    UpdaterViewModel.NewRelease.NewVerString = "v" + latestVer;
+                    UpdaterViewModel.NewRelease.NowVerString = "v" + UpdaterViewModel.CurrentVersion;
+                    UpdaterViewModel.NewRelease.Body = UpdaterViewModel.NewRelease.HtmlUrl + Environment.NewLine +
+                                                       UpdaterViewModel.NewRelease.Body;
                     result = true;
                 }
                 catch
@@ -67,7 +66,7 @@ namespace Milkitic.ApplicationUpdater
                     result = null;
                 }
             });
-            IsRunningChecking = false;
+            UpdaterViewModel.IsRunningChecking = false;
             return result;
         }
 

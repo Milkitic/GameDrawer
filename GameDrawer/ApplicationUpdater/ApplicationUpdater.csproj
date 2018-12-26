@@ -73,6 +73,7 @@
     <Compile Include="Github\Author.cs" />
     <Compile Include="Github\Release.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="UpdaterViewModel.cs" />
     <Compile Include="UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>

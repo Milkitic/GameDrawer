@@ -27,11 +27,13 @@ namespace GameDrawer.Windows
     {
         private Color _color;
         private bool _saved = false;
+
         public ConfigWindow()
         {
             InitializeComponent();
             ViewModel = (ConfigWindowViewModel)DataContext;
             ViewModel.SetConfig(App.Config);
+            ViewModel.UpdaterViewModel = App.Updater.UpdaterViewModel;
         }
 
         private ConfigWindowViewModel ViewModel { get; set; }
