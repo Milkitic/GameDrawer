@@ -43,7 +43,11 @@ namespace Milkitic.ApplicationUpdater
 
         private void Downloader_OnStartDownloading(long size)
         {
-            Dispatcher.BeginInvoke(new Action(() => DlProgress.Maximum = size));
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                LblStatus.Content = "正在下载……";
+                DlProgress.Maximum = size;
+            }));
         }
 
         private void Downloader_OnDownloading(long size, long downloadedSize, long speed)

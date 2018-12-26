@@ -6,10 +6,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Milkitic.WpfApi;
 
 namespace Milkitic.ApplicationUpdater
 {
-    public class UpdaterViewModel : INotifyPropertyChanged
+    public class UpdaterViewModel : ViewModelBase
     {
         private bool _isRunningChecking;
         private bool _hasNewVersion;
@@ -58,12 +59,5 @@ namespace Milkitic.ApplicationUpdater
         }
 
         public string CurrentVersion => UpdaterConfig.CurrentVersion;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

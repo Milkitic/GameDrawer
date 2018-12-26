@@ -12,7 +12,7 @@ namespace Milkitic.ApplicationUpdater
 {
     public class Updater
     {
-         private const int Timeout = 10000;
+        private const int Timeout = 10000;
         private const int RetryCount = 3;
         private static readonly HttpClient HttpClient;
         public UpdaterViewModel UpdaterViewModel { get; } = new UpdaterViewModel();
@@ -34,15 +34,16 @@ namespace Milkitic.ApplicationUpdater
                     Console.WriteLine(@"Get");
                     List<Release> releases = JsonConvert.DeserializeObject<List<Release>>(json);
                     var latest = releases.OrderByDescending(k => k.PublishedAt)
-                        .FirstOrDefault(k => !k.Draft && !k.Prerelease);
+                        //.FirstOrDefault(k => !k.Draft && !k.Prerelease);
+                        .FirstOrDefault(k => !k.Draft);
                     if (latest == null)
                     {
-                        UpdaterViewModel. NewRelease = null;
+                        UpdaterViewModel.NewRelease = null;
                         result = false;
                         return;
                     }
 
-                    var latestVer = latest.TagName.TrimStart('v').TrimEnd('.', '0');
+                    var latestVer = latest.TagName;
 
                     Version latestVerObj = new Version(latestVer);
                     Version nowVerObj = new Version(UpdaterViewModel.CurrentVersion);
@@ -55,10 +56,9 @@ namespace Milkitic.ApplicationUpdater
                     }
 
                     UpdaterViewModel.NewRelease = latest;
-                    UpdaterViewModel.NewRelease.NewVerString = "v" + latestVer;
-                    UpdaterViewModel.NewRelease.NowVerString = "v" + UpdaterViewModel.CurrentVersion;
-                    UpdaterViewModel.NewRelease.Body = UpdaterViewModel.NewRelease.HtmlUrl + Environment.NewLine +
-                                                       UpdaterViewModel.NewRelease.Body;
+                    UpdaterViewModel.NewRelease.NewVerString = latestVer;
+                    UpdaterViewModel.NewRelease.NowVerString = UpdaterViewModel.CurrentVersion;
+                    UpdaterViewModel.NewRelease.Body = UpdaterViewModel.NewRelease.Body;
                     result = true;
                 }
                 catch

@@ -131,7 +131,7 @@
                                     DMSystemButtonHoverColor="Transparent"
                                     DMSystemButtonHoverForeground="#FF6EBFFF"
                                     Content="有新版本"
-                                    Command="{Binding OpenUpdateWindowCommand}" />
+                                    Command="{Binding OpenNewVersionWindowCommand}" />
                             </Label>
                             <loaders:ChromeLoader
                                 Foreground="Orange"
@@ -214,7 +214,6 @@
             Height="28" Width="80"
             CornerRadius="3"
             Content="确定" HorizontalAlignment="Right"
-            Command="{Binding SaveCommand}"
             Click="SaveButton_Click">
             <Button.Background>
                 <LinearGradientBrush StartPoint="0,1" EndPoint="1,0">

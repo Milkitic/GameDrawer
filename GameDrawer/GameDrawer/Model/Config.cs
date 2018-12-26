@@ -26,6 +26,7 @@ namespace GameDrawer.Model
         }
 
         public string GameDirectory { get; set; } = Path.Combine(BaseDirectory, "Games");
+        public string IgnoredVersion { get; set; }
         public bool AutoStartup { get; set; }
 
         public DateTime? LastUpdateCheck

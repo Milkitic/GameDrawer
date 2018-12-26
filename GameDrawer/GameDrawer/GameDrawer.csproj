@@ -249,6 +249,10 @@
       <Project>{bd05b25b-09ab-48e8-9740-bd5b5937c32b}</Project>
       <Name>ApplicationUpdater</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameMigrate\GameMigrate.csproj">
+      <Project>{a83352f8-34ba-413b-a832-0fb2a14c4cac}</Project>
+      <Name>GameMigrate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MrMitch.Loaders\MrMitch.Loaders.csproj">
       <Project>{00e8fbc2-33cd-440b-81f4-066c15b06a46}</Project>
       <Name>MrMitch.Loaders</Name>

@@ -22,9 +22,11 @@ namespace GameDrawer.Windows
         private MainWindowViewModel ViewModel { get; set; }
         private readonly OptionContainer _consoleOption = new OptionContainer();
         private readonly OptionContainer _gameOption = new OptionContainer();
+        private bool _shown;
 
         public static SynchronizationContext SynchronizationContext { get; private set; }
-        private bool _shown;
+        public static MainWindow CurrentInstance { get; set; }
+
         public MainWindow()
         {
             Shown += Window_Shown;
@@ -34,20 +36,12 @@ namespace GameDrawer.Windows
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SynchronizationContext = SynchronizationContext.Current;
+            CurrentInstance = this;
             App.GameListLoader = new GameListLoader();
             ViewModel = (MainWindowViewModel)DataContext;
             ViewModel.SetConfig(App.Config);
 
-            bool? hasUpdate = await App.Updater.CheckUpdateAsync();
-            if (hasUpdate == true)
-            {
-                NewVersionWindow newVersionWindow = new NewVersionWindow(App.Updater.UpdaterViewModel.NewRelease, () =>
-                {
-
-                });
-
-                newVersionWindow.ShowDialog();
-            }
+            await ConfigWindowViewModel.CheckUpdateAsync();
         }
 
         private async void Window_Shown(object sender, EventArgs e)

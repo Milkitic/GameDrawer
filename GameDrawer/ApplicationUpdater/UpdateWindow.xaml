@@ -4,19 +4,38 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="UpdateWindow" SizeToContent="Height" Width="485" ResizeMode="NoResize"
-        Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="更新程序" SizeToContent="Height" Width="485" ResizeMode="NoResize"
+        Loaded="Window_Loaded" Closing="Window_Closing"
+        Background="{StaticResource ExtraBlackBrush}"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="正在从获取更新……" Margin="10,10,10,5" VerticalAlignment="Top"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,5,10,5">
-            <ProgressBar x:Name="DlProgress" Height="20" Margin="0" Width="400" />
-            <Label x:Name="LblProgress" Content="0 %" Margin="5,0,0,0" />
+        <Label x:Name="LblStatus"
+               Grid.Row="0"
+               Content="正在从获取更新……" 
+               Margin="10,10,10,5"
+               VerticalAlignment="Top"
+               Foreground="{StaticResource ExtraLightBrush}" />
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="10,5,10,5">
+            <ProgressBar x:Name="DlProgress"
+                         Height="20" Margin="0"
+                         Width="400" />
+            <Label x:Name="LblProgress"
+                   Content="0 %"
+                   Margin="5,0,0,0"
+                   Foreground="{StaticResource ExtraLightBrush}" />
         </StackPanel>
-        <Label Grid.Row="2" x:Name="LblSpeed" Content="" Margin="10,5,10,10" VerticalAlignment="Top"/>
+        <Label Grid.Row="2"
+               x:Name="LblSpeed"
+               Content=""
+               Margin="10,5,10,10"
+               VerticalAlignment="Top"
+               Foreground="{StaticResource ExtraLightBrush}" />
     </Grid>
 </Window>

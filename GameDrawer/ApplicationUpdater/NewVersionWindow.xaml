@@ -4,13 +4,35 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:github="clr-namespace:Milkitic.ApplicationUpdater.Github"
+        xmlns:dms="clr-namespace:DMSkin.WPF.Controls;assembly=DMSkin.WPF"
         mc:Ignorable="d"
-        Title="NewVersionWindow" Height="384" Width="587">
-    <Grid x:Name="MainGrid">
+        Title="有新版本" Height="384" Width="587"
+        WindowStartupLocation="CenterOwner"
+        SourceInitialized="Window_SourceInitialized">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;Component/Styles/DMSkin.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/DMSkin.WPF;component/Styles/DMButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="ExtraLight20Brush" Color="#20F0F0F0" />
+               <SolidColorBrush x:Key="ExtraLightBrush" Color="#F0F0F0" />
+            <SolidColorBrush x:Key="ExtraBlackBrush" Color="#303030" />
+            <LinearGradientBrush x:Key="ButtonBrush" StartPoint="0,1" EndPoint="1,0">
+                <GradientStop Offset="0" Color="#c4c4c4" />
+                <GradientStop Offset="0.4" Color="#c4c4c4" />
+                <GradientStop Offset="0.6" Color="#f0f0f0" />
+                <GradientStop Offset="1" Color="#f0f0f0" />
+            </LinearGradientBrush>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid x:Name="MainGrid"
+          Background="{StaticResource ExtraBlackBrush}">
         <Grid.DataContext>
             <github:Release />
         </Grid.DataContext>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition />
@@ -20,41 +42,78 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Grid.Row="0" 
+        <Label Grid.Column="0" Grid.Row="0"
+               Foreground="{StaticResource ExtraLightBrush}"
+               Margin="10,10,-5,5"
                Content="当前版本：" />
-        <Label x:Name="CurrentVer" 
+        <Label x:Name="CurrentVer"
+               Foreground="{StaticResource ExtraLightBrush}"
                Grid.Column="1" Grid.Row="0"  
                Content="{Binding NowVerString}" 
                VerticalContentAlignment="Center" />
         <Label Grid.Column="0" Grid.Row="1" 
+               Foreground="{StaticResource ExtraLightBrush}"
+               Margin="10,5,-5,5"
                Content="新版本：" />
         <Label x:Name="NewVer"
+               Foreground="{StaticResource ExtraLightBrush}"
                Grid.Column="1" Grid.Row="1"
                Content="{Binding NewVerString}"
                VerticalContentAlignment="Center" />
         <Label Grid.Column="0" Grid.Row="2"
+               Foreground="{StaticResource ExtraLightBrush}"
+               Margin="10,5,-5,5"
+               Content="发行地址：" />
+        <Label x:Name="Link"
+               Foreground="{StaticResource ExtraLightBrush}"
+               Grid.Column="1" Grid.Row="2"
+               VerticalContentAlignment="Center" >
+            <Hyperlink NavigateUri="{Binding HtmlUrl}" Click="Hyperlink_Click"
+                       Foreground="#FF1E9FFF" TextDecorations="{x:Null}" >
+                <TextBlock Text="{Binding HtmlUrl}" />
+            </Hyperlink>
+        </Label>
+        <Label Grid.Column="0" Grid.Row="3"
+               Foreground="{StaticResource ExtraLightBrush}"
+               Margin="10,5,-5,5"
                Content="更新说明：" />
         <TextBox x:Name="Body"
-                 Grid.Column="1" Grid.Row="2"
+                 Foreground="{StaticResource ExtraLightBrush}"
+                 IsReadOnly="True"
+                 Grid.Column="1" Grid.Row="3"
+                 Padding="3,5"
                  Margin="5,5,5,0"
                  Text="{Binding Body}"
                  TextWrapping="Wrap" AcceptsReturn="True"
-                 VerticalScrollBarVisibility="Visible" />
-        <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"
+                 VerticalScrollBarVisibility="Visible"
+                 Background="Transparent"/>
+        <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Content="忽略此版本" 
-                    Width="70" Height="25" 
-                    Margin="0,5,5,5" 
-                    Click="BtnSkip_Click" />
-            <Button Content="以后再说" 
-                    Width="70" Height="25" 
-                    Margin="0,5,5,5"
-                    Click="BtnLater_Click" />
-            <Button Content="现在更新" 
-                    Width="70" Height="25" 
-                    Margin="0,5,5,5" 
-                    Click="BtnUpdate_Click" />
+            <dms:DMButton
+                Margin="5" Padding="5,0"
+                Height="28" Width="80"
+                CornerRadius="3"
+                Content="忽略此版本"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Background="{StaticResource ButtonBrush}"
+                Click="BtnSkip_Click" />
+            <dms:DMButton
+                Margin="0,5,5,5" Padding="5,0"
+                Height="28" Width="80"
+                CornerRadius="3"
+                Content="以后再说"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Background="{StaticResource ButtonBrush}"
+                Click="BtnLater_Click" />
+            <dms:DMButton
+                Margin="0,5,5,5" Padding="5,0"
+                Height="28" Width="80"
+                CornerRadius="3"
+                Content="现在更新"
+                BorderBrush="{StaticResource ExtraLight20Brush}"
+                Background="{StaticResource ButtonBrush}"
+                Click="BtnUpdate_Click" />
         </StackPanel>
     </Grid>
 </Window>

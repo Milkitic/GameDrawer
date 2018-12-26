@@ -1,6 +1,8 @@
 ﻿using GameDrawer.Model;
+using GameDrawer.Windows;
 using Microsoft.Win32;
 using Milkitic.ApplicationUpdater;
+using Milkitic.ApplicationUpdater.Github;
 using Milkitic.WpfApi;
 using Milkitic.WpfApi.Commands;
 using System;
@@ -20,7 +22,6 @@ namespace GameDrawer.ViewModel
         private string _gameDirectory;
         private bool _autoStartup;
         private UpdaterViewModel _updaterViewModel;
-        private bool _hasNewVersion;
 
         public void SetConfig(Config config)
         {
@@ -69,37 +70,57 @@ namespace GameDrawer.ViewModel
             }
         }
 
-        public ICommand SaveCommand
-        {
-            get
-            {
-                return new DelegateCommand(obj =>
-                {
-
-                });
-            }
-        }
-
         public ICommand CheckUpdateCommand
         {
             get
             {
                 return new DelegateCommand(async obj =>
                 {
-                    bool? hasUpdate = await App.Updater.CheckUpdateAsync();
-                    Config.LastUpdateCheck = DateTime.Now;
-                    Config.SaveConfig();
-                    if (hasUpdate == true)
+                    await InnerCheckUpdateAsync();
+                    if (Config != null)
                     {
-                        NewVersionWindow newVersionWindow = new NewVersionWindow(UpdaterViewModel.NewRelease, () =>
-                        {
-
-                        });
-
-                        newVersionWindow.ShowDialog();
+                        Config.LastUpdateCheck = DateTime.Now;
+                        Config.SaveConfig();
                     }
                 });
             }
+        }
+
+        private async Task InnerCheckUpdateAsync()
+        {
+            bool? hasUpdate = await App.Updater.CheckUpdateAsync();
+
+            if (hasUpdate == true && App.Updater.UpdaterViewModel.NewRelease.NewVerString != App.Config.IgnoredVersion)
+            {
+                OpenNewVersionWindow();
+            }
+        }
+
+        private static void OpenNewVersionWindow()
+        {
+            NewVersionWindow newVersionWindow = new NewVersionWindow(
+                App.Updater.UpdaterViewModel.NewRelease,
+                updateCallback: () =>
+                {
+                    UpdateWindow updateWindow = new UpdateWindow(App.Updater.UpdaterViewModel.NewRelease);
+                    updateWindow.Show();
+                    MainWindow.CurrentInstance.Close();
+                },
+                laterCallback: () => { },
+                skipCallback: () =>
+                {
+                    App.Config.IgnoredVersion = App.Updater.UpdaterViewModel.NewRelease.NewVerString;
+                    App.Config.SaveConfig();
+                })
+            {
+                Owner = MainWindow.CurrentInstance
+            };
+            newVersionWindow.ShowDialog();
+        }
+
+        public static async Task CheckUpdateAsync()
+        {
+            await new ConfigWindowViewModel().InnerCheckUpdateAsync();
         }
 
         public ICommand LinkGithubCommand
@@ -124,13 +145,13 @@ namespace GameDrawer.ViewModel
             }
         }
 
-        public ICommand OpenUpdateWindowCommand
+        public ICommand OpenNewVersionWindowCommand
         {
             get
             {
                 return new DelegateCommand(obj =>
                 {
-
+                    OpenNewVersionWindow();
                 });
             }
         }

@@ -1,6 +1,9 @@
 ﻿using Milkitic.ApplicationUpdater.Github;
 using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Documents;
+using Milkitic.WpfApi;
 
 namespace Milkitic.ApplicationUpdater
 {
@@ -57,6 +60,17 @@ namespace Milkitic.ApplicationUpdater
             if (_later)
                 _laterCallback?.Invoke();
             base.Close();
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            Hyperlink link = (Hyperlink)sender;
+            Process.Start(link.NavigateUri.AbsoluteUri);
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            this.HideMinimizeAndMaximizeButtons();
         }
     }
 }
