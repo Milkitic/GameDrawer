@@ -4,4 +4,4 @@
 
 GameDrawer is the next version of it.
 
-Migration from old version (RomManager) is available. Just Run Game Migration Tool.
+Migration from old version (RomManager) is available. Just Run GameMigrate.exe.
