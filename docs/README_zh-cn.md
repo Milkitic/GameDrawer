@@ -1,4 +1,8 @@
 ## GameDrawer
+![](https://img.shields.io/badge/.NET-4.6.1-blue.svg)
+![](https://img.shields.io/badge/license-GPL-blue.svg)
+
+![](http://puu.sh/CnJAF/72f761e012.jpg)
 ### 用途:
 GameDrawer是用来管理您的文件、应用程序以及游戏的工具。
 
