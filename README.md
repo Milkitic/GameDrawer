@@ -1,4 +1,6 @@
 ## GameDrawer
+[中文说明](./docs/README_zh-cn.md)
+![](http://puu.sh/CnJAF/72f761e012.jpg)
 ### What's this:
 GameDrawer is a application for managing your games and programs. 
 
@@ -18,7 +20,7 @@ GameDrawer is a application for managing your games and programs.
 ### Useful tips:
 * You can open the game folder and create drawer by pressing sync button after creating folders by windows explorer.
 * You can add icon for all drawers and programs.
-* You can add running parameters and host programs for drawers and single program. (e.g. roms as games need emulator to run)
+* You can add running parameters and host programs for drawers and single program. (%APPPATH% represents the file path) (e.g. roms as games need emulator to run)
 ### Migarate from old "RomManager":
 Run GameMigrate.exe, and follow the instructions.
 ### Plans:
