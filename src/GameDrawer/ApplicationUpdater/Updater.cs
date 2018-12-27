@@ -34,8 +34,8 @@ namespace Milkitic.ApplicationUpdater
                     Console.WriteLine(@"Get");
                     List<Release> releases = JsonConvert.DeserializeObject<List<Release>>(json);
                     var latest = releases.OrderByDescending(k => k.PublishedAt)
-                        //.FirstOrDefault(k => !k.Draft && !k.Prerelease);
-                        .FirstOrDefault(k => !k.Draft);
+                        .FirstOrDefault(k => !k.Draft && !k.Prerelease);
+                        //.FirstOrDefault(k => !k.Draft);
                     if (latest == null)
                     {
                         UpdaterViewModel.NewRelease = null;
