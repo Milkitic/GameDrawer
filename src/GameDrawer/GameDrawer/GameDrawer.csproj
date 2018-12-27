@@ -241,7 +241,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\完整项目\Osu-Player\WpfApi\WpfApi.csproj">
+    <ProjectReference Include="..\..\..\..\完整项目\Osu-Player\WpfApi\WpfApi.csproj">
       <Project>{028e6f4e-d538-4b83-904c-c94c2f1e3c83}</Project>
       <Name>WpfApi</Name>
     </ProjectReference>
