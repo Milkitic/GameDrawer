@@ -1,4 +1,7 @@
 ## GameDrawer
+![](https://img.shields.io/badge/.NET-4.6.1-blue.svg)
+![](https://img.shields.io/badge/license-GPL-blue.svg)
+
 [中文说明](./docs/README_zh-cn.md)
 ![](http://puu.sh/CnJAF/72f761e012.jpg)
 ### What's this:
