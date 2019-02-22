@@ -1,5 +1,5 @@
 ﻿using GameDrawer.IO;
-using Milkitic.ApplicationUpdater;
+using Milky.ApplicationUpdater;
 using System;
 using System.IO;
 using System.Reflection;

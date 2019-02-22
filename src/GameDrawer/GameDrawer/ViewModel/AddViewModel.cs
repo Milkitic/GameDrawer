@@ -1,5 +1,5 @@
 ﻿using GameDrawer.Model;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
 
 namespace GameDrawer.ViewModel
 {

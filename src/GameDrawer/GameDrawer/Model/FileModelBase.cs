@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using GameDrawer.IO;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
 using Newtonsoft.Json;
 using IoPath = System.IO.Path;
 

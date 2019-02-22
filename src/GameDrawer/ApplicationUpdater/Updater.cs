@@ -1,5 +1,4 @@
-﻿using Milkitic.ApplicationUpdater.Github;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Milky.ApplicationUpdater.Github;
 
-namespace Milkitic.ApplicationUpdater
+namespace Milky.ApplicationUpdater
 {
     public class Updater
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Milkitic.ApplicationUpdater
+namespace Milky.ApplicationUpdater
 {
     /// <summary>
     /// App.xaml 的交互逻辑

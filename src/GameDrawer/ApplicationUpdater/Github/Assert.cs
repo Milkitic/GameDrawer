@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Milkitic.ApplicationUpdater.Github
+namespace Milky.ApplicationUpdater.Github
 {
     public class Asset
     {

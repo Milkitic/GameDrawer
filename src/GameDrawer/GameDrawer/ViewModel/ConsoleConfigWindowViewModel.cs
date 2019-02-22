@@ -4,8 +4,8 @@ using System.Windows.Input;
 using GameDrawer.IO;
 using GameDrawer.Model;
 using Microsoft.Win32;
-using Milkitic.WpfApi;
-using Milkitic.WpfApi.Commands;
+using Milky.WpfApi;
+using Milky.WpfApi.Commands;
 
 namespace GameDrawer.ViewModel
 {

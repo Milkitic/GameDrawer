@@ -2,8 +2,8 @@
 using GameDrawer.Model;
 using GameDrawer.Windows;
 using Microsoft.VisualBasic.FileIO;
-using Milkitic.WpfApi;
-using Milkitic.WpfApi.Commands;
+using Milky.WpfApi;
+using Milky.WpfApi.Commands;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

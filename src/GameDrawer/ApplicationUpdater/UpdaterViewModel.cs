@@ -1,14 +1,14 @@
-﻿using Milkitic.ApplicationUpdater.Github;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
+using Milky.ApplicationUpdater.Github;
 
-namespace Milkitic.ApplicationUpdater
+namespace Milky.ApplicationUpdater
 {
     public class UpdaterViewModel : ViewModelBase
     {

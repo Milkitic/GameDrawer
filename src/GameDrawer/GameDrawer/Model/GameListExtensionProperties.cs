@@ -1,4 +1,4 @@
-﻿using Milkitic.WpfApi;
+﻿using Milky.WpfApi;
 using System.Threading;
 using System.Threading.Tasks;
 

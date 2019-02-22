@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Milkitic.ApplicationUpdater.Properties {
+namespace Milky.ApplicationUpdater.Properties {
     using System;
     
     

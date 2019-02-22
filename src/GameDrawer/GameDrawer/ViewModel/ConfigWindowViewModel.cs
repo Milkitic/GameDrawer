@@ -1,10 +1,8 @@
 ﻿using GameDrawer.Model;
 using GameDrawer.Windows;
-using Microsoft.Win32;
-using Milkitic.ApplicationUpdater;
-using Milkitic.ApplicationUpdater.Github;
-using Milkitic.WpfApi;
-using Milkitic.WpfApi.Commands;
+using Milky.ApplicationUpdater;
+using Milky.WpfApi;
+using Milky.WpfApi.Commands;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

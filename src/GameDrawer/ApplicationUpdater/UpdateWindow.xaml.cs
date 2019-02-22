@@ -1,12 +1,12 @@
-﻿using Milkitic.ApplicationUpdater.Github;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Milky.ApplicationUpdater.Github;
 using Path = System.IO.Path;
 
-namespace Milkitic.ApplicationUpdater
+namespace Milky.ApplicationUpdater
 {
     /// <summary>
     /// UpdateWindow.xaml 的交互逻辑

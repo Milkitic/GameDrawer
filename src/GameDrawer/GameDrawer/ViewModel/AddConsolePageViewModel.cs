@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using GameDrawer.IO;
-using Milkitic.WpfApi;
-using Milkitic.WpfApi.Commands;
+using Milky.WpfApi;
+using Milky.WpfApi.Commands;
 
 namespace GameDrawer.ViewModel
 {

@@ -1,6 +1,6 @@
 ﻿using GameDrawer.Model;
 using GameDrawer.Windows;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;

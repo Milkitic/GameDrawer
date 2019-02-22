@@ -1,11 +1,11 @@
-﻿using Milkitic.ApplicationUpdater.Github;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
+using Milky.ApplicationUpdater.Github;
 
-namespace Milkitic.ApplicationUpdater
+namespace Milky.ApplicationUpdater
 {
     /// <summary>
     /// NewVersionWindow.xaml 的交互逻辑

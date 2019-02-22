@@ -1,7 +1,7 @@
 ﻿using GameDrawer.IO;
 using GameDrawer.Model;
 using GameDrawer.ViewModel;
-using Milkitic.ApplicationUpdater;
+using Milky.ApplicationUpdater;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;

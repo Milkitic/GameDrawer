@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using GameDrawer.Model;
 using GameDrawer.ViewModel;
-using Milkitic.WpfApi;
+using Milky.WpfApi;
 
 namespace GameDrawer.Windows
 {
